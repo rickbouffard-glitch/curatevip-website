@@ -66,19 +66,13 @@
     }
 
     .nav-logo img {
-      height: 32px;
+      height: 28px;
       width: auto;
+      opacity: 0.92;
     }
 
     .nav-logo-vip {
-      font-family: var(--serif);
-      font-size: 13px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      color: var(--gold);
-      text-transform: uppercase;
-      opacity: 0.65;
-      margin-top: 2px;
+      display: none;
     }
 
     .nav-links {
@@ -461,27 +455,91 @@
       line-height: 1.7;
     }
 
-    /* Category cards */
-    .categories {
+    /* App screenshot mockup */
+    .app-mockup-wrap {
       max-width: 1100px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 64px;
     }
 
-    .cat-card {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px 32px;
-      background: var(--bg3);
-      text-align: center;
-      transition: border-color 0.2s, transform 0.2s;
+    .phone-frame {
+      position: relative;
+      width: 280px;
+      flex-shrink: 0;
     }
 
-    .cat-card:hover {
-      border-color: var(--gold-border);
-      transform: translateY(-4px);
+    .phone-outer {
+      background: #1a1a1a;
+      border-radius: 44px;
+      padding: 12px;
+      border: 1px solid rgba(186,159,117,0.25);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .phone-screen {
+      border-radius: 34px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 9/19.5;
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 26px;
+      background: #1a1a1a;
+      border-radius: 0 0 16px 16px;
+      z-index: 2;
+    }
+
+    .mockup-text {
+      flex: 1;
+      max-width: 420px;
+    }
+
+    .mockup-text .section-eyebrow {
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .mockup-feature {
+      margin-bottom: 28px;
+    }
+
+    .mockup-feature-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .mockup-feature-desc {
+      font-size: 14px;
+      color: var(--text-60);
+      line-height: 1.75;
+    }
+
+    .mockup-divider {
+      width: 1px;
+      height: 100%;
+      background: var(--border);
+      margin: 0;
     }
 
     .cat-icon { font-size: 34px; margin-bottom: 16px; }
@@ -700,8 +758,7 @@
   <!-- ── NAV ── -->
   <nav>
     <a href="#home" class="nav-logo">
-      <img src="C-IconNoBg.png" alt="CURATEvip" />
-      <span class="nav-logo-vip">vip</span>
+      <img src="logo-wordmarksolo.png" alt="CURATEvip" />
     </a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
@@ -826,21 +883,32 @@
       </div>
     </div>
 
-    <div class="categories">
-      <div class="cat-card fade-in">
-        <div class="cat-icon">🍽</div>
-        <div class="cat-title">Table</div>
-        <div class="cat-desc">The best restaurant for tonight — whether it's a power dinner, a date, or a celebration with the group.</div>
+    <div class="app-mockup-wrap fade-in">
+      <div class="phone-frame">
+        <div class="phone-outer">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="screenshot-quiz.jpg" alt="CURATEvip App — Choose Your Experience" />
+          </div>
+        </div>
       </div>
-      <div class="cat-card fade-in delay-1">
-        <div class="cat-icon">🎉</div>
-        <div class="cat-title">Social</div>
-        <div class="cat-desc">Curated experiences beyond the table — rooftop bars, private events, and nights worth remembering.</div>
-      </div>
-      <div class="cat-card fade-in delay-2">
-        <div class="cat-icon">🏨</div>
-        <div class="cat-title">Stay</div>
-        <div class="cat-desc">Luxury hotel stays matched to your dates, with room availability and pricing shown natively in-app.</div>
+
+      <div class="mockup-text">
+        <p class="section-eyebrow">Three Categories. One Tap.</p>
+        <div class="mockup-feature">
+          <div class="mockup-feature-title">TABLE — Dining</div>
+          <div class="mockup-feature-desc">The best restaurant for tonight — whether it's a power dinner, a date, or a celebration with the group.</div>
+        </div>
+        <div style="width:36px; height:1px; background:var(--gold-border); margin-bottom:28px;"></div>
+        <div class="mockup-feature">
+          <div class="mockup-feature-title">SOCIAL — Pre/Post</div>
+          <div class="mockup-feature-desc">Curated experiences beyond the table — rooftop bars, private events, and nights worth remembering.</div>
+        </div>
+        <div style="width:36px; height:1px; background:var(--gold-border); margin-bottom:28px;"></div>
+        <div class="mockup-feature">
+          <div class="mockup-feature-title">STAY — Lodging</div>
+          <div class="mockup-feature-desc">Luxury hotel stays matched to your dates, with room availability and pricing shown natively in-app.</div>
+        </div>
       </div>
     </div>
   </section>
