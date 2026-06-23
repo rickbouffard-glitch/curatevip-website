@@ -312,10 +312,11 @@
       padding: 120px 72px;
       max-width: 1240px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 88px;
-      align-items: center;
+    }
+
+    .about-intro {
+      max-width: 660px;
+      margin-bottom: 72px;
     }
 
     .section-eyebrow {
@@ -348,78 +349,79 @@
     .body-text em { color: var(--gold-light); font-style: italic; }
     .section-sub em { color: var(--gold-light); font-style: italic; }
 
-    .about-cards {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .about-card {
-      background: linear-gradient(135deg, rgba(186,159,117,0.06) 0%, var(--bg3) 70%);
-      border: 1px solid rgba(186,159,117,0.15);
-      border-left: 3px solid var(--gold);
-      border-radius: 16px;
-      padding: 30px 32px;
-      display: flex;
-      align-items: center;
-      gap: 26px;
-      transition: all 0.35s ease;
-      position: relative;
+    /* Feature panel: 3-column horizontal */
+    .feature-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: rgba(186,159,117,0.025);
+      border: 1px solid rgba(186,159,117,0.14);
+      border-radius: 24px;
       overflow: hidden;
     }
 
-    .about-card::after {
+    .feature-col {
+      padding: 48px 40px 52px;
+      position: relative;
+      border-right: 1px solid rgba(186,159,117,0.1);
+      transition: background 0.4s ease;
+      overflow: hidden;
+    }
+
+    .feature-col:last-child { border-right: none; }
+
+    .feature-col:hover { background: rgba(186,159,117,0.05); }
+
+    .feature-col::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(186,159,117,0.04) 0%, transparent 55%);
-      pointer-events: none;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
       opacity: 0;
-      transition: opacity 0.35s ease;
+      transition: opacity 0.4s ease;
     }
 
-    .about-card:hover {
-      border-color: rgba(186,159,117,0.45);
-      border-left-color: var(--gold);
-      box-shadow: 0 8px 48px rgba(186,159,117,0.1), 0 0 0 1px rgba(186,159,117,0.12);
-      transform: translateX(6px);
+    .feature-col:hover::before { opacity: 0.6; }
+
+    .feature-num {
+      font-family: var(--serif);
+      font-size: 80px;
+      font-weight: 300;
+      line-height: 1;
+      color: rgba(186,159,117,0.08);
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      user-select: none;
     }
 
-    .about-card:hover::after { opacity: 1; }
-
-    .card-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
+    .feature-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
       background: linear-gradient(135deg, rgba(186,159,117,0.14), rgba(186,159,117,0.04));
-      border: 1px solid rgba(186,159,117,0.35);
-      box-shadow: 0 0 28px rgba(186,159,117,0.15), inset 0 0 14px rgba(186,159,117,0.06);
+      border: 1px solid rgba(186,159,117,0.3);
+      box-shadow: 0 0 24px rgba(186,159,117,0.12);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      margin-bottom: 24px;
     }
 
-    .card-icon svg {
-      width: 28px;
-      height: 28px;
-    }
+    .feature-icon-wrap svg { width: 24px; height: 24px; }
 
-    .card-body { flex: 1; }
-
-    .card-title {
+    .feature-title {
       font-family: var(--serif);
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 500;
-      letter-spacing: 0.01em;
-      margin-bottom: 8px;
       color: #d4b896;
+      margin-bottom: 14px;
+      letter-spacing: 0.01em;
     }
 
-    .card-desc {
-      font-size: 13.5px;
-      color: rgba(255,255,255,0.58);
-      line-height: 1.75;
+    .feature-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.8;
     }
 
     /* ─── HOW IT WORKS ────────────────────────────────── */
@@ -849,11 +851,12 @@
       .stat-num { font-size: 32px; }
 
       /* ABOUT */
-      #about {
-        padding: 72px 24px;
-        grid-template-columns: 1fr;
-        gap: 48px;
-      }
+      #about { padding: 72px 24px; }
+      .about-intro { margin-bottom: 48px; }
+      .feature-panel { grid-template-columns: 1fr; }
+      .feature-col { border-right: none; border-bottom: 1px solid rgba(186,159,117,0.1); padding: 36px 28px; }
+      .feature-col:last-child { border-bottom: none; }
+      .feature-num { font-size: 56px; margin-bottom: 16px; }
       .section-h2 { font-size: clamp(28px, 7vw, 44px); }
 
       /* HOW IT WORKS */
@@ -994,37 +997,36 @@
 
   <!-- ── ABOUT ── -->
   <section id="about">
-    <div class="fade-in">
+
+    <div class="about-intro fade-in">
       <p class="section-eyebrow">The Problem</p>
       <h2 class="section-h2">An Over-Saturation<br />of <em>Noise</em></h2>
       <p class="body-text">
         The global luxury travel market is valued at $1.59 trillion — yet still runs on Yelp and TripAdvisor logic. Star ratings are averaged from millions of people who aren't you. Featured listings go to whoever paid the most. Influencer content is an ad.
       </p>
-      <p class="body-text">
-        High-net-worth travelers don't lack options — they lack signal. They need <em>direction.</em> Hours lost, wrong choices made, and money spent on experiences that were never built for their Speed.
-      </p>
       <p class="body-text" style="font-style:italic; color:var(--gold); opacity:0.8;">
         "If I commit my time and capital to this venue, is it actually going to be My Speed?" Right now, they are guessing.
       </p>
     </div>
-    <div class="about-cards fade-in delay-1">
 
-      <div class="about-card">
-        <div class="card-icon">
+    <div class="feature-panel fade-in delay-1">
+
+      <div class="feature-col">
+        <div class="feature-num">01</div>
+        <div class="feature-icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M13.5 2.5L4 13.5H11.5L10.5 21.5L20 10.5H12.5L13.5 2.5Z" stroke="#ba9f75" stroke-width="1.4" stroke-linejoin="round" fill="rgba(186,159,117,0.18)"/>
             <circle cx="4.5" cy="6" r="1" fill="#ba9f75" opacity="0.5"/>
             <circle cx="19.5" cy="18" r="1" fill="#ba9f75" opacity="0.5"/>
           </svg>
         </div>
-        <div class="card-body">
-          <div class="card-title">The Speed Engine™</div>
-          <div class="card-desc">Proprietary CCTF technology reads atmosphere, acoustic energy, and behavioral signals — then eliminates every venue that isn't built for your exact taste. No ratings. No noise. Pure signal.</div>
-        </div>
+        <div class="feature-title">The Speed Engine™</div>
+        <div class="feature-desc">Proprietary CCTF technology reads atmosphere, acoustic energy, and behavioral signals — then eliminates every venue that isn't built for your exact taste. No ratings. No noise. Pure signal.</div>
       </div>
 
-      <div class="about-card">
-        <div class="card-icon">
+      <div class="feature-col">
+        <div class="feature-num">02</div>
+        <div class="feature-icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="9" stroke="#ba9f75" stroke-width="1.4"/>
             <circle cx="12" cy="12" r="5" stroke="#ba9f75" stroke-width="1.4"/>
@@ -1035,27 +1037,25 @@
             <line x1="17.5" y1="12" x2="21" y2="12" stroke="#ba9f75" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
         </div>
-        <div class="card-body">
-          <div class="card-title">Zero Research Tax</div>
-          <div class="card-desc">The hours of deep research, stylistic cross-referencing, and atmospheric filtering? Already done. You open CURATE and the right answer is already there — matched to who you are, not who the algorithm guessed you might be.</div>
-        </div>
+        <div class="feature-title">Zero Research Tax</div>
+        <div class="feature-desc">The hours of deep research, stylistic cross-referencing, and atmospheric filtering? Already done. You open CURATE and the right answer is waiting — matched to who you are, not who the algorithm guessed you might be.</div>
       </div>
 
-      <div class="about-card">
-        <div class="card-icon">
+      <div class="feature-col">
+        <div class="feature-num">03</div>
+        <div class="feature-icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2.5L20.5 8.5V15.5L12 21.5L3.5 15.5V8.5L12 2.5Z" stroke="#ba9f75" stroke-width="1.4" stroke-linejoin="round" fill="rgba(186,159,117,0.12)"/>
             <path d="M12 6.5L17 9.8V14.2L12 17.5L7 14.2V9.8L12 6.5Z" stroke="#ba9f75" stroke-width="1" stroke-linejoin="round" stroke-opacity="0.55"/>
             <circle cx="12" cy="12" r="1.5" fill="#ba9f75"/>
           </svg>
         </div>
-        <div class="card-body">
-          <div class="card-title">By Invitation Only</div>
-          <div class="card-desc">No paid placements. No crowdsourced reviews. Every venue in CURATE is hand-vetted against a standard most travelers never even define — because most apps never ask them to.</div>
-        </div>
+        <div class="feature-title">By Invitation Only</div>
+        <div class="feature-desc">No paid placements. No crowdsourced reviews. Every venue in CURATE is hand-vetted against a standard most travelers never even define — because most apps never ask them to.</div>
       </div>
 
     </div>
+
   </section>
 
   <!-- ── HOW IT WORKS ── -->
