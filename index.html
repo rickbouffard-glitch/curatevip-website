@@ -107,6 +107,16 @@
       color: #000 !important;
     }
 
+    .nav-member {
+      font-size: 11px !important;
+      letter-spacing: 0.1em !important;
+      color: var(--text-40) !important;
+      text-transform: uppercase;
+      transition: color 0.2s !important;
+    }
+
+    .nav-member:hover { color: var(--gold) !important; }
+
     /* ─── SECTIONS ────────────────────────────────────── */
     section { scroll-margin-top: 76px; }
 
@@ -246,6 +256,23 @@
       border-color: var(--gold-border);
       color: var(--gold);
     }
+
+    .btn-enter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      margin-top: 8px;
+      opacity: 0.75;
+      transition: opacity 0.2s, gap 0.2s;
+    }
+
+    .btn-enter:hover { opacity: 1; gap: 12px; }
 
     .hero-scroll {
       position: absolute;
@@ -814,7 +841,8 @@
         padding: 0 24px;
         height: 64px;
       }
-      .nav-links li:not(:last-child) { display: none; }
+      .nav-links li:not(:last-child):not(:nth-last-child(2)) { display: none; }
+      .nav-member { font-size: 9px !important; letter-spacing: 0.08em !important; }
       .nav-cta { padding: 8px 18px; font-size: 9px; }
 
       /* HERO */
@@ -923,6 +951,7 @@
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="https://curatevip.ai" target="_blank" class="nav-member">Member Login</a></li>
       <li><a href="#contact" class="nav-cta">Request Access</a></li>
     </ul>
   </nav>
@@ -945,6 +974,10 @@
           <a href="#contact" class="btn-primary">Request Early Access</a>
           <a href="#how-it-works" class="btn-ghost">See How It Works</a>
         </div>
+        <a href="https://curatevip.ai" target="_blank" class="btn-enter">
+          Already a member? Enter CURATE
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
 
       <!-- Right: phone mockup -->
