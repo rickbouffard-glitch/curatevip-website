@@ -351,47 +351,75 @@
     .about-cards {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
     }
 
     .about-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(186,159,117,0.06) 0%, var(--bg3) 70%);
+      border: 1px solid rgba(186,159,117,0.15);
+      border-left: 3px solid var(--gold);
       border-radius: 16px;
-      padding: 22px 26px;
+      padding: 30px 32px;
       display: flex;
-      align-items: flex-start;
-      gap: 18px;
-      transition: border-color 0.2s;
+      align-items: center;
+      gap: 26px;
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .about-card:hover { border-color: var(--gold-border); }
+    .about-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(186,159,117,0.04) 0%, transparent 55%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .about-card:hover {
+      border-color: rgba(186,159,117,0.45);
+      border-left-color: var(--gold);
+      box-shadow: 0 8px 48px rgba(186,159,117,0.1), 0 0 0 1px rgba(186,159,117,0.12);
+      transform: translateX(6px);
+    }
+
+    .about-card:hover::after { opacity: 1; }
 
     .card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: var(--gold-dim);
-      border: 1px solid var(--gold-border);
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(186,159,117,0.14), rgba(186,159,117,0.04));
+      border: 1px solid rgba(186,159,117,0.35);
+      box-shadow: 0 0 28px rgba(186,159,117,0.15), inset 0 0 14px rgba(186,159,117,0.06);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-size: 17px;
     }
 
+    .card-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .card-body { flex: 1; }
+
     .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      margin-bottom: 4px;
-      color: #fff;
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      margin-bottom: 8px;
+      color: #d4b896;
     }
 
     .card-desc {
-      font-size: 12px;
-      color: var(--text-40);
-      line-height: 1.65;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.58);
+      line-height: 1.75;
     }
 
     /* ─── HOW IT WORKS ────────────────────────────────── */
@@ -980,27 +1008,53 @@
       </p>
     </div>
     <div class="about-cards fade-in delay-1">
+
       <div class="about-card">
-        <div class="card-icon">✦</div>
-        <div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5 2.5L4 13.5H11.5L10.5 21.5L20 10.5H12.5L13.5 2.5Z" stroke="#ba9f75" stroke-width="1.4" stroke-linejoin="round" fill="rgba(186,159,117,0.18)"/>
+            <circle cx="4.5" cy="6" r="1" fill="#ba9f75" opacity="0.5"/>
+            <circle cx="19.5" cy="18" r="1" fill="#ba9f75" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="card-body">
           <div class="card-title">The Speed Engine™</div>
-          <div class="card-desc">Our proprietary CCTF engine matches you to venues by atmosphere, acoustic profile, and behavioral energy — not star ratings or paid placement.</div>
+          <div class="card-desc">Proprietary CCTF technology reads atmosphere, acoustic energy, and behavioral signals — then eliminates every venue that isn't built for your exact taste. No ratings. No noise. Pure signal.</div>
         </div>
       </div>
+
       <div class="about-card">
-        <div class="card-icon">◎</div>
-        <div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" stroke="#ba9f75" stroke-width="1.4"/>
+            <circle cx="12" cy="12" r="5" stroke="#ba9f75" stroke-width="1.4"/>
+            <circle cx="12" cy="12" r="1.8" fill="#ba9f75"/>
+            <line x1="12" y1="3" x2="12" y2="6.5" stroke="#ba9f75" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="12" y1="17.5" x2="12" y2="21" stroke="#ba9f75" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="3" y1="12" x2="6.5" y2="12" stroke="#ba9f75" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="17.5" y1="12" x2="21" y2="12" stroke="#ba9f75" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-body">
           <div class="card-title">Zero Research Tax</div>
-          <div class="card-desc">CURATE eliminates choice fatigue. The deep research, stylistic sorting, and atmospheric filtering is done before you ever open the app.</div>
+          <div class="card-desc">The hours of deep research, stylistic cross-referencing, and atmospheric filtering? Already done. You open CURATE and the right answer is already there — matched to who you are, not who the algorithm guessed you might be.</div>
         </div>
       </div>
+
       <div class="about-card">
-        <div class="card-icon">⬡</div>
-        <div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.5L20.5 8.5V15.5L12 21.5L3.5 15.5V8.5L12 2.5Z" stroke="#ba9f75" stroke-width="1.4" stroke-linejoin="round" fill="rgba(186,159,117,0.12)"/>
+            <path d="M12 6.5L17 9.8V14.2L12 17.5L7 14.2V9.8L12 6.5Z" stroke="#ba9f75" stroke-width="1" stroke-linejoin="round" stroke-opacity="0.55"/>
+            <circle cx="12" cy="12" r="1.5" fill="#ba9f75"/>
+          </svg>
+        </div>
+        <div class="card-body">
           <div class="card-title">By Invitation Only</div>
-          <div class="card-desc">No paid placements. No crowdsourced noise. Every listing is vetted to meet the standard of someone who already knows what they like.</div>
+          <div class="card-desc">No paid placements. No crowdsourced reviews. Every venue in CURATE is hand-vetted against a standard most travelers never even define — because most apps never ask them to.</div>
         </div>
       </div>
+
     </div>
   </section>
 
