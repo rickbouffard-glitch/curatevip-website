@@ -781,6 +781,100 @@
 
     .footer-links a:hover { color: var(--gold); }
 
+    /* ─── MOBILE RESPONSIVE ──────────────────────────── */
+    @media (max-width: 768px) {
+
+      /* NAV */
+      nav {
+        padding: 0 24px;
+        height: 64px;
+      }
+      .nav-links li:not(:last-child) { display: none; }
+      .nav-cta { padding: 8px 18px; font-size: 9px; }
+
+      /* HERO */
+      #home {
+        padding: 100px 24px 60px;
+      }
+      .hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 48px;
+      }
+      .hero-left { align-items: flex-start; }
+      .hero-wordmark { height: 36px; margin-bottom: 28px; }
+      .hero-title { font-size: clamp(32px, 8vw, 48px); max-width: 100%; }
+      .hero-sub { font-size: 14px; max-width: 100%; margin-bottom: 36px; }
+      .hero-actions { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .btn-primary, .btn-ghost { padding: 14px 32px; width: 100%; text-align: center; }
+      .hero-right { width: 100%; justify-content: center; }
+      .hero-right .phone-frame { width: 220px; }
+      .hero-scroll { display: none; }
+
+      /* STATS BAR */
+      .stats-bar {
+        padding: 36px 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px 16px;
+      }
+      .stat-num { font-size: 32px; }
+
+      /* ABOUT */
+      #about {
+        padding: 72px 24px;
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .section-h2 { font-size: clamp(28px, 7vw, 44px); }
+
+      /* HOW IT WORKS */
+      #how-it-works { padding: 72px 24px; }
+      .flow {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .flow-step { padding: 24px 16px 20px; }
+
+      /* App mockup wrap — stack vertically */
+      .app-mockup-wrap {
+        flex-direction: column;
+        gap: 48px;
+      }
+      .mockup-text { max-width: 100%; }
+      .dual-phones {
+        justify-content: center;
+      }
+      .phone-secondary { display: none; }
+      .phone-primary-frame { width: 230px; }
+
+      /* Solution callout */
+      .solution-callout {
+        padding: 36px 24px;
+        margin-top: 48px;
+      }
+      .solution-quote { font-size: 16px; }
+
+      /* CONTACT */
+      #contact { padding: 72px 24px; }
+      .form-row { grid-template-columns: 1fr; }
+
+      /* FOOTER */
+      footer {
+        padding: 32px 24px;
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+      .footer-links { justify-content: center; }
+    }
+
+    @media (max-width: 480px) {
+      .flow { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: 1fr 1fr; gap: 24px 12px; }
+      .hero-title { font-size: 30px; }
+    }
+
     /* ─── FADE IN ─────────────────────────────────────── */
     .fade-in {
       opacity: 0;
