@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms &amp; Conditions — CURATEvip</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #ba9f75;
+      --gold-light: #d4b896;
+      --bg: #0a0a0a;
+      --bg2: #111;
+      --border: rgba(186,159,117,0.12);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+      --text: rgba(255,255,255,0.82);
+      --text-muted: rgba(255,255,255,0.45);
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 72px;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+
+    .nav-logo img { height: 43px; width: auto; opacity: 0.92; }
+    .nav-logo { text-decoration: none; }
+
+    .nav-back {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--gold); }
+
+    /* PAGE */
+    .page-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 140px 40px 100px;
+    }
+
+    .page-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .page-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .page-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 56px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--gold-light);
+      margin: 48px 0 14px;
+      letter-spacing: 0.01em;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    ul {
+      margin: 0 0 16px 20px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    ul li { margin-bottom: 6px; }
+
+    a { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
+    a:hover { opacity: 0.75; }
+
+    .highlight-box {
+      background: rgba(186,159,117,0.06);
+      border: 1px solid rgba(186,159,117,0.18);
+      border-left: 3px solid var(--gold);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.75;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-footer-copy {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .page-footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .page-footer-links a {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .page-footer-links a:hover { color: var(--gold); }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .page-wrap { padding: 120px 24px 80px; }
+      .page-footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <img src="Logo-fullHorizontal.png" alt="CURATEvip" />
+    </a>
+    <a href="index.html" class="nav-back">← Back to Home</a>
+  </nav>
+
+  <div class="page-wrap">
+
+    <p class="page-eyebrow">Legal</p>
+    <h1 class="page-title">Terms &amp; Conditions</h1>
+    <p class="page-meta">Effective Date: June 23, 2026 &nbsp;·&nbsp; RMK Group LLC, DBA CURATEvip</p>
+
+    <div class="highlight-box">
+      Please read these Terms and Conditions carefully before using any CURATEvip service. By accessing or using our platform, you agree to be bound by these Terms. If you do not agree, please do not use our services.
+    </div>
+
+    <h2>1. Company Information</h2>
+    <p>
+      CURATEvip is a product of <strong>RMK Group LLC</strong>, a Delaware limited liability company, doing business as <strong>CURATEvip</strong>. These Terms govern your use of all services operated under that entity, including but not limited to the applications and websites accessible at <strong>curatevip.app</strong> and <strong>curatevip.ai</strong> (collectively, the "Service").
+    </p>
+
+    <h2>2. Acceptance of Terms</h2>
+    <p>
+      By creating an account, requesting access, or otherwise using the Service, you represent that you are at least 18 years of age, have read and understood these Terms, and agree to be legally bound by them. If you are using the Service on behalf of an organization, you represent that you have authority to bind that organization to these Terms.
+    </p>
+
+    <h2>3. Nature of the Service</h2>
+    <p>
+      CURATEvip is an invitation-only, AI-powered travel curation platform. The Service uses proprietary technology to match users with hotels, restaurants, and social venues based on personal taste profiles derived from the Speed Quiz. CURATEvip does not guarantee availability, pricing, or access at any venue.
+    </p>
+    <p>
+      CURATEvip is not a booking engine, travel agency, or venue operator. All reservations, transactions, and engagements made with third-party venues are solely between you and that venue. CURATEvip assumes no liability for any such arrangements.
+    </p>
+
+    <h2>4. Invitation-Only Access</h2>
+    <p>
+      Access to the CURATEvip platform is granted at our sole discretion. Submitting a request for access does not guarantee admission. We reserve the right to revoke access at any time for any reason, including but not limited to violation of these Terms, misuse of the platform, or at our business discretion.
+    </p>
+
+    <h2>5. User Accounts</h2>
+    <p>You are responsible for:</p>
+    <ul>
+      <li>Maintaining the confidentiality of your account credentials</li>
+      <li>All activity that occurs under your account</li>
+      <li>Providing accurate and current information during registration</li>
+      <li>Notifying us immediately of any unauthorized use of your account</li>
+    </ul>
+    <p>
+      You may not share, sell, transfer, or assign your account or access rights to any other person.
+    </p>
+
+    <h2>6. Acceptable Use</h2>
+    <p>You agree not to:</p>
+    <ul>
+      <li>Use the Service for any unlawful purpose or in violation of any applicable law or regulation</li>
+      <li>Attempt to reverse engineer, scrape, copy, or reproduce any part of the Service or its underlying technology</li>
+      <li>Interfere with or disrupt the integrity or performance of the Service</li>
+      <li>Introduce malicious code, viruses, or any other harmful software</li>
+      <li>Impersonate any person or entity or misrepresent your affiliation with any person or entity</li>
+      <li>Use the Service to transmit unsolicited commercial communications</li>
+    </ul>
+
+    <h2>7. Intellectual Property</h2>
+    <p>
+      All content, technology, trademarks, trade dress, logos, and materials associated with CURATEvip — including the Speed Engine™, CCTF methodology, CURATEvip name and marks, and all application interfaces — are the exclusive property of RMK Group LLC or its licensors and are protected by applicable intellectual property laws.
+    </p>
+    <p>
+      Nothing in these Terms grants you any right, title, or interest in any CURATEvip intellectual property. You may not use our trademarks, logos, or brand assets without our prior written consent.
+    </p>
+
+    <h2>8. Third-Party Services</h2>
+    <p>
+      The Service may display content from or links to third-party websites, venues, or services. CURATEvip does not endorse, control, or assume responsibility for any third-party content or services. Your use of third-party services is governed solely by the terms of those services.
+    </p>
+
+    <h2>9. Disclaimers</h2>
+    <p>
+      THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR FREE OF HARMFUL COMPONENTS.
+    </p>
+    <p>
+      Venue curation results are generated by automated systems and represent our best assessment based on your profile. CURATEvip makes no guarantee that any recommended venue will meet your personal expectations.
+    </p>
+
+    <h2>10. Limitation of Liability</h2>
+    <p>
+      TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, RMK GROUP LLC AND ITS OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATED TO YOUR USE OF THE SERVICE, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+    </p>
+    <p>
+      IN NO EVENT SHALL OUR TOTAL LIABILITY TO YOU EXCEED THE GREATER OF (A) THE AMOUNT YOU PAID US IN THE TWELVE MONTHS PRECEDING THE CLAIM, OR (B) ONE HUNDRED DOLLARS ($100).
+    </p>
+
+    <h2>11. Indemnification</h2>
+    <p>
+      You agree to indemnify, defend, and hold harmless RMK Group LLC and its affiliates, officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable attorneys' fees) arising out of or related to your use of the Service, your violation of these Terms, or your violation of any third-party rights.
+    </p>
+
+    <h2>12. Termination</h2>
+    <p>
+      We reserve the right to suspend or terminate your access to the Service at any time, with or without notice, for any reason. Upon termination, your right to use the Service immediately ceases. Provisions of these Terms that by their nature should survive termination shall survive, including ownership provisions, warranty disclaimers, and limitations of liability.
+    </p>
+
+    <h2>13. Governing Law &amp; Dispute Resolution</h2>
+    <p>
+      These Terms shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of law provisions. Any dispute arising from or relating to these Terms or the Service shall first be attempted to be resolved informally by contacting us at <a href="mailto:legal@curatevip.app">legal@curatevip.app</a>. If informal resolution fails, disputes shall be submitted to binding arbitration in accordance with the rules of the American Arbitration Association, with proceedings conducted in Delaware.
+    </p>
+
+    <h2>14. Changes to These Terms</h2>
+    <p>
+      We reserve the right to modify these Terms at any time. When we make material changes, we will update the effective date above and notify users via email or in-app notification where practicable. Your continued use of the Service after changes are posted constitutes your acceptance of the revised Terms.
+    </p>
+
+    <h2>15. Contact</h2>
+    <p>
+      For questions, concerns, or legal notices regarding these Terms, please contact:
+    </p>
+    <p>
+      <strong>RMK Group LLC, DBA CURATEvip</strong><br />
+      A Delaware Limited Liability Company<br />
+      Email: <a href="mailto:legal@curatevip.app">legal@curatevip.app</a>
+    </p>
+
+    <div class="page-footer">
+      <p class="page-footer-copy">© 2026 RMK Group LLC, DBA CURATEvip. All rights reserved.</p>
+      <ul class="page-footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+</body>
+</html>
