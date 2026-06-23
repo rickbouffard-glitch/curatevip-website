@@ -783,6 +783,35 @@
 
     .form-success-text { font-size: 14px; color: var(--text-40); }
 
+    /* Validation states */
+    .form-input.invalid,
+    .form-select.invalid,
+    .form-textarea.invalid {
+      border-color: rgba(192, 57, 43, 0.75);
+    }
+
+    .form-input.valid,
+    .form-select.valid,
+    .form-textarea.valid {
+      border-color: rgba(186,159,117,0.45);
+    }
+
+    .field-error {
+      font-size: 10.5px;
+      color: #c0392b;
+      letter-spacing: 0.03em;
+      margin-top: -4px;
+      display: none;
+    }
+
+    .field-error.show { display: block; }
+
+    .form-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     /* ─── FOOTER ──────────────────────────────────────── */
     footer {
       border-top: 1px solid var(--border);
@@ -1185,24 +1214,29 @@
       <p class="section-sub">We give a high-taste traveler back the hours they currently spend researching — with the same or better outcome. Whether you're a potential member, venue partner, or investor, we'd love to connect.</p>
     </div>
 
-    <form class="contact-form fade-in delay-1" id="contactForm">
+    <form class="contact-form fade-in delay-1" id="contactForm"
+          action="https://formspree.io/f/REPLACE_WITH_FORMSPREE_ID"
+          method="POST">
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">First Name</label>
-          <input type="text" class="form-input" placeholder="First name" required />
+          <input type="text" name="first_name" id="fieldFirstName" class="form-input" placeholder="First name" autocomplete="given-name" />
+          <span class="field-error" id="errFirstName">Please enter your first name.</span>
         </div>
         <div class="form-group">
           <label class="form-label">Last Name</label>
-          <input type="text" class="form-input" placeholder="Last name" required />
+          <input type="text" name="last_name" id="fieldLastName" class="form-input" placeholder="Last name" autocomplete="family-name" />
+          <span class="field-error" id="errLastName">Please enter your last name.</span>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Email Address</label>
-        <input type="email" class="form-input" placeholder="you@example.com" required />
+        <input type="email" name="email" id="fieldEmail" class="form-input" placeholder="you@example.com" autocomplete="email" />
+        <span class="field-error" id="errEmail">Please enter a valid email address.</span>
       </div>
       <div class="form-group">
         <label class="form-label">I am a…</label>
-        <select class="form-select">
+        <select name="inquiry_type" id="fieldType" class="form-select">
           <option value="" disabled selected>Select one</option>
           <option>Potential User — I want early access</option>
           <option>Venue Partner — I want to list my property</option>
@@ -1211,13 +1245,18 @@
           <option>Press / Media</option>
           <option>Other</option>
         </select>
+        <span class="field-error" id="errType">Please let us know who you are.</span>
       </div>
       <div class="form-group">
         <label class="form-label">Message</label>
-        <textarea class="form-textarea" placeholder="Tell us a bit about yourself or what you're looking for…"></textarea>
+        <textarea name="message" id="fieldMessage" class="form-textarea" placeholder="Tell us a bit about yourself or what you're looking for…"></textarea>
+        <span class="field-error" id="errMessage">Please include a brief message.</span>
       </div>
-      <button type="submit" class="form-submit">Send Message →</button>
-      <p class="form-note">We respond to every inquiry within 24 hours.</p>
+      <input type="hidden" name="_subject" value="New CURATEvip Inquiry" />
+      <input type="text" name="_gotcha" style="display:none" />
+      <button type="submit" class="form-submit" id="formSubmitBtn">Send Message →</button>
+      <p class="form-note" id="formNote">We respond to every inquiry within 24 hours.</p>
+      <p class="form-note" id="formError" style="display:none; color:#c0392b;">Something went wrong. Please try again or email us at <a href="mailto:rick@curatevip.app" style="color:#c0392b;">rick@curatevip.app</a>.</p>
     </form>
 
     <div class="form-success" id="formSuccess">
@@ -1255,12 +1294,76 @@
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el))
 
-    // Contact form
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-      e.preventDefault()
-      this.style.display = 'none'
-      document.getElementById('formSuccess').classList.add('show')
-    })
+    // ── Form Validation + Formspree Submit ──────────────────
+    (function() {
+      const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+      function validate(id, errId, testFn) {
+        const el = document.getElementById(id)
+        const err = document.getElementById(errId)
+        const ok = testFn(el.value.trim())
+        el.classList.toggle('invalid', !ok)
+        el.classList.toggle('valid', ok)
+        err.classList.toggle('show', !ok)
+        return ok
+      }
+
+      const fields = [
+        { id: 'fieldFirstName', errId: 'errFirstName', test: v => v.length >= 2 },
+        { id: 'fieldLastName',  errId: 'errLastName',  test: v => v.length >= 2 },
+        { id: 'fieldEmail',     errId: 'errEmail',     test: v => emailRE.test(v) },
+        { id: 'fieldType',      errId: 'errType',      test: v => v !== '' },
+        { id: 'fieldMessage',   errId: 'errMessage',   test: v => v.length >= 10 },
+      ]
+
+      // Blur (on-leave) validation for each field
+      fields.forEach(f => {
+        const el = document.getElementById(f.id)
+        el.addEventListener('blur', () => validate(f.id, f.errId, f.test))
+        el.addEventListener('input', () => {
+          // Clear invalid state as user types
+          if (el.classList.contains('invalid')) validate(f.id, f.errId, f.test)
+        })
+      })
+
+      // Submit
+      document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault()
+
+        // Run all validations
+        const allValid = fields.every(f => validate(f.id, f.errId, f.test))
+        if (!allValid) {
+          // Scroll to first invalid field
+          const firstInvalid = this.querySelector('.invalid')
+          if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          return
+        }
+
+        const btn = document.getElementById('formSubmitBtn')
+        const errMsg = document.getElementById('formError')
+        btn.textContent = 'Sending…'
+        btn.disabled = true
+        errMsg.style.display = 'none'
+
+        try {
+          const res = await fetch(this.action, {
+            method: 'POST',
+            body: new FormData(this),
+            headers: { 'Accept': 'application/json' }
+          })
+          if (res.ok) {
+            this.style.display = 'none'
+            document.getElementById('formSuccess').classList.add('show')
+          } else {
+            throw new Error('Server error')
+          }
+        } catch {
+          btn.textContent = 'Send Message →'
+          btn.disabled = false
+          errMsg.style.display = 'block'
+        }
+      })
+    })()
 
     // Nav active link highlight
     const sections = document.querySelectorAll('section[id]')
