@@ -322,6 +322,9 @@
       margin-bottom: 18px;
     }
 
+    .body-text em { color: var(--gold-light); font-style: italic; }
+    .section-sub em { color: var(--gold-light); font-style: italic; }
+
     .about-cards {
       display: flex;
       flex-direction: column;
@@ -535,30 +538,61 @@
       line-height: 1.75;
     }
 
-    .mockup-divider {
-      width: 1px;
-      height: 100%;
-      background: var(--border);
-      margin: 0;
+    /* Dual phones */
+    .dual-phones {
+      display: flex;
+      align-items: flex-end;
+      gap: 20px;
+      flex-shrink: 0;
     }
 
-    .cat-icon { font-size: 34px; margin-bottom: 16px; }
+    .phone-secondary {
+      width: 230px;
+      transform: rotate(-4deg) translateY(20px);
+      opacity: 0.75;
+    }
 
-    .cat-title {
-      font-family: var(--serif);
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
+    .phone-primary-frame {
+      width: 270px;
+    }
+
+    .phone-label {
+      text-align: center;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 10px;
+      color: var(--text-20);
+      margin-top: 14px;
     }
 
-    .cat-desc {
-      font-size: 13px;
-      color: var(--text-40);
-      line-height: 1.7;
+    /* Solution callout */
+    .solution-callout {
+      max-width: 780px;
+      margin: 72px auto 0;
+      background: var(--bg3);
+      border: 1px solid var(--gold-border);
+      border-radius: 24px;
+      padding: 52px 64px;
+      text-align: center;
     }
+
+    .solution-quote {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .solution-sub {
+      font-size: 14px;
+      color: var(--text-40);
+      margin-top: 14px;
+    }
+
+    .solution-sub em { color: var(--gold); font-style: italic; }
 
     /* ─── CONTACT ─────────────────────────────────────── */
     #contact {
@@ -773,10 +807,10 @@
     <img src="logo-wordmarksolo.png" alt="CURATE" class="hero-wordmark fade-in" />
     <p class="hero-vip-tag fade-in delay-1">vip</p>
     <h1 class="hero-title fade-in delay-2">
-      Every great night starts with<br />the <em>right venue</em>
+      Because five stars means nothing<br />if it's not <em>your</em> five stars.
     </h1>
     <p class="hero-sub fade-in delay-3">
-      CURATEvip surfaces the restaurants, experiences, and luxury stays that match the moment — so you spend less time searching and more time living.
+      The only travel app that knows the difference. AI-powered taste intelligence for the world's most discerning travelers.
     </p>
     <div class="hero-actions fade-in delay-3">
       <a href="#contact" class="btn-primary">Request Early Access</a>
@@ -791,16 +825,16 @@
   <!-- ── STATS BAR ── -->
   <div class="stats-bar">
     <div class="stat fade-in">
-      <div class="stat-num">3</div>
-      <div class="stat-lbl">Curated Picks Per Session</div>
+      <div class="stat-num">$1.59T</div>
+      <div class="stat-lbl">Global Luxury Travel Market</div>
     </div>
     <div class="stat fade-in delay-1">
-      <div class="stat-num">60s</div>
-      <div class="stat-lbl">From Open to Booked</div>
+      <div class="stat-num">$227B</div>
+      <div class="stat-lbl">HNW Travel Segment by 2028</div>
     </div>
     <div class="stat fade-in delay-2">
-      <div class="stat-num">3</div>
-      <div class="stat-lbl">Categories — Table · Social · Stay</div>
+      <div class="stat-num">23M+</div>
+      <div class="stat-lbl">US Households $1M–$100M Net Worth</div>
     </div>
     <div class="stat fade-in delay-3">
       <div class="stat-num">0</div>
@@ -811,35 +845,38 @@
   <!-- ── ABOUT ── -->
   <section id="about">
     <div class="fade-in">
-      <p class="section-eyebrow">About Us</p>
-      <h2 class="section-h2">Built for people who<br /><em>value their time</em></h2>
+      <p class="section-eyebrow">The Problem</p>
+      <h2 class="section-h2">An Over-Saturation<br />of <em>Noise</em></h2>
       <p class="body-text">
-        CURATEvip was built on a simple belief: the best nights out shouldn't require two hours of research. Our platform analyzes atmosphere, energy, occasion, and location to surface exactly the right venue for right now.
+        The global luxury travel market is valued at $1.59 trillion — yet still runs on Yelp and TripAdvisor logic. Star ratings are averaged from millions of people who aren't you. Featured listings go to whoever paid the most. Influencer content is an ad.
       </p>
       <p class="body-text">
-        We partner with luxury hotels, top-tier restaurants, and curated experience providers to give our members a seamless path from discovery to booking — all in one place.
+        High-net-worth travelers don't lack options — they lack signal. They need <em>direction.</em> Hours lost, wrong choices made, and money spent on experiences that were never built for their Speed.
+      </p>
+      <p class="body-text" style="font-style:italic; color:var(--gold); opacity:0.8;">
+        "If I commit my time and capital to this venue, is it actually going to be My Speed?" Right now, they are guessing.
       </p>
     </div>
     <div class="about-cards fade-in delay-1">
       <div class="about-card">
-        <div class="card-icon">🎯</div>
-        <div>
-          <div class="card-title">Precision Curation</div>
-          <div class="card-desc">Every result is matched to the occasion — not just any great venue, but the right one for tonight.</div>
-        </div>
-      </div>
-      <div class="about-card">
-        <div class="card-icon">⚡</div>
-        <div>
-          <div class="card-title">Book Without Leaving</div>
-          <div class="card-desc">Reserve a table or browse room availability and pricing natively in the app. No redirects, no friction.</div>
-        </div>
-      </div>
-      <div class="about-card">
         <div class="card-icon">✦</div>
         <div>
-          <div class="card-title">Luxury Standard</div>
-          <div class="card-desc">Only venues that meet our quality bar make the cut. Every listing is vetted before it's shown.</div>
+          <div class="card-title">The Speed Engine™</div>
+          <div class="card-desc">Our proprietary CCTF engine matches you to venues by atmosphere, acoustic profile, and behavioral energy — not star ratings or paid placement.</div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="card-icon">◎</div>
+        <div>
+          <div class="card-title">Zero Research Tax</div>
+          <div class="card-desc">CURATE eliminates choice fatigue. The deep research, stylistic sorting, and atmospheric filtering is done before you ever open the app.</div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="card-icon">⬡</div>
+        <div>
+          <div class="card-title">By Invitation Only</div>
+          <div class="card-desc">No paid placements. No crowdsourced noise. Every listing is vetted to meet the standard of someone who already knows what they like.</div>
         </div>
       </div>
     </div>
@@ -848,53 +885,50 @@
   <!-- ── HOW IT WORKS ── -->
   <section id="how-it-works">
     <div class="section-header fade-in">
-      <p class="section-eyebrow">How It Works</p>
-      <h2 class="section-h2" style="max-width:560px; margin:0 auto 0;">
-        From vibe to <em>booked</em><br />in four steps
+      <p class="section-eyebrow">Your Speed Quiz</p>
+      <h2 class="section-h2" style="max-width:620px; margin:0 auto 0;">
+        Three environments.<br /><em>One read</em> on who you are.
       </h2>
       <div class="gold-rule"></div>
-      <p class="section-sub">Open the app, tell us your moment, and we'll handle the rest.</p>
+      <p class="section-sub">CURATE doesn't ask for your budget. It wants to understand how an environment <em>feels</em> to you — the atmosphere you gravitate toward, the energy that puts you at ease.</p>
     </div>
 
     <div class="flow">
       <div class="flow-step fade-in">
         <div class="flow-num">1</div>
-        <div class="flow-icon">🎭</div>
-        <div class="flow-title">Choose Your Category</div>
-        <div class="flow-desc">Select TABLE for dining, SOCIAL for experiences, or STAY for a luxury hotel night.</div>
+        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">STAY</div>
+        <div class="flow-title">How You Rest</div>
+        <div class="flow-desc">Tell us about the spaces where you feel most at home. The architecture, the mood, the silence or the energy.</div>
       </div>
       <div class="flow-step fade-in delay-1">
         <div class="flow-num">2</div>
-        <div class="flow-icon">✦</div>
-        <div class="flow-title">Get Your Curation</div>
-        <div class="flow-desc">Three venues are surfaced — each matched to tonight's vibe, location, and occasion.</div>
+        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">TABLE</div>
+        <div class="flow-title">How You Dine</div>
+        <div class="flow-desc">Not what you eat — how dining <em>feels</em> to you. The room, the rhythm, the company it attracts.</div>
       </div>
       <div class="flow-step fade-in delay-2">
         <div class="flow-num">3</div>
-        <div class="flow-icon">📅</div>
-        <div class="flow-title">Book Instantly</div>
-        <div class="flow-desc">Reserve your table or browse room availability and pricing — all inside the app.</div>
+        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">SOCIAL</div>
+        <div class="flow-title">How You Move</div>
+        <div class="flow-desc">How you arrive at a night out. The energy you're drawn to before and after the table.</div>
       </div>
       <div class="flow-step fade-in delay-3">
         <div class="flow-num">4</div>
-        <div class="flow-icon">🥂</div>
-        <div class="flow-title">Arrive Ready</div>
-        <div class="flow-desc">Walk in with confidence. CURATEvip did the research so you didn't have to.</div>
+        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">REVEAL</div>
+        <div class="flow-title">Your Curation</div>
+        <div class="flow-desc">Your Speed is revealed. The venues built for exactly your taste — not hundreds of options. Only <em>your</em> options.</div>
       </div>
     </div>
 
+    <!-- Phone mockup: Quiz + Curation Results side by side -->
     <div class="app-mockup-wrap fade-in">
-      <div class="phone-frame">
-        <div class="phone-outer">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <img src="screenshot-quiz.jpg" alt="CURATEvip App — Choose Your Experience" />
-          </div>
-        </div>
-      </div>
-
       <div class="mockup-text">
         <p class="section-eyebrow">Three Categories. One Tap.</p>
+        <div class="mockup-feature">
+          <div class="mockup-feature-title">STAY — Lodging</div>
+          <div class="mockup-feature-desc">Luxury hotel stays matched to your dates, with room availability and pricing shown natively in-app. No redirects, no friction.</div>
+        </div>
+        <div style="width:36px; height:1px; background:var(--gold-border); margin-bottom:28px;"></div>
         <div class="mockup-feature">
           <div class="mockup-feature-title">TABLE — Dining</div>
           <div class="mockup-feature-desc">The best restaurant for tonight — whether it's a power dinner, a date, or a celebration with the group.</div>
@@ -904,11 +938,40 @@
           <div class="mockup-feature-title">SOCIAL — Pre/Post</div>
           <div class="mockup-feature-desc">Curated experiences beyond the table — rooftop bars, private events, and nights worth remembering.</div>
         </div>
-        <div style="width:36px; height:1px; background:var(--gold-border); margin-bottom:28px;"></div>
-        <div class="mockup-feature">
-          <div class="mockup-feature-title">STAY — Lodging</div>
-          <div class="mockup-feature-desc">Luxury hotel stays matched to your dates, with room availability and pricing shown natively in-app.</div>
+      </div>
+
+      <!-- Two phones side by side -->
+      <div class="dual-phones">
+        <div class="phone-frame phone-secondary">
+          <div class="phone-outer">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img src="screenshot-quiz.jpg" alt="CURATEvip — Your Speed Quiz" />
+            </div>
+          </div>
+          <div class="phone-label">Select Your Category</div>
         </div>
+        <div class="phone-frame phone-primary-frame">
+          <div class="phone-outer">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img src="screenshot-curation.jpg" alt="CURATEvip — Your Curation Results" />
+            </div>
+          </div>
+          <div class="phone-label">Your Curated Results</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Solution callout -->
+    <div class="solution-callout fade-in">
+      <div class="solution-inner">
+        <p class="section-eyebrow" style="text-align:center; margin-bottom:18px;">The Individual Speed Architecture Engine</p>
+        <p class="solution-quote">
+          "CURATE is the world's first AI-driven taste and vibe architecture platform — built for the subscriber who already knows what they like and refuses to waste time proving it to an algorithm built for everyone else."
+        </p>
+        <div class="gold-rule" style="margin-top:28px;"></div>
+        <p class="solution-sub">Not hundreds of options. Only <em>your</em> options. Only <em>your</em> Speed.</p>
       </div>
     </div>
   </section>
@@ -916,10 +979,10 @@
   <!-- ── CONTACT ── -->
   <section id="contact">
     <div class="fade-in">
-      <p class="section-eyebrow">Get In Touch</p>
-      <h2 class="section-h2" style="margin-bottom:0;">Ready to be<br /><em>part of it?</em></h2>
+      <p class="section-eyebrow">By Invitation Only</p>
+      <h2 class="section-h2" style="margin-bottom:0;">Speed is personal.<br /><em>Apply for access.</em></h2>
       <div class="gold-rule"></div>
-      <p class="section-sub">Whether you're a venue partner, investor, or want early access — we'd love to hear from you.</p>
+      <p class="section-sub">We give a high-taste traveler back the hours they currently spend researching — with the same or better outcome. Whether you're a potential member, venue partner, or investor, we'd love to connect.</p>
     </div>
 
     <form class="contact-form fade-in delay-1" id="contactForm">
@@ -967,8 +1030,7 @@
   <!-- ── FOOTER ── -->
   <footer>
     <div class="footer-logo">
-      <img src="C-IconNoBg.png" alt="CURATEvip" />
-      <span class="footer-logo-vip">vip</span>
+      <img src="logo-wordmarksolo.png" alt="CURATEvip" />
     </div>
     <p class="footer-copy">© 2026 CURATEvip. All rights reserved.</p>
     <ul class="footer-links">
