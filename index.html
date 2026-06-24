@@ -238,9 +238,9 @@
     .btn-ghost {
       padding: 16px 44px;
       background: transparent;
-      border: 1px solid var(--border-l);
+      border: 1px solid rgba(255,255,255,0.28);
       border-radius: 40px;
-      color: var(--text-40);
+      color: rgba(255,255,255,0.82);
       font-family: var(--sans);
       font-size: 10px;
       font-weight: 500;
@@ -987,7 +987,7 @@
       .hero-title { font-size: clamp(32px, 8vw, 48px); max-width: 100%; }
       .hero-sub { font-size: 14px; max-width: 100%; margin-bottom: 36px; }
       .hero-actions { flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: center; }
-      .btn-primary, .btn-ghost { padding: 13px 22px; width: auto; flex: 1; min-width: 130px; text-align: center; }
+      .btn-primary, .btn-ghost { padding: 13px 16px; width: auto; flex: 1; min-width: 0; font-size: 9px; letter-spacing: 0.12em; white-space: nowrap; text-align: center; }
       .hero-right { width: 100%; justify-content: center; }
       .hero-right .phone-frame { width: 220px; }
       .hero-scroll { display: none; }
@@ -1110,7 +1110,7 @@
           The only curation engine that identifies your Speed — the atmospheric signature of where you actually belong. AI-powered taste intelligence that stops matching you to what everyone else likes and starts matching you to the venues calibrated for exactly who you are.
         </p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary">Get Invite</a>
+          <a href="#contact" class="btn-primary">Request Invite</a>
           <a href="#how-it-works" class="btn-ghost">Learn More</a>
         </div>
         <a href="https://curatevip.ai" target="_blank" class="btn-enter">
