@@ -526,21 +526,21 @@
     .flow-body { flex: 1; }
 
     .flow-label {
-      font-size: 8px;
+      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(186,159,117,0.6);
-      margin-bottom: 3px;
+      color: rgba(186,159,117,0.85);
+      margin-bottom: 4px;
     }
 
     .flow-title {
       font-family: var(--serif);
-      font-size: 22px;
+      font-size: 30px;
       font-weight: 400;
       color: #fff;
       line-height: 1.2;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .flow-desc {
@@ -1013,7 +1013,8 @@
       .flow-icon { width: 40px; height: 40px; }
       .flow-icon svg { width: 18px; height: 18px; }
       .flow-title { font-size: 19px; }
-      .flow-label { font-size: 9px; color: rgba(186,159,117,0.85); letter-spacing: 0.2em; }
+      .flow-label { font-size: 10px; color: rgba(186,159,117,0.85); letter-spacing: 0.18em; }
+      .flow-title { font-size: 26px; }
       .flow-desc { font-size: 13px; color: rgba(255,255,255,0.7); }
       .flow-arrow { display: none; }
 
@@ -1114,7 +1115,7 @@
           The only curation engine that identifies your Speed — the atmospheric signature of where you actually belong. AI-powered taste intelligence that stops matching you to what everyone else likes and starts matching you to the venues calibrated for exactly who you are.
         </p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary">Request Invite</a>
+          <a href="#contact" class="btn-primary" id="heroRequestBtn">Request Access</a>
           <a href="#about" class="btn-ghost">Learn More</a>
         </div>
         <a href="https://curatevip.ai" target="_blank" class="btn-enter">
@@ -1385,7 +1386,7 @@
     </div>
 
     <form class="contact-form fade-in delay-1" id="contactForm"
-          action="https://formspree.io/f/REPLACE_WITH_FORMSPREE_ID"
+          action="https://formsubmit.co/ajax/rick@curatevip.app"
           method="POST">
       <div class="form-row">
         <div class="form-group">
@@ -1567,6 +1568,19 @@
         }
       });
     })();
+
+    // Request Access button — pre-select "Potential User" in form
+    var heroBtn = document.getElementById('heroRequestBtn');
+    if (heroBtn) {
+      heroBtn.addEventListener('click', function() {
+        var sel = document.getElementById('fieldType');
+        if (sel) {
+          sel.value = 'Potential User — I want early access';
+          sel.classList.remove('invalid');
+          sel.classList.add('valid');
+        }
+      });
+    }
 
     // Nav active link highlight
     const sections = document.querySelectorAll('section[id]')
