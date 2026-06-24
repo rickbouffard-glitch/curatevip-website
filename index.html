@@ -477,62 +477,81 @@
       line-height: 1.75;
     }
 
-    /* Flow steps */
+    /* Flow steps — app CC-card style */
     .flow {
-      max-width: 1100px;
+      max-width: 860px;
       margin: 0 auto 64px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .flow-step {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      text-align: center;
-      padding: 36px 22px 32px;
-      background: var(--bg);
+      gap: 18px;
+      padding: 20px 24px 20px 28px;
+      background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      transition: border-color 0.25s, transform 0.25s;
+      border-left: 3px solid var(--gold);
+      border-radius: 14px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
     }
 
     .flow-step:hover {
-      border-color: var(--gold-border);
-      transform: translateY(-5px);
+      border-color: rgba(186,159,117,0.35);
+      border-left-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(186,159,117,0.1), 0 8px 32px rgba(0,0,0,0.25), 0 0 24px rgba(186,159,117,0.06);
     }
 
-    .flow-num {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--gold-dim);
-      border: 1px solid var(--gold-border);
+    .flow-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(186,159,117,0.14), rgba(186,159,117,0.03));
+      border: 1px solid rgba(186,159,117,0.3);
+      box-shadow: 0 0 18px rgba(186,159,117,0.18);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: var(--serif);
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--gold);
-      margin-bottom: 18px;
+      flex-shrink: 0;
     }
 
-    .flow-icon { font-size: 28px; margin-bottom: 14px; }
+    .flow-icon svg { width: 22px; height: 22px; }
+
+    .flow-body { flex: 1; }
+
+    .flow-label {
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(186,159,117,0.6);
+      margin-bottom: 3px;
+    }
 
     .flow-title {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
       color: #fff;
-      margin-bottom: 10px;
+      line-height: 1.2;
+      margin-bottom: 3px;
     }
 
     .flow-desc {
-      font-size: 14px;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.7;
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+    }
+
+    .flow-arrow {
+      flex-shrink: 0;
+      color: rgba(186,159,117,0.35);
     }
 
     /* App screenshot mockup */
@@ -988,11 +1007,11 @@
 
       /* HOW IT WORKS */
       #how-it-works { padding: 72px 24px; }
-      .flow {
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
-      .flow-step { padding: 24px 16px 20px; }
+      .flow { gap: 10px; }
+      .flow-step { padding: 16px 18px 16px 22px; gap: 14px; }
+      .flow-icon { width: 40px; height: 40px; }
+      .flow-icon svg { width: 18px; height: 18px; }
+      .flow-title { font-size: 19px; }
 
       /* App mockup wrap — stack vertically */
       .app-mockup-wrap {
@@ -1028,7 +1047,6 @@
     }
 
     @media (max-width: 480px) {
-      .flow { grid-template-columns: 1fr; }
       .stats-bar { grid-template-columns: 1fr 1fr; gap: 24px 12px; }
       .hero-title { font-size: 30px; }
     }
@@ -1089,7 +1107,7 @@
           Because five stars means nothing if it's not <em>your</em> five stars.
         </h1>
         <p class="hero-sub">
-          The only travel app that knows the difference. AI-powered taste intelligence for the world's most discerning travelers.
+          The only curation engine that identifies your Speed — the atmospheric signature of where you actually belong. AI-powered taste intelligence that stops matching you to what everyone else likes and starts matching you to the venues calibrated for exactly who you are.
         </p>
         <div class="hero-actions">
           <a href="#contact" class="btn-primary">Request Access</a>
@@ -1210,56 +1228,112 @@
     <div class="section-header fade-in">
       <p class="section-eyebrow">The Solution: Your Speed</p>
       <h2 class="section-h2" style="max-width:720px; margin:0 auto 0;">
-        Three environments.<br /><em>One read</em> on who you are,<br /><em>Your Speed</em>.
+        Take the quiz.<br /><em>Every answer is calibrated.</em><br /><em>Your Speed</em> is revealed.
       </h2>
       <div class="gold-rule"></div>
-      <p class="section-sub">CURATE doesn't ask for your budget. It wants to understand how an environment <em>feels</em> to you — the atmosphere you gravitate toward, the energy that puts you at ease.</p>
+      <p class="section-sub">CURATE reads your answers across three environments, assigns each a signal value, tallies your Speed score, and surfaces only the venues built for your taste — and no one else's.</p>
     </div>
 
     <div class="flow">
+
+      <!-- STAY -->
       <div class="flow-step fade-in">
-        <div class="flow-num">1</div>
-        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">STAY</div>
-        <div class="flow-title">How You Rest</div>
-        <div class="flow-desc">Tell us about the spaces where you feel most at home. The architecture, the mood, the silence or the energy.</div>
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ba9f75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18v-2M21 18v-2"/>
+            <path d="M3 16h18"/>
+            <path d="M4 7a2 2 0 012-2h12a2 2 0 012 2v9H4V7z" fill="rgba(186,159,117,0.08)"/>
+            <rect x="6" y="10" width="4.5" height="3.5" rx="0.8" fill="rgba(186,159,117,0.22)" stroke="#ba9f75" stroke-width="1.2"/>
+            <rect x="13.5" y="10" width="4.5" height="3.5" rx="0.8" fill="rgba(186,159,117,0.22)" stroke="#ba9f75" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="flow-body">
+          <div class="flow-label">LODGING · STEP 01</div>
+          <div class="flow-title">Stay</div>
+          <div class="flow-desc">How you rest. The architecture, the mood, and the energy — or silence — of the spaces that feel like yours.</div>
+        </div>
+        <svg class="flow-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
+
+      <!-- TABLE -->
       <div class="flow-step fade-in delay-1">
-        <div class="flow-num">2</div>
-        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">TABLE</div>
-        <div class="flow-title">How You Dine</div>
-        <div class="flow-desc">Not what you eat — how dining <em>feels</em> to you. The room, the rhythm, the company it attracts.</div>
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ba9f75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3v4c0 1.1.9 2 2 2"/>
+            <path d="M10 9v12"/>
+            <path d="M8 3M8.8 3v3M7.2 3v3"/>
+            <path d="M16 3c0 0 2 1.8 2 4.5S16 10 16 10v11" fill="none"/>
+          </svg>
+        </div>
+        <div class="flow-body">
+          <div class="flow-label">DINING · STEP 02</div>
+          <div class="flow-title">Table</div>
+          <div class="flow-desc">Not what you eat — how dining feels to you. The room, the rhythm, the company it draws in.</div>
+        </div>
+        <svg class="flow-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
+
+      <!-- SOCIAL -->
       <div class="flow-step fade-in delay-2">
-        <div class="flow-num">3</div>
-        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">SOCIAL</div>
-        <div class="flow-title">How You Move</div>
-        <div class="flow-desc">How you arrive at a night out. The energy you're drawn to before and after the table.</div>
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ba9f75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16L12 13z" fill="rgba(186,159,117,0.15)"/>
+            <path d="M12 13v7"/>
+            <path d="M8.5 20h7"/>
+            <circle cx="9.5" cy="7" r="1" fill="#ba9f75" opacity="0.8" stroke="none"/>
+          </svg>
+        </div>
+        <div class="flow-body">
+          <div class="flow-label">PRE · POST · STEP 03</div>
+          <div class="flow-title">Social</div>
+          <div class="flow-desc">How you move through the night. The energy you're drawn to before and after the table.</div>
+        </div>
+        <svg class="flow-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
+
+      <!-- REVEAL -->
       <div class="flow-step fade-in delay-3">
-        <div class="flow-num">4</div>
-        <div class="flow-icon" style="font-size:22px; color:var(--gold); font-family:var(--serif); letter-spacing:0.1em;">REVEAL</div>
-        <div class="flow-title">Your Curation</div>
-        <div class="flow-desc">Your Speed is revealed. The venues built for exactly your taste — not hundreds of options. Only <em>your</em> options.</div>
+        <div class="flow-icon" style="background:linear-gradient(135deg,rgba(186,159,117,0.22),rgba(186,159,117,0.06)); box-shadow:0 0 28px rgba(186,159,117,0.28);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ba9f75" stroke-width="1.5" stroke-linecap="round">
+            <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+            <circle cx="12" cy="12" r="3.5" fill="rgba(186,159,117,0.2)" stroke="#ba9f75" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="flow-body">
+          <div class="flow-label">YOUR CURATION · REVEAL</div>
+          <div class="flow-title">Your Speed</div>
+          <div class="flow-desc">Your score is tallied. Your Speed Profile is calibrated. Only the venues built for exactly who you are — surfaced and ready.</div>
+        </div>
+        <svg class="flow-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
+
     </div>
 
     <!-- Phone mockup: Quiz + Curation Results side by side -->
     <div class="app-mockup-wrap fade-in">
       <div class="mockup-text">
-        <p class="section-eyebrow">Three Categories. One Tap.</p>
+        <p class="section-eyebrow">The Calibration Engine</p>
         <div class="mockup-feature">
-          <div class="mockup-feature-title">STAY — Lodging</div>
-          <div class="mockup-feature-desc">Luxury hotel stays matched to your dates, with room availability and pricing shown natively in-app. No redirects, no friction.</div>
+          <div class="mockup-feature-title">Every Answer Has a Value</div>
+          <div class="mockup-feature-desc">Each response is weighted and assigned a signal within CURATE's proprietary CCTF framework — measuring atmosphere, acoustic energy, and behavioral preference across all three environments.</div>
         </div>
         <div style="width:36px; height:1px; background:var(--gold-border); margin-bottom:28px;"></div>
         <div class="mockup-feature">
-          <div class="mockup-feature-title">TABLE — Dining</div>
-          <div class="mockup-feature-desc">The best restaurant for tonight — whether it's a power dinner, a date, or a celebration with the group.</div>
+          <div class="mockup-feature-title">Your Speed Score Is Tallied</div>
+          <div class="mockup-feature-desc">Responses across Stay, Table, and Social are cross-referenced and scored into a Speed Profile unique to you — a precise atmospheric signature that no one else shares.</div>
         </div>
         <div style="width:36px; height:1px; background:var(--gold-border); margin-bottom:28px;"></div>
         <div class="mockup-feature">
-          <div class="mockup-feature-title">SOCIAL — Pre/Post</div>
-          <div class="mockup-feature-desc">Curated experiences beyond the table — rooftop bars, private events, and nights worth remembering.</div>
+          <div class="mockup-feature-title">Only Your Venues Surface</div>
+          <div class="mockup-feature-desc">Not hundreds of results. Only the hotels, restaurants, and social spaces that match your Speed are shown — already filtered, ranked, and ready. Zero research tax.</div>
         </div>
       </div>
 
