@@ -51,7 +51,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 72px;
-      height: 76px;
+      height: 88px;
       background: rgba(10,10,10,0.88);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
@@ -118,7 +118,7 @@
     .nav-member:hover { color: var(--gold) !important; }
 
     /* ─── SECTIONS ────────────────────────────────────── */
-    section { scroll-margin-top: 76px; }
+    section { scroll-margin-top: 88px; }
 
     /* ─── HERO ────────────────────────────────────────── */
     #home {
@@ -443,8 +443,8 @@
     }
 
     .card-desc {
-      font-size: 12px;
-      color: rgba(255,255,255,0.55);
+      font-size: 14px;
+      color: rgba(255,255,255,0.72);
       line-height: 1.7;
     }
 
@@ -530,8 +530,8 @@
     }
 
     .flow-desc {
-      font-size: 12px;
-      color: var(--text-40);
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
       line-height: 1.7;
     }
 
@@ -644,7 +644,7 @@
 
     .solution-quote {
       font-family: var(--serif);
-      font-size: clamp(18px, 2vw, 24px);
+      font-size: clamp(20px, 2.2vw, 26px);
       font-weight: 300;
       font-style: italic;
       color: var(--text);
@@ -688,11 +688,11 @@
     }
 
     .form-label {
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.24em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(186,159,117,0.65);
+      color: rgba(186,159,117,0.85);
     }
 
     .form-input,
@@ -703,9 +703,9 @@
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: 10px;
-      color: #fff;
+      color: rgba(255,255,255,0.88);
       font-family: var(--sans);
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 300;
       outline: none;
       transition: border-color 0.2s;
@@ -896,7 +896,7 @@
     .mobile-menu {
       display: none;
       position: fixed;
-      top: 76px;
+      top: 88px;
       left: 0; right: 0;
       background: rgba(10,10,10,0.97);
       backdrop-filter: blur(28px);
@@ -947,15 +947,16 @@
       /* NAV */
       nav {
         padding: 0 24px;
-        height: 72px;
+        height: 80px;
       }
+      .nav-logo img { height: 38px; }
       .nav-links { display: none; }
       .hamburger { display: flex; }
-      .mobile-menu { top: 72px; }
+      .mobile-menu { top: 80px; }
 
       /* HERO */
       #home {
-        padding: 100px 24px 60px;
+        padding: 108px 24px 60px;
       }
       .hero-inner {
         flex-direction: column;
@@ -966,8 +967,8 @@
       .hero-wordmark { height: 44px; margin-bottom: 28px; }
       .hero-title { font-size: clamp(32px, 8vw, 48px); max-width: 100%; }
       .hero-sub { font-size: 14px; max-width: 100%; margin-bottom: 36px; }
-      .hero-actions { flex-direction: column; align-items: flex-start; gap: 14px; }
-      .btn-primary, .btn-ghost { padding: 14px 32px; width: 100%; text-align: center; }
+      .hero-actions { flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: center; }
+      .btn-primary, .btn-ghost { padding: 13px 22px; width: auto; flex: 1; min-width: 130px; text-align: center; }
       .hero-right { width: 100%; justify-content: center; }
       .hero-right .phone-frame { width: 220px; }
       .hero-scroll { display: none; }
@@ -1010,7 +1011,7 @@
         padding: 36px 24px;
         margin-top: 48px;
       }
-      .solution-quote { font-size: 16px; }
+      .solution-quote { font-size: 19px; }
 
       /* CONTACT */
       #contact { padding: 72px 24px; }
@@ -1091,8 +1092,8 @@
           The only travel app that knows the difference. AI-powered taste intelligence for the world's most discerning travelers.
         </p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary">Request Early Access</a>
-          <a href="#how-it-works" class="btn-ghost">See How It Works</a>
+          <a href="#contact" class="btn-primary">Request Access</a>
+          <a href="#how-it-works" class="btn-ghost">Learn More</a>
         </div>
         <a href="https://curatevip.ai" target="_blank" class="btn-enter">
           Already a member? Enter CURATE
@@ -1457,22 +1458,37 @@
     })()
 
     // Hamburger mobile menu
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
+    (function() {
+      var hbtn = document.getElementById('hamburger');
+      var hmenu = document.getElementById('mobileMenu');
+      if (!hbtn || !hmenu) return;
 
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('open');
-      mobileMenu.classList.toggle('open');
-      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
-    });
-
-    mobileMenu.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        hamburger.classList.remove('open');
-        mobileMenu.classList.remove('open');
+      function openMenu() {
+        hmenu.style.display = 'flex';
+        hbtn.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeMenu() {
+        hmenu.style.display = 'none';
+        hbtn.classList.remove('open');
         document.body.style.overflow = '';
+      }
+
+      hbtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hmenu.style.display === 'flex' ? closeMenu() : openMenu();
       });
-    });
+
+      hmenu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('click', function(e) {
+        if (hmenu.style.display === 'flex' && !hmenu.contains(e.target) && !hbtn.contains(e.target)) {
+          closeMenu();
+        }
+      });
+    })();
 
     // Nav active link highlight
     const sections = document.querySelectorAll('section[id]')
