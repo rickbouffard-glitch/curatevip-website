@@ -258,8 +258,9 @@
     }
 
     .btn-enter {
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       font-size: 12px;
       font-weight: 500;
@@ -270,6 +271,7 @@
       margin-top: 8px;
       opacity: 0.75;
       transition: opacity 0.2s, gap 0.2s;
+      width: 100%;
     }
 
     .btn-enter:hover { opacity: 1; gap: 12px; }
@@ -992,9 +994,8 @@
     <div class="hero-inner">
       <!-- Left: text -->
       <div class="hero-left fade-in">
-        <img src="logo-wordmark.png" alt="CURATE vip" class="hero-wordmark" />
         <h1 class="hero-title">
-          Because five stars means nothing<br />if it's not <em>your</em> five stars.
+          Because five stars means nothing if it's not <em>your</em> five stars.
         </h1>
         <p class="hero-sub">
           The only travel app that knows the difference. AI-powered taste intelligence for the world's most discerning travelers.
