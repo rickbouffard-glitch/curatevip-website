@@ -774,8 +774,8 @@
         <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">Most luxury travel products match venues to budgets, categories, or star ratings. None of them model the member's <em>psychological appetite</em> at the moment of travel. The CCTF Engine is the methodology that makes this possible.</p>
         <div class="subhead">The Core Innovation</div>
         <div class="row"><div class="row-label">Two-axis classification</div><div class="row-value">Every interaction has two axes: the member's Speed Tier (their psychological appetite) and the venue's Environment (its physical and social character). A curation is a match between these two axes — not a keyword search, not a category filter, not a rating lookup.</div></div>
-        <div class="row"><div class="row-label">Three intent categories</div><div class="row-value">Members are profiled separately for STAY (hotel), TABLE (dining), and SOCIAL (bars, lounges, experiences). The same member can be Vanguard for hotels (brand prestige), Couture for dining (immersive), and Shadow for social (atmospheric). These are independent axes, not a single preference score.</div></div>
-        <div class="row"><div class="row-label">The vocabulary is proprietary</div><div class="row-value">Atelier, Sanctuary, Vanguard, Estate, Provision, Couture, Shadow, Verandah, Pulse, Gallery — these names are not borrowed from the hotel industry. They were created specifically for this system. Each name encodes a precise definition with positive indicators and hard disqualifiers. The vocabulary itself is a moat.</div></div>
+        <div class="row"><div class="row-label">Three intent categories</div><div class="row-value">Members are profiled separately for STAY (hotel), TABLE (dining), and SOCIAL (bars, lounges, experiences). The same member can be Vanguard for hotels (hotel-as-social-scene), Couture for dining (design-immersive), and Shadow for social (atmospheric). These are independent axes, not a single preference score.</div></div>
+        <div class="row"><div class="row-label">The vocabulary is proprietary</div><div class="row-value">Atelier, Sanctuary, Vanguard, Estate, Provision, Couture, Pulse, Electric, Shadow, Verandah, Gallery — these names are not borrowed from the hotel industry. They were created specifically for this system. Each name encodes a precise definition with positive indicators and hard disqualifiers. The vocabulary itself is a moat.</div></div>
         <div class="row"><div class="row-label">The system is deterministic</div><div class="row-value">Given a venue's physical and social characteristics, its Environment classification can be determined by following the decision protocol. The same trained evaluator applying the same protocol to the same venue always reaches the same classification. This is what makes it a methodology, not a personal opinion, and what makes it legally protectable as trade secret.</div></div>
         <div class="row"><div class="row-label">The AI is an accelerant, not the engine</div><div class="row-value">Claude is used to apply the CCTF methodology at scale — surfacing venues from its training knowledge, applying the Environment definitions to classify them, and generating editorial content. The methodology predates and governs the AI. The AI executes; the CCTF Engine decides.</div></div>
       </div>
@@ -830,9 +830,9 @@
 
         <div class="tier-block">
           <div class="tier-name">Vanguard &mdash; STAY</div>
-          <div class="tier-def">"The name alone sets the expectation. You book it because of what it is."</div>
-          <div class="tier-test">Primary test: Is the booking decision driven primarily by the brand name — Four Seasons, Ritz-Carlton, Rosewood, Aman, Fairmont, St. Regis? If yes: Vanguard. If the property is known for its design, history, or setting more than its brand: look elsewhere.</div>
-          <div class="tier-dis">Disqualifies: Independent boutiques regardless of quality. Design-led properties (Atelier). Historic properties (Estate). Any property where the brand is secondary to the experience.</div>
+          <div class="tier-def">"The hotel IS the scene. The lobby buzzes, the bar is where the night starts, the pool deck is where people end up. Checking in feels like walking into an event."</div>
+          <div class="tier-test">Primary test: Does the hotel itself generate social energy — is the lobby, bar, and pool a destination, not just amenities? Would a guest say they went for the experience of being inside that hotel's social ecosystem, not just to sleep there? Examples: SLS Beverly Hills (the lobby is an event, the pool is a scene, the rooftop hums), 1 Hotel South Beach (pool, rooftop, lobby bar are all the night). Note: a globally recognized brand flagship in a quiet, service-first market is Sanctuary — not Vanguard. The scene must actually exist, not just the brand name.</div>
+          <div class="tier-dis">Disqualifiers: Quiet, service-first hotels regardless of brand prestige (Sanctuary). Design-forward properties where architecture is the primary identity (Atelier). Historic grand dames (Estate). Any hotel where the primary reason to stay is rest, privacy, design, or heritage rather than being inside the hotel's social scene.</div>
         </div>
 
         <div class="tier-block">
@@ -860,37 +860,61 @@
 
         <div class="tier-block">
           <div class="tier-name">Provision &mdash; TABLE</div>
-          <div class="tier-def">"Organic energy in a great room. Lively bar, tables full, real conversation. The atmosphere is the product but it's genuine, not manufactured. Excellent food required."</div>
-          <div class="tier-test">Primary test: Is the room alive with real energy that emerged organically from the crowd and the space — not from a DJ, bottle service, or designed performance? Is the food excellent (not merely acceptable)? If both: Provision.</div>
-          <div class="tier-dis">Disqualifiers: Manufactured energy (DJ, bottle service = Pulse/Electric). Quiet or intimate rooms (Shadow). Design-as-destination rooms (Couture). Food that is mediocre or beside the point.</div>
+          <div class="tier-def">"The kitchen is everything. Food-primary, chef-driven. The room is irrelevant — it could be gorgeous, plain, or anywhere in between. You are here because of what the kitchen does."</div>
+          <div class="tier-test">Primary test: Would a serious food critic rate this restaurant purely on the strength of what the kitchen produces — with zero consideration for the room, the energy, or the scene? If yes: Provision. Signals: James Beard Awards, Michelin recognition, tasting menus, prix fixe formats, exceptional sourcing, chef reputation. NOTE: quiet and unhurried dining is a POSITIVE signal for Provision, not a disqualifier. The room does not need to have energy to qualify.</div>
+          <div class="tier-dis">Disqualifiers: Venues where the buzz, scene, or energy is the primary draw (that is Pulse). Venues where the room design is the primary draw (that is Couture). Do NOT reclassify a food-primary venue as Couture because the room is architecturally beautiful — if the food is the reason to go, it is Provision regardless of the room.</div>
         </div>
 
         <div class="tier-block">
           <div class="tier-name">Couture &mdash; TABLE</div>
-          <div class="tier-def">"The room takes you somewhere else. Immersive aesthetic. Design-as-destination. You'd go for the room as much as the food."</div>
-          <div class="tier-test">Primary test: Is the design so distinctive and fully-realized that it fundamentally changes the experience of dining there — not merely a nice backdrop, but an immersive world? Does the room feel like it was built around a singular vision?</div>
-          <div class="tier-dis">Disqualifiers: Standard upscale dining rooms regardless of quality. Rooms with good design that's primarily decorative. Rooms where the food is the sole editorial reason to go.</div>
+          <div class="tier-def">"The physical design of the room is the primary reason a guest specifically seeks out this venue. The space is so visually singular and intentionally art-directed that a design-conscious diner would choose it for the room itself."</div>
+          <div class="tier-test">Primary test: "Would I go here even if the food were merely competent (not exceptional)?" If yes: Couture. CRITICAL DISTINCTION FROM PROVISION: if the primary reason a guest would choose this venue is the food, the chef, or the culinary experience — even if the room is stunning — that is Provision, not Couture. A beautiful room does not make a venue Couture.</div>
+          <div class="tier-dis">Disqualifiers: Any venue whose primary identity is culinary, regardless of how architecturally notable or beautiful the room is. Fine dining, tasting menus, prix fixe, and chef-driven restaurants — even those with striking interiors — are Provision. Couture is reserved for rooms so visually distinctive that the design itself would draw a design-conscious guest independent of the food.</div>
         </div>
 
         <div class="tier-block">
-          <div class="tier-name">Shadow &mdash; TABLE &amp; SOCIAL</div>
-          <div class="tier-def">"Dark, considered, atmospheric. Mood is the amenity. You had to know it was there."</div>
-          <div class="tier-test">Primary test: Is low visibility a feature, not a bug? Is the room deliberately dark, intimate, and discovered rather than promoted? Would high visibility or a busy, loud room fundamentally change what makes it special?</div>
-          <div class="tier-dis">Disqualifiers: Bright, open rooms. High-visibility spots that appear in mainstream "best restaurants" lists. Loud or energy-forward venues of any kind.</div>
-        </div>
-
-        <div class="tier-block">
-          <div class="tier-name">Verandah &mdash; TABLE &amp; SOCIAL</div>
-          <div class="tier-def">"PHYSICALLY OUTDOORS is the primary identity. The table itself is outside, under the sky, in open air. The guest is not inside looking at a view."</div>
-          <div class="tier-test">Primary test: Is the dining or drinking surface itself physically outside — not behind glass, not through a window, not on a covered terrace that is functionally indoors? The test is: could it rain on the guest? If no glass separates the guest from the sky: Verandah.</div>
-          <div class="tier-dis">Disqualifiers: Indoor restaurants with outdoor views through glass walls (Canlis). Glassed-in terraces. Indoor rooms with large windows facing nature. Covered patios where glass or substantial roofing creates an indoor feeling. Any venue where "outdoor" is a visual amenity rather than a physical condition of the dining experience.</div>
+          <div class="tier-name">Pulse &mdash; TABLE</div>
+          <div class="tier-def">"Scene and energy are the product. The dining room buzzes — loud on purpose, alive at full tilt. You are there for the night as much as the meal."</div>
+          <div class="tier-test">Primary test: Is the room charged with intentional social energy — high volume, live crowd, momentum that builds through the evening? Is the scene itself a reason to be there, not just background to the food? If yes: Pulse. This is the buzzy, high-energy TABLE tier. It is distinct from Provision (food-first, quiet) and from Couture (design-first, immersive).</div>
+          <div class="tier-dis">Disqualifiers: Quiet, food-first venues (Provision). Design-as-destination rooms (Couture). Outdoor-primary venues (Verandah). Note: Shadow is a SOCIAL-only tier and does not apply to TABLE.</div>
         </div>
 
         <div class="tier-block" style="border-bottom:none;">
-          <div class="tier-name">Pulse &mdash; TABLE (formerly Electric)</div>
-          <div class="tier-def">"Scene, energy, the right crowd. Power tables. Alive at full tilt. Being seen is part of the experience."</div>
-          <div class="tier-test">Primary test: Is social performance — being in the right room with the right people, seen at the right table — a genuine part of the value proposition? Is the energy level high and intentional?</div>
-          <div class="tier-dis">Disqualifiers: Organic energy without performance (Provision). Intimate or hidden venues (Shadow). Outdoor-primary venues (Verandah). Design-immersive venues (Couture).</div>
+          <div class="tier-name">Verandah &mdash; TABLE <span style="color:rgba(255,180,50,0.7);font-size:11px;font-weight:400;letter-spacing:0.08em;">[HIDDEN IN BETA]</span> &amp; SOCIAL</div>
+          <div class="tier-def">"PHYSICALLY OUTDOORS is the primary identity. The table itself is outside, under the sky, in open air. The guest is not inside looking at a view."</div>
+          <div class="tier-test">Primary test: Is the dining or drinking surface itself physically outside — not behind glass, not through a window, not on a covered terrace that is functionally indoors? The test: could it rain on the guest? If no glass separates the guest from the sky: Verandah.</div>
+          <div class="tier-dis">Disqualifiers: Indoor restaurants with outdoor views through glass walls. Glassed-in terraces. Indoor rooms with large windows facing nature. Covered patios where glass or roofing creates an indoor feeling. Any venue where "outdoor" is a visual amenity rather than the physical condition of the experience.</div>
+          <div class="tier-dis" style="color:rgba(255,180,50,0.6);margin-top:6px;">Beta status: Verandah is a defined TABLE tier and exists in the seed data, but is currently hidden from member-facing TABLE selections. It is active and fully available in SOCIAL. Verandah will be enabled for TABLE in a future release once the venue inventory is sufficient across all markets.</div>
+        </div>
+
+        <div class="subhead" style="margin-top:20px;">SOCIAL Tiers</div>
+
+        <div class="tier-block">
+          <div class="tier-name">Electric &mdash; SOCIAL</div>
+          <div class="tier-def">"Scene-driven social energy. The right crowd, the room is alive and buzzy. The night usually starts or ends here."</div>
+          <div class="tier-test">Primary test: Is the room actively charged with social energy — the crowd, the noise level, the sense that this is where the night is happening? Is being in this room with the right people a genuine part of the value? If yes: Electric. This is the SOCIAL equivalent of Pulse for TABLE — buzzy, crowd-forward, alive.</div>
+          <div class="tier-dis">Disqualifiers: Quiet, atmospheric venues (Shadow). Design-contemplative venues (Gallery). Outdoor-primary venues (Verandah). Any venue where the energy is calm, considered, or intimate.</div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-name">Shadow &mdash; SOCIAL</div>
+          <div class="tier-def">"Dark, considered, atmospheric. Mood is the amenity. You had to know it was there."</div>
+          <div class="tier-test">Primary test: Is low visibility a feature, not a bug? Is the room deliberately dark, intimate, and discovered rather than promoted? Would high visibility or a busy, loud room fundamentally change what makes it special? Shadow is a SOCIAL-only tier — it applies to bars, cocktail lounges, and social venues, not to dining rooms.</div>
+          <div class="tier-dis">Disqualifiers: Bright, open rooms. High-visibility spots. Loud or energy-forward venues (Electric). Venues where being seen is part of the value proposition. Dining rooms of any kind — Shadow is SOCIAL only.</div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-name">Gallery &mdash; SOCIAL</div>
+          <div class="tier-def">"Design you feel before you see. Intimate, selective, private-feeling. A room with a point of view."</div>
+          <div class="tier-test">Primary test: Does the space have a distinct visual and spatial identity that makes it feel curated and considered — not merely well-decorated, but designed with intent? Is the atmosphere intimate and selective rather than open and social? Would a design-conscious guest choose it as much for the room as for the crowd?</div>
+          <div class="tier-dis">Disqualifiers: High-energy, crowd-forward venues (Electric). Purely atmospheric, dark venues without design identity (Shadow). Outdoor-primary venues (Verandah). Mainstream bars or lounges with no distinct design concept.</div>
+        </div>
+
+        <div class="tier-block" style="border-bottom:none;">
+          <div class="tier-name">Verandah &mdash; SOCIAL</div>
+          <div class="tier-def">Verandah applies to SOCIAL venues using the same definition as TABLE above — a bar, terrace, or rooftop where the drinking surface is physically outside, under open sky. Active for SOCIAL in all markets.</div>
+          <div class="tier-test">Same primary test as TABLE: the guest is physically outdoors, not behind glass. Could it rain on them? If yes: Verandah.</div>
+          <div class="tier-dis">Same disqualifiers as TABLE Verandah — glass walls, covered indoor terraces, and venues where "outdoor" is a view amenity rather than the actual physical condition.</div>
         </div>
       </div>
     </div>
@@ -1167,7 +1191,7 @@
 
         <div class="moat-item">
           <div class="moat-title">The Vocabulary</div>
-          <div class="moat-detail">Atelier, Sanctuary, Vanguard, Estate, Provision, Couture, Shadow, Verandah, Pulse, Gallery — these names encode precise definitions developed over multiple iteration cycles. A competitor could copy the names in a day. They could not copy the definitions, the disqualifiers, the decision protocol, or the worked-example library that makes the system deterministic without years of the same iteration.</div>
+          <div class="moat-detail">Atelier, Sanctuary, Vanguard, Estate, Provision, Couture, Pulse, Electric, Shadow, Verandah, Gallery — these names encode precise definitions developed over multiple iteration cycles. A competitor could copy the names in a day. They could not copy the definitions, the disqualifiers, the decision protocol, or the worked-example library that makes the system deterministic without years of the same iteration.</div>
           <div class="moat-why">Why it matters: the vocabulary is the user interface for the classification system. A different vocabulary requires starting the member profiling and seed data from scratch.</div>
         </div>
 
