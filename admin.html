@@ -1016,18 +1016,22 @@
           </div>
           <div class="we-step">
             <div class="we-step-num">3</div>
-            <div><div class="we-step-label">Tier Classification</div><div class="we-step-text">Couture test: Is the design so distinctive and fully-realized that it takes you somewhere else? The mid-century A-frame overlooking Lake Union is architecturally iconic, the room has a strong point of view, but the primary draw is culinary excellence + occasion dining rather than design immersion. Partial match. Provision test: Is the room alive with organic energy? No — Canlis is intimate and occasion-driven, not buzzy. Shadow test: Dark, considered, atmospheric? The room is open, bright, with panoramic lake views. No. Verandah test: Is the table physically outdoors? No — glass walls throughout. Explicitly disqualified from Verandah.</div></div>
+            <div><div class="we-step-label">Couture Test (initial, incorrect)</div><div class="we-step-text">First pass classified Canlis as Couture, citing the 1950 Roland Terry A-frame architecture and the Lake Union glass-wall room as design-as-destination. This was wrong. The Couture test asks: "Would you go for the room as much as the food?" At Canlis, the answer is no. The room is spectacular backdrop — the food and the occasion are the reason. Architectural significance is not the same as design-as-destination.</div></div>
           </div>
           <div class="we-step">
             <div class="we-step-num">4</div>
-            <div><div class="we-step-label">Final Classification</div><div class="we-step-text">Couture (primary) — the architectural identity and singular interior experience is the closest match. The glass-and-view dining room is distinctive enough to qualify, though it is at the conservative end of Couture. Also carries a Provision lean — a note that it has enough energy and food focus to drift toward Provision for some members.</div></div>
+            <div><div class="we-step-label">Provision Test (correct)</div><div class="we-step-text">Provision requires food-primary identity, excellent execution, and organic room energy. Canlis is formal and occasion-driven rather than buzzy — but "buzzy" describes one expression of Provision energy, not the only one. The fundamental Provision identity is: the food is the point, the room serves the food, and the experience is alive because the people and the kitchen are exceptional. Canlis clears this. James Beard credential = the food is the reason. The room, as beautiful as it is, is in service of the dining experience, not the other way around.</div></div>
           </div>
           <div class="we-step">
             <div class="we-step-num">5</div>
-            <div><div class="we-step-label">Environment Block</div><div class="we-step-text">environment_blocked: ['Verandah'] — the glass-walled room is the defining characteristic. Under no reading of the Verandah definition does Canlis qualify. The block is a safeguard against AI hallucination.</div></div>
+            <div><div class="we-step-label">Environment Block</div><div class="we-step-text">environment_blocked: ['Verandah'] — unchanged. The glass-walled room is definitionally not Verandah regardless of classification. The block remains a safeguard against AI hallucination.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">6</div>
+            <div><div class="we-step-label">Classification Principle Illustrated</div><div class="we-step-text">This case establishes a key rule: notable architecture in a dining room does not make a venue Couture. The architecture must be the primary reason a guest chooses the venue. When the food is the primary reason — regardless of how beautiful the room is — the venue is Provision. The protocol caught the error on challenge; a trained evaluator should catch it before challenge by applying the Couture test strictly.</div></div>
           </div>
           <div class="we-verdict">
-            <div><div class="we-verdict-label">Classification: Couture · Seattle TABLE</div><div class="we-verdict-text">environment_blocked: ['Verandah']. Surrounding: false (core market). Seed confirmed June 2026.</div></div>
+            <div><div class="we-verdict-label">Corrected Classification: Provision · Seattle TABLE</div><div class="we-verdict-text">environment_blocked: ['Verandah']. Surrounding: false (core market). Initial Couture classification challenged and corrected — food-primary identity requires Provision. Seed updated June 2026.</div></div>
           </div>
         </div>
 
@@ -1045,14 +1049,22 @@
           </div>
           <div class="we-step">
             <div class="we-step-num">3</div>
-            <div><div class="we-step-label">Tier Classification — Hard Case</div><div class="we-step-text">Couture test: Is the room design so distinctive it takes you somewhere else? The dining room is pleasant but not architecturally immersive — the experience is primarily culinary and narrative. Not the strongest Couture match. Estate test (TABLE): does not apply (Estate is STAY-only). Provision test: organic energy, lively bar? No — prix fixe dinner service is formal, not buzzy. Shadow: dark and atmospheric? No — the setting is pastoral and warm, not dark. This is an unusual edge case: the venue's distinctiveness is entirely in the culinary/experiential format (9-course, fixed-seating, storytelling service), not the room or the energy. This is a genuine gap in the tier system — a venue that clears the quality floor but does not map cleanly to any single tier. Current classification: Couture (best available match — the immersive, singular experience format is closest to design-as-destination even without strong architectural identity).</div></div>
+            <div><div class="we-step-label">Couture Test (initial, incorrect)</div><div class="we-step-text">First pass classified The Herbfarm as Couture, on the basis that the 9-course storytelling format is "immersive in spirit." This was wrong for the same reason as Canlis: Couture requires design-as-destination. The dining room at The Herbfarm is pleasant and pastoral — it is explicitly not a room that takes you somewhere else architecturally or aesthetically. Applying the Couture label because no other tier felt perfect is exactly the kind of compromise the protocol is designed to prevent.</div></div>
           </div>
           <div class="we-step">
             <div class="we-step-num">4</div>
+            <div><div class="we-step-label">Provision Test (correct)</div><div class="we-step-text">The Herbfarm's entire identity is food. The 9-course menu is built around the farm, the season, and the kitchen's storytelling. The prix fixe format is formal and quiet — not buzzy — but the Provision identity is not about energy level, it is about the primacy of the food and the excellence of the kitchen. The Herbfarm is Provision in its deepest sense: you go because of what they cook, how they source it, and what the kitchen has to say. The room is the stage. The food is the performance.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">5</div>
             <div><div class="we-step-label">Location</div><div class="we-step-text">Woodinville, WA — part of the Seattle surrounding area (Eastside &amp; Woodinville). Not in Seattle's core market geography.</div></div>
           </div>
+          <div class="we-step">
+            <div class="we-step-num">6</div>
+            <div><div class="we-step-label">Taxonomy Note</div><div class="we-step-text">Both Canlis and The Herbfarm reveal the same gap: the taxonomy currently has no tier for formal, quiet, food-primary dining that isn't buzzy. Provision covers this well conceptually (food-first, excellent kitchen) but its operational description leans toward energy and atmosphere. A future "Ceremony" or "Kitchen" tier may eventually be needed for prix fixe, tasting-menu, and chef's-table formats where the room is incidental and the culinary narrative is everything. For now, Provision is the correct classification — it is food-primary, and that is the core of Provision.</div></div>
+          </div>
           <div class="we-verdict">
-            <div><div class="we-verdict-label">Classification: Couture · surrounding: true · Seattle TABLE</div><div class="we-verdict-text">Only surfaces when member checks "Include Eastside &amp; Woodinville." Wild card candidate (distinctive enough to anchor a wild card recommendation). Seed confirmed June 2026. Note: this edge case is a candidate for a future tier addition — an "Immersive" or "Ceremony" tier for format-driven dining experiences without room-primary identity.</div></div>
+            <div><div class="we-verdict-label">Corrected Classification: Provision · surrounding: true · Seattle TABLE</div><div class="we-verdict-text">Only surfaces when member checks "Include Eastside &amp; Woodinville." Wild card candidate. Initial Couture classification challenged and corrected — food-primary identity requires Provision. Seed updated June 2026.</div></div>
           </div>
         </div>
 
