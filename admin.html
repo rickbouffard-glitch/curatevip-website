@@ -192,27 +192,13 @@
 </head>
 <body>
 
-<!-- ══════════════════════ SETUP SCREEN ══════════════════════ -->
-<div id="screen-setup" class="auth-screen">
-  <div class="auth-card">
-    <div class="auth-logo">CURATE</div>
-    <div class="auth-subtitle">Admin Setup — First Run</div>
-    <div id="setup-error" class="auth-error"></div>
-    <label class="auth-label">Username</label>
-    <input id="setup-user" class="auth-input" type="text" autocomplete="username" placeholder="admin username">
-    <label class="auth-label">Password</label>
-    <input id="setup-pass" class="auth-input" type="password" autocomplete="new-password" placeholder="min 8 characters">
-    <label class="auth-label">Confirm Password</label>
-    <input id="setup-confirm" class="auth-input" type="password" autocomplete="new-password" placeholder="repeat password">
-    <button class="auth-btn" onclick="handleSetup()">Create Admin Account</button>
-  </div>
-</div>
+<!-- Setup screen removed — credentials are pre-seeded on first visit -->
 
 <!-- ══════════════════════ LOGIN SCREEN ══════════════════════ -->
 <div id="screen-login" class="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">CURATE</div>
-    <div class="auth-subtitle">Admin Access</div>
+    <div class="auth-subtitle">Private — Authorized Access Only</div>
     <div id="login-error" class="auth-error"></div>
     <label class="auth-label">Username</label>
     <input id="login-user" class="auth-input" type="text" autocomplete="username" placeholder="">
@@ -757,6 +743,10 @@
 </div>
 
 <script>
+  // ── Default credentials (pre-seeded — change via Change Password after first login) ──
+  const DEFAULT_USER = 'rick';
+  const DEFAULT_HASH = 'f537473bb6a8a1f35b4b4e01d846959d15e0308fdb287947cbb3c8d067f3fcc9'; // CurateAdmin2026!
+
   // ── SHA-256 helper ──────────────────────────────────────────────────────────
   async function sha256(text) {
     const data = new TextEncoder().encode(text);
@@ -764,21 +754,18 @@
     return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  // ── Auth state ──────────────────────────────────────────────────────────────
-  function getAuthState() {
-    const user = localStorage.getItem('curate_admin_user');
-    const hash = localStorage.getItem('curate_admin_hash');
-    const session = sessionStorage.getItem('curate_admin_session');
-    if (!user || !hash) return 'setup';
-    if (!session) return 'login';
-    return 'authenticated';
+  // ── Ensure credentials exist (seed defaults on first visit) ─────────────────
+  function ensureCredentials() {
+    if (!localStorage.getItem('curate_admin_user')) {
+      localStorage.setItem('curate_admin_user', DEFAULT_USER);
+      localStorage.setItem('curate_admin_hash', DEFAULT_HASH);
+    }
   }
 
+  // ── Show/hide screens ───────────────────────────────────────────────────────
   function showScreen(name) {
-    document.getElementById('screen-setup').style.display = 'none';
     document.getElementById('screen-login').style.display = 'none';
     document.getElementById('screen-docs').style.display = 'none';
-    if (name === 'setup') document.getElementById('screen-setup').style.display = 'flex';
     if (name === 'login') document.getElementById('screen-login').style.display = 'flex';
     if (name === 'docs')  document.getElementById('screen-docs').style.display = 'block';
   }
@@ -792,22 +779,6 @@
     const el = document.getElementById(id);
     el.style.display = 'none';
     el.textContent = '';
-  }
-
-  // ── Setup ───────────────────────────────────────────────────────────────────
-  async function handleSetup() {
-    clearAuthError('setup-error');
-    const user = document.getElementById('setup-user').value.trim();
-    const pass = document.getElementById('setup-pass').value;
-    const confirm = document.getElementById('setup-confirm').value;
-    if (!user) { showAuthError('setup-error', 'Username is required.'); return; }
-    if (pass.length < 8) { showAuthError('setup-error', 'Password must be at least 8 characters.'); return; }
-    if (pass !== confirm) { showAuthError('setup-error', 'Passwords do not match.'); return; }
-    const hash = await sha256(pass);
-    localStorage.setItem('curate_admin_user', user);
-    localStorage.setItem('curate_admin_hash', hash);
-    sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
-    showScreen('docs');
   }
 
   // ── Login ───────────────────────────────────────────────────────────────────
@@ -869,8 +840,7 @@
     document.getElementById('pw-confirm').value = '';
   }
 
-  // ── Keyboard: Enter to submit ───────────────────────────────────────────────
-  document.getElementById('setup-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handleSetup(); });
+  // ── Keyboard shortcuts ──────────────────────────────────────────────────────
   document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
   document.getElementById('pw-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handlePwChange(); });
 
@@ -881,8 +851,9 @@
 
   // ── Init ────────────────────────────────────────────────────────────────────
   (function init() {
-    const state = getAuthState();
-    showScreen(state === 'authenticated' ? 'docs' : state);
+    ensureCredentials();
+    const session = sessionStorage.getItem('curate_admin_session');
+    showScreen(session ? 'docs' : 'login');
   })();
 </script>
 </body>
