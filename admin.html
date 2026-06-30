@@ -743,23 +743,13 @@
 </div>
 
 <script>
-  // ── Default credentials (pre-seeded — change via Change Password after first login) ──
-  const DEFAULT_USER = 'rick';
-  const DEFAULT_HASH = 'f537473bb6a8a1f35b4b4e01d846959d15e0308fdb287947cbb3c8d067f3fcc9'; // CurateAdmin2026!
+  const API = 'https://api.curatevip.ai';
 
   // ── SHA-256 helper ──────────────────────────────────────────────────────────
   async function sha256(text) {
     const data = new TextEncoder().encode(text);
     const hash = await crypto.subtle.digest('SHA-256', data);
     return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  // ── Ensure credentials exist (seed defaults on first visit) ─────────────────
-  function ensureCredentials() {
-    if (!localStorage.getItem('curate_admin_user')) {
-      localStorage.setItem('curate_admin_user', DEFAULT_USER);
-      localStorage.setItem('curate_admin_hash', DEFAULT_HASH);
-    }
   }
 
   // ── Show/hide screens ───────────────────────────────────────────────────────
@@ -786,21 +776,40 @@
     clearAuthError('login-error');
     const user = document.getElementById('login-user').value.trim();
     const pass = document.getElementById('login-pass').value;
-    const storedUser = localStorage.getItem('curate_admin_user');
-    const storedHash = localStorage.getItem('curate_admin_hash');
     if (!user || !pass) { showAuthError('login-error', 'Username and password required.'); return; }
-    const hash = await sha256(pass);
-    if (user !== storedUser || hash !== storedHash) {
-      showAuthError('login-error', 'Invalid credentials.');
-      return;
+
+    const btn = document.querySelector('#screen-login .auth-btn');
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    try {
+      const hash = await sha256(pass);
+      const res = await fetch(API + '/api/admin-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, passwordHash: hash })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        // Store username in sessionStorage so password change knows who is logged in
+        sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
+        sessionStorage.setItem('curate_admin_user', user);
+        showScreen('docs');
+      } else {
+        showAuthError('login-error', 'Invalid credentials.');
+      }
+    } catch (err) {
+      showAuthError('login-error', 'Could not reach server. Check your connection.');
+    } finally {
+      btn.textContent = 'Sign In';
+      btn.disabled = false;
     }
-    sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
-    showScreen('docs');
   }
 
   // ── Sign out ────────────────────────────────────────────────────────────────
   function handleSignOut() {
     sessionStorage.removeItem('curate_admin_session');
+    sessionStorage.removeItem('curate_admin_user');
     document.getElementById('login-user').value = '';
     document.getElementById('login-pass').value = '';
     showScreen('login');
@@ -822,22 +831,43 @@
   async function handlePwChange() {
     clearAuthError('pw-error');
     document.getElementById('pw-success').style.display = 'none';
-    const current = document.getElementById('pw-current').value;
-    const newPw   = document.getElementById('pw-new').value;
-    const confirm = document.getElementById('pw-confirm').value;
-    const storedHash = localStorage.getItem('curate_admin_hash');
-    const currentHash = await sha256(current);
-    if (currentHash !== storedHash) { showAuthError('pw-error', 'Current password is incorrect.'); return; }
+    const current  = document.getElementById('pw-current').value;
+    const newPw    = document.getElementById('pw-new').value;
+    const confirm  = document.getElementById('pw-confirm').value;
+    const username = sessionStorage.getItem('curate_admin_user') || 'rick';
+
     if (newPw.length < 8) { showAuthError('pw-error', 'New password must be at least 8 characters.'); return; }
     if (newPw !== confirm) { showAuthError('pw-error', 'New passwords do not match.'); return; }
-    const newHash = await sha256(newPw);
-    localStorage.setItem('curate_admin_hash', newHash);
-    const s = document.getElementById('pw-success');
-    s.textContent = 'Password updated successfully.';
-    s.style.display = 'block';
-    document.getElementById('pw-current').value = '';
-    document.getElementById('pw-new').value = '';
-    document.getElementById('pw-confirm').value = '';
+
+    const btn = document.querySelector('#modal-pw .auth-btn');
+    btn.textContent = 'Updating…';
+    btn.disabled = true;
+
+    try {
+      const currentHash = await sha256(current);
+      const newHash     = await sha256(newPw);
+      const res = await fetch(API + '/api/admin-set-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, currentHash, newHash })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        const s = document.getElementById('pw-success');
+        s.textContent = 'Password updated successfully.';
+        s.style.display = 'block';
+        document.getElementById('pw-current').value = '';
+        document.getElementById('pw-new').value = '';
+        document.getElementById('pw-confirm').value = '';
+      } else {
+        showAuthError('pw-error', data.error || 'Update failed.');
+      }
+    } catch (err) {
+      showAuthError('pw-error', 'Could not reach server.');
+    } finally {
+      btn.textContent = 'Update Password';
+      btn.disabled = false;
+    }
   }
 
   // ── Keyboard shortcuts ──────────────────────────────────────────────────────
@@ -851,7 +881,6 @@
 
   // ── Init ────────────────────────────────────────────────────────────────────
   (function init() {
-    ensureCredentials();
     const session = sessionStorage.getItem('curate_admin_session');
     showScreen(session ? 'docs' : 'login');
   })();
