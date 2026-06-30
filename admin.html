@@ -490,6 +490,38 @@
       </div>
     </div>
 
+    <!-- 04C: Live Credential Spinner & Phase 1 UX -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04C</span>
+        <span class="section-title">Live Credential Spinner &amp; Member Communication <span class="new-badge">New — June 30</span></span>
+      </div>
+      <div class="section-body blue">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">While the backend is fetching live credential signals and running Claude, the member sees a sequential narration of every source being checked — not a spinning wheel. This communicates that real work is happening on their behalf and builds trust that results are genuinely curated, not cached or random.</p>
+
+        <div class="subhead">Source Sequences by Category</div>
+        <div class="row"><div class="row-label">TABLE (8 sources)</div><div class="row-value">Michelin recognition → James Beard Awards → World's 50 Best → Robb Report → Wine Spectator → Food &amp; Wine → Condé Nast Traveler → Searching top restaurants in [City]</div></div>
+        <div class="row"><div class="row-label">STAY (9 sources)</div><div class="row-value">Forbes Five Star hotels → AAA Five Diamond → Leading Hotels of the World → Relais &amp; Châteaux → Small Luxury Hotels → Condé Nast Traveler Gold List → Travel + Leisure World's Best → Robb Report hotels → Searching top hotels in [City]</div></div>
+        <div class="row"><div class="row-label">SOCIAL (5 sources)</div><div class="row-value">World's 50 Best Bars → Tales of the Cocktail → James Beard bar nominations → Robb Report bars → Searching top bars in [City]</div></div>
+
+        <div class="subhead">Timing — Spread Across 25 Seconds</div>
+        <div class="callout" style="margin-top:8px;margin-bottom:16px;">
+          <p>Each source message is displayed for <code>Math.floor(25000 / msgCount)</code> milliseconds, spreading all sources evenly across ~25 seconds regardless of how many sources the category has. The full curation averages ~36 seconds — this ensures the member sees meaningful activity for the majority of that wait, not a 7-second flash followed by 29 seconds of a static spinner.</p>
+          <p style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.4);">TABLE: 8 × 3,125ms = 25s &nbsp;|&nbsp; STAY: 9 × 2,778ms = 25s &nbsp;|&nbsp; SOCIAL: 5 × 5,000ms = 25s</p>
+        </div>
+
+        <div class="subhead">Status Messages — After Sources Complete</div>
+        <div class="row"><div class="row-label">"Found X verified venues · Curating just for you…"</div><div class="row-value">Shown as soon as the first Claude response chunk arrives, or when the source list finishes — whichever comes first. The count comes from a server-sent <code>event: status</code> SSE payload with <code>credentialedVenueCount</code>. If the count is 0, shows "Curating just for you…" with no count.</div></div>
+        <div class="row"><div class="row-label">"Paired X match(es) just for you"</div><div class="row-value">Shown when the final validated venue list arrives (SSE <code>event: venues</code>). Immediately followed by each venue name with a ✓ checkmark, one per 650ms.</div></div>
+
+        <div class="subhead">Phase 1 — SOCIAL Tab Hidden</div>
+        <div class="callout red-bg" style="margin-top:8px;">
+          <p><strong>Decision (June 30, 2026):</strong> The SOCIAL tab is disabled for Phase 1 beta. The button remains visible in the UI at 40% opacity with a "COMING SOON" badge — it is not removed from the interface. This approach signals the product roadmap to members and investors without implying the feature doesn't exist. Re-enable by removing the <code>comingSoon</code> flag from the CATEGORIES map in <code>DashboardPage.jsx</code>.</p>
+        </div>
+        <div class="row"><div class="row-label">Implementation</div><div class="row-value"><code>const comingSoon = key === 'social'</code> — sets <code>opacity: 0.4</code>, <code>cursor: default</code>, <code>disabled={true}</code>, and renders a "COMING SOON" sub-label. onClick is undefined (not a no-op) so click does nothing. Single-line change to re-enable.</div></div>
+      </div>
+    </div>
+
     <!-- 02: Quality Standard — cross-reference -->
     <div class="section">
       <div class="section-header">
@@ -946,6 +978,15 @@
         <div class="callout" style="margin-top:8px;margin-bottom:16px;">
           <p>The CCTF Engine does not rely solely on training data for credential validation. At the moment of every curation, the system queries live web sources via Brave Search API to fetch current credential signals for the market and category being curated. Results are cached for 7 days per market and refreshed automatically. This means Claude receives up-to-date Michelin, James Beard, Forbes, Robb Report, and other signals before making recommendations — not frozen training memory. If a venue has lost credentials, changed ownership, or closed since Claude's training cutoff, the live signal layer surfaces that information and Claude adjusts its recommendations accordingly.</p>
         </div>
+        <div class="subhead">Credential Attribution Rule — Critical Curation Error <span class="new-badge">New — June 30</span></div>
+        <div class="callout red-bg" style="margin-top:8px;margin-bottom:16px;">
+          <p><strong>Chef awards earned at a prior employer do NOT transfer to the chef's current restaurant.</strong> This is the single most common credential misattribution error in AI curation. A James Beard Award belongs to the venue where it was earned, not to wherever that chef works today.</p>
+        </div>
+        <div class="row"><div class="row-label">The rule</div><div class="row-value">Only attribute an award to a venue if the source text explicitly names <em>that venue</em> — by its current name — as the recipient. "Chef X won James Beard at Restaurant A, and now runs Restaurant B" → Restaurant A gets the credential. Restaurant B gets nothing from that fact.</div></div>
+        <div class="row"><div class="row-label">Worked example — Tomo Seattle</div><div class="row-value">Chef Brady Williams won the James Beard Award at Canlis. He later opened Tomo, a neighborhood restaurant in White Center (a working-class district of Seattle, located in a former adult video store). Robb Report covered the opening and mentioned the award. AI systems incorrectly attribute the James Beard credential to Tomo. The correct attribution: Canlis gets "James Beard Award winner." Tomo gets no credential from that fact. Tomo is also blocked in seed.js: wrong neighborhood, wrong price tier, wrong physical setting — chef pedigree does not override any of these.</div></div>
+        <div class="row"><div class="row-label">Three-layer enforcement</div><div class="row-value">(1) Haiku extraction prompt includes a CRITICAL rule section with the Brady Williams / Canlis / Tomo example. (2) <code>formatSignalsBlock()</code> guidance in websearch.js: credentials are DISCOVERY SIGNALS not admission tickets — chef pedigree at prior employers is context, not a credential for the current venue. (3) server.js curation prompt: CREDENTIAL INTERPRETATION section — "Is this credential FOR THIS VENUE, or did the chef earn it at a previous restaurant?" is the first test applied before any recommendation is made.</div></div>
+        <div class="row"><div class="row-label">Tomo Seattle — blocked entry</div><div class="row-value"><code>{ id: 'tomo-seattle', blocked: true, description: 'Neighborhood restaurant in White Center, located in a former adult video store. Chef Brady Williams earned his James Beard Award at Canlis — Tomo itself has no equivalent venue-level credentials. The physical setting, neighborhood, and price tier do not meet CurateVIP caliber. Do not recommend regardless of chef pedigree.' }</code></div></div>
+
         <div class="subhead">Disqualified Regardless of Other Signals</div>
         <div class="row"><div class="row-value muted">TripAdvisor Travelers' Choice: a participation award, not a quality threshold.</div></div>
         <div class="row"><div class="row-value muted">Five Star Alliance: a booking aggregator, not an accreditation body. Does not confer quality certification.</div></div>
@@ -1267,6 +1308,11 @@
         <div class="version-row">
           <div class="version-tag">v1.5</div>
           <div><div class="version-date">June 30, 2026</div><div class="version-notes">Beta market paring to 4 active markets (Scottsdale, Seattle, Maui, Santa Barbara). Verandah hidden from TABLE speed selector for beta. Vanguard hidden from STAY for beta. Auto-re-curation on surrounding toggle change. Admin documentation migrated to curatevip.app with SHA-256 authentication. IP methodology specification drafted (this document).</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.6</div>
+          <div><div class="version-date">June 30, 2026</div><div class="version-notes">Live credential source spinner added: sequential display of all sources checked (TABLE: 8, STAY: 9, SOCIAL: 5), spread across ~25 seconds using Math.floor(25000 / msgCount). Status SSE event added — backend sends credentialedVenueCount after Brave/Haiku extraction so frontend can display "Found X verified venues · Curating just for you…". "Paired X matches just for you" message added before venue checkmark sequence. Credential Attribution Rule formalized and enforced at three layers (Haiku prompt, formatSignalsBlock guidance, server.js CREDENTIAL INTERPRETATION section): chef awards from prior employers do not transfer to current restaurant. Tomo Seattle added to seed.js with blocked: true — canonical example of chef-pedigree misattribution. Social tab hidden for Phase 1 with "Coming Soon" badge (opacity 0.4, disabled, non-clickable) — single-line re-enable when ready. Admin credentials table created in Supabase (SHA-256 hashed, username/password_hash schema) with /api/admin-auth and /api/admin-set-password endpoints on Railway backend.</div></div>
         </div>
       </div>
     </div>
