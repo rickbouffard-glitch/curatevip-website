@@ -678,11 +678,12 @@
       </div>
       <div class="section-body blue">
         <div class="callout blue-bg">
-          <p class="serif">"Claude's training knowledge is the engine. Seed data is the reference."</p>
+          <p class="serif">"Live credential intelligence is the signal. Seed data is the calibration. Claude's judgment is the engine." <span class="new-badge" style="font-size:9px;vertical-align:middle;">Updated — June 30</span></p>
         </div>
-        <div class="row"><div class="row-label">What seed data does</div><div class="row-value">Quality anchor: shows Claude what ultra-luxury looks like in this specific market. Environment calibration: confirmed classifications give Claude concrete examples to reason from.</div></div>
-        <div class="row"><div class="row-label">What seed data does NOT do</div><div class="row-value">Constrain Claude to a pre-approved list. Claude freely surfaces venues it knows from training regardless of seed. Gate new markets — a city with zero seed venues still returns quality curations.</div></div>
-        <div class="row"><div class="row-label">Adding a new market</div><div class="row-value">Step 1: add market to MARKETS object in seed.js (name, state, metro cities). Step 2: add pill to MARKETS array in DashboardPage.jsx. That's it — Claude curates immediately. Seed venues are optional and can be added any time.</div></div>
+        <div class="row"><div class="row-label">Layer 1 — Live credential intelligence</div><div class="row-value">At curation time, the system fires parallel Brave Search queries across up to 22 authoritative sources (Michelin, James Beard, Forbes, Robb Report, Condé Nast, etc.). Claude Haiku extracts structured credential signals from raw snippets. This block is fed to Claude Sonnet before any recommendation is made. Claude does not recall credentials from training memory — it reasons from live data fetched seconds before it responds. Cached 7 days per market + category.</div></div>
+        <div class="row"><div class="row-label">Layer 2 — Seed data calibration</div><div class="row-value">Quality anchor: shows Claude what ultra-luxury looks like in this specific market. Environment calibration: confirmed classifications give Claude concrete examples to reason from. Blocked venues are excluded from the calibration prompt so Claude never considers them. Seed data does NOT constrain Claude to a pre-approved list — it calibrates Claude's judgment, which then surfaces any qualifying venue it knows, seeded or not.</div></div>
+        <div class="row"><div class="row-label">Layer 3 — Claude's judgment</div><div class="row-value">Claude Sonnet synthesizes live credential signals + seed calibration + the member's speed profile + the quality floor + attribution rules into a ranked recommendation. Its training provides the background knowledge of venues; the live intelligence and seed layers provide the current-state context. Claude returns fewer than 3 venues if confidence isn't there — judgment, not padding.</div></div>
+        <div class="row"><div class="row-label">Adding a new market</div><div class="row-value">Step 1: add market to MARKETS object in seed.js (name, state, metro cities). Step 2: add pill to MARKETS array in DashboardPage.jsx. That's it — Claude curates immediately using live intelligence + its training knowledge. Seed venues are optional and can be added any time to deepen calibration.</div></div>
       </div>
     </div>
 
@@ -1360,14 +1361,4 @@
 
         <div class="version-row">
           <div class="version-tag">v1.4</div>
-          <div><div class="version-date">June 2026</div><div class="version-notes">environment_blocked field added to seed schema. Verandah definition hardened: "the table itself is outside, under the sky, in open air" — eliminates glass-wall edge cases. Canlis and Goldfinch Tavern added to environment_blocked: ['Verandah']. Discovery Mandate formalized: geographic sweep + reference sweep required before any curation. Maui TABLE deep-dive surfaced nyloS, The Restaurant at Hotel Wailea, and Nobu Maui — all missed by default AI behavior without the mandate.</div></div>
-        </div>
-
-        <div class="version-row">
-          <div class="version-tag">v1.5</div>
-          <div><div class="version-date">June 30, 2026</div><div class="version-notes">Beta market paring to 4 active markets (Scottsdale, Seattle, Maui, Santa Barbara). Verandah hidden from TABLE speed selector for beta. Vanguard hidden from STAY for beta. Auto-re-curation on surrounding toggle change. Admin documentation migrated to curatevip.app with SHA-256 authentication. IP methodology specification drafted (this document).</div></div>
-        </div>
-
-        <div class="version-row">
-          <div class="version-tag">v1.7</div>
-          <div><div class="version-date">June 30, 2026</div><div class="version-notes">New Section H1 — Live Intelligence
+          <div><div class="version-date">June 2026</div><div class="version-notes"
