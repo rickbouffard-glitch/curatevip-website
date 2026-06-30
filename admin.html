@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CURATEvip — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold: #ba9f75; --gold-dim: rgba(186,159,117,0.5); --bg: #0c0c0d; --surface: #111113; }
+    body { background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+    /* ── Auth screens ── */
+    .auth-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 50% 30%, rgba(186,159,117,0.10) 0%, #0c0c0d 60%);
+      padding: 32px 20px;
+    }
+    .auth-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(186,159,117,0.18);
+      border-radius: 20px; padding: 44px 40px; width: 100%; max-width: 400px;
+    }
+    .auth-logo {
+      font-family: 'Cormorant Garamond', serif; font-size: 28px; letter-spacing: 0.25em;
+      color: var(--gold); text-align: center; margin-bottom: 6px; font-weight: 500;
+    }
+    .auth-subtitle {
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 36px;
+    }
+    .auth-label {
+      display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold-dim); font-weight: 700; margin-bottom: 8px;
+    }
+    .auth-input {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; padding: 12px 14px; color: #fff; font-size: 15px;
+      outline: none; transition: border-color 0.2s; margin-bottom: 18px;
+    }
+    .auth-input:focus { border-color: var(--gold-dim); }
+    .auth-btn {
+      width: 100%; background: none; border: 1px solid rgba(186,159,117,0.4);
+      border-radius: 40px; padding: 13px; color: var(--gold); font-size: 11px;
+      letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+      transition: background 0.2s, border-color 0.2s; margin-top: 4px;
+    }
+    .auth-btn:hover { background: rgba(186,159,117,0.1); border-color: var(--gold); }
+    .auth-error {
+      background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.2);
+      border-radius: 8px; padding: 10px 14px; font-size: 13px;
+      color: rgba(255,120,120,0.9); margin-bottom: 18px; display: none;
+    }
+    .auth-success {
+      background: rgba(76,175,125,0.08); border: 1px solid rgba(76,175,125,0.2);
+      border-radius: 8px; padding: 10px 14px; font-size: 13px;
+      color: rgba(76,175,125,0.9); margin-bottom: 18px; display: none;
+    }
+
+    /* ── Docs layout ── */
+    #screen-docs { display: none; }
+    .docs-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(12,12,13,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .docs-header-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 20px;
+      color: var(--gold); letter-spacing: 0.2em; font-weight: 500;
+    }
+    .docs-header-actions { display: flex; gap: 16px; align-items: center; }
+    .header-btn {
+      background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
+      padding: 6px 16px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.2s;
+    }
+    .header-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .docs-body { max-width: 760px; margin: 0 auto; padding: 40px 28px 100px; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 44px; }
+    .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+    .section-num { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--gold-dim); letter-spacing: 0.2em; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #fff; }
+    .section-body {
+      background: #000; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 22px 24px;
+    }
+    .section-body.gold { border-left: 3px solid var(--gold); }
+    .section-body.blue { border-left: 3px solid #4ab8e8; }
+    .section-body.green { border-left: 3px solid #4caf7d; }
+    .section-body.purple { border-left: 3px solid #bf7fff; }
+    .section-body.orange { border-left: 3px solid #e8934a; }
+    .section-body.red { border-left: 3px solid rgba(255,100,100,0.7); }
+    .section-body.amber { border-left: 3px solid #c9a96e; }
+
+    .subhead {
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(186,159,117,0.6); margin: 20px 0 10px; font-weight: 700;
+    }
+    .row { padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .row-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(186,159,117,0.55); font-weight: 700; margin-bottom: 5px; }
+    .row-value { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+    .callout {
+      background: rgba(186,159,117,0.05); border: 1px solid rgba(186,159,117,0.15);
+      border-radius: 10px; padding: 16px 18px; margin-bottom: 16px;
+    }
+    .callout.red-bg { background: rgba(255,100,100,0.04); border-color: rgba(255,100,100,0.12); }
+    .callout.green-bg { background: rgba(76,175,125,0.06); border-color: rgba(76,175,125,0.2); }
+    .callout.blue-bg { background: rgba(74,184,232,0.05); border-color: rgba(74,184,232,0.2); }
+    .callout.gold-hi { border-color: rgba(186,159,117,0.3); }
+    .callout p { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 10px; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout .serif { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; line-height: 1.55; font-style: italic; }
+    .check-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; line-height: 1.5; }
+    .check-item .pass { color: #4caf7d; flex-shrink: 0; }
+    .check-item .fail { color: rgba(255,100,100,0.7); flex-shrink: 0; }
+    .check-item .text-pass { color: rgba(255,255,255,0.65); }
+    .check-item .text-fail { color: rgba(255,255,255,0.35); }
+    .env-rule { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .env-name { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; font-weight: 700; }
+    .env-def { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.55; margin-bottom: 5px; }
+    .env-dis { font-size: 12px; color: rgba(255,100,100,0.6); line-height: 1.5; }
+    code { background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .gold { color: var(--gold); }
+    .white { color: rgba(255,255,255,0.8); }
+    .muted { color: rgba(255,255,255,0.4); }
+    .italic { font-style: italic; }
+    strong { color: rgba(255,255,255,0.8); font-weight: 600; }
+
+    /* Pipeline flow */
+    .pipeline { display: flex; align-items: flex-start; gap: 0; overflow-x: auto; margin-bottom: 32px; padding-bottom: 8px; }
+    .pipe-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 80px; }
+    .pipe-circle {
+      width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    }
+    .pipe-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-align: center; color: #fff; }
+    .pipe-sub { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 0.04em; text-align: center; }
+    .pipe-arrow { width: 24px; height: 1px; background: rgba(255,255,255,0.12); flex-shrink: 0; margin-top: 22px; }
+
+    /* New badge */
+    .new-badge { display: inline-block; background: rgba(76,175,125,0.15); border: 1px solid rgba(76,175,125,0.35); border-radius: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #4caf7d; padding: 1px 6px; margin-left: 8px; vertical-align: middle; font-weight: 700; }
+    .updated-badge { display: inline-block; background: rgba(186,159,117,0.12); border: 1px solid rgba(186,159,117,0.3); border-radius: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 1px 6px; margin-left: 8px; vertical-align: middle; font-weight: 700; }
+
+    /* Password modal */
+    #modal-pw {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 200; align-items: center; justify-content: center; padding: 20px;
+    }
+    #modal-pw.open { display: flex; }
+    .modal-card {
+      background: #111113; border: 1px solid rgba(186,159,117,0.2); border-radius: 16px;
+      padding: 36px 32px; width: 100%; max-width: 380px;
+    }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #fff; margin-bottom: 24px; }
+    .modal-close { float: right; background: none; border: none; color: rgba(255,255,255,0.3); font-size: 20px; cursor: pointer; line-height: 1; }
+    .modal-close:hover { color: #fff; }
+
+    /* Code block */
+    .code-block {
+      background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 14px 16px; font-family: 'SF Mono','Fira Code',monospace;
+      font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.8; overflow-x: auto;
+    }
+    .kw { color: #7ab0ff; }
+    .str { color: #c47aff; }
+
+    /* Filter chain */
+    .filter-chain { display: flex; flex-direction: column; gap: 0; }
+    .filter-step { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .filter-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .filter-content .filter-label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+    .filter-content .filter-detail { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+    /* Docs intro */
+    .docs-intro { margin-bottom: 40px; }
+    .docs-intro-tag { font-size: 10px; letter-spacing: 0.28em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 10px; }
+    .docs-intro-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600; color: #fff; margin-bottom: 12px; line-height: 1.1; }
+    .docs-intro-body { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.75; max-width: 580px; }
+
+    /* Updated marker in page header */
+    .docs-updated { font-size: 10px; letter-spacing: 0.12em; color: rgba(186,159,117,0.4); text-transform: uppercase; margin-top: 4px; }
+
+    @media (max-width: 600px) {
+      .auth-card { padding: 32px 24px; }
+      .docs-body { padding: 28px 18px 80px; }
+      .docs-header { padding: 12px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════ SETUP SCREEN ══════════════════════ -->
+<div id="screen-setup" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">CURATE</div>
+    <div class="auth-subtitle">Admin Setup — First Run</div>
+    <div id="setup-error" class="auth-error"></div>
+    <label class="auth-label">Username</label>
+    <input id="setup-user" class="auth-input" type="text" autocomplete="username" placeholder="admin username">
+    <label class="auth-label">Password</label>
+    <input id="setup-pass" class="auth-input" type="password" autocomplete="new-password" placeholder="min 8 characters">
+    <label class="auth-label">Confirm Password</label>
+    <input id="setup-confirm" class="auth-input" type="password" autocomplete="new-password" placeholder="repeat password">
+    <button class="auth-btn" onclick="handleSetup()">Create Admin Account</button>
+  </div>
+</div>
+
+<!-- ══════════════════════ LOGIN SCREEN ══════════════════════ -->
+<div id="screen-login" class="auth-screen" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">CURATE</div>
+    <div class="auth-subtitle">Admin Access</div>
+    <div id="login-error" class="auth-error"></div>
+    <label class="auth-label">Username</label>
+    <input id="login-user" class="auth-input" type="text" autocomplete="username" placeholder="">
+    <label class="auth-label">Password</label>
+    <input id="login-pass" class="auth-input" type="password" autocomplete="current-password" placeholder="">
+    <button class="auth-btn" onclick="handleLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- ══════════════════════ PASSWORD MODAL ══════════════════════ -->
+<div id="modal-pw">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closePwModal()">&times;</button>
+    <div class="modal-title">Change Password</div>
+    <div id="pw-error" class="auth-error"></div>
+    <div id="pw-success" class="auth-success"></div>
+    <label class="auth-label">Current Password</label>
+    <input id="pw-current" class="auth-input" type="password" placeholder="">
+    <label class="auth-label">New Password</label>
+    <input id="pw-new" class="auth-input" type="password" placeholder="min 8 characters">
+    <label class="auth-label">Confirm New Password</label>
+    <input id="pw-confirm" class="auth-input" type="password" placeholder="">
+    <button class="auth-btn" onclick="handlePwChange()">Update Password</button>
+  </div>
+</div>
+
+<!-- ══════════════════════ DOCS SCREEN ══════════════════════ -->
+<div id="screen-docs">
+
+  <header class="docs-header">
+    <div>
+      <div class="docs-header-title">CURATE / Admin</div>
+      <div class="docs-updated">Last synced June 30, 2026</div>
+    </div>
+    <div class="docs-header-actions">
+      <button class="header-btn" onclick="openPwModal()">Change Password</button>
+      <button class="header-btn" onclick="handleSignOut()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="docs-body">
+
+    <div class="docs-intro">
+      <div class="docs-intro-tag">System Documentation</div>
+      <div class="docs-intro-title">When you tap Curate</div>
+      <div class="docs-intro-body">When a member taps Curate, three skeleton cards appear instantly. The server checks the market venue cache first — on a hit, results return almost immediately with zero AI cost. On a cache miss, Claude Sonnet streams venue picks in real-time. After streaming: three post-filters run in sequence, non-seed venues get vision-classified from Google Places photos, FEEL/WHY text is served from the Supabase content cache, and photos load per-card with interior shots prioritized. Here's exactly how each stage works.</div>
+    </div>
+
+    <!-- Pipeline Flow -->
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-circle" style="border:2px solid var(--gold);background:rgba(186,159,117,0.1);color:var(--gold)">01</div>
+        <div class="pipe-label">Tap Curate</div>
+        <div class="pipe-sub">Skeletons appear</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="border:2px solid #4caf7d;background:rgba(76,175,125,0.1);color:#4caf7d">02</div>
+        <div class="pipe-label">Cache Check</div>
+        <div class="pipe-sub">Instant on hit</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="border:2px solid #4ab8e8;background:rgba(74,184,232,0.1);color:#4ab8e8">03</div>
+        <div class="pipe-label">Claude Streams</div>
+        <div class="pipe-sub">Cache miss ~3s</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="border:2px solid #e8934a;background:rgba(232,147,74,0.1);color:#e8934a">04</div>
+        <div class="pipe-label">Guards Run</div>
+        <div class="pipe-sub">3-filter chain</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="border:2px solid #bf7fff;background:rgba(191,127,255,0.1);color:#bf7fff">05</div>
+        <div class="pipe-label">Vision Classify</div>
+        <div class="pipe-sub">Non-seed venues</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="border:2px solid #4caf7d;background:rgba(76,175,125,0.1);color:#4caf7d">06</div>
+        <div class="pipe-label">DB Cache</div>
+        <div class="pipe-sub">FEEL/WHY applied</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="border:2px solid var(--gold);background:rgba(186,159,117,0.1);color:var(--gold)">07</div>
+        <div class="pipe-label">Photos Load</div>
+        <div class="pipe-sub">OG check + sorted</div>
+      </div>
+    </div>
+
+    <!-- 00: Curate Principle -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">00</span>
+        <span class="section-title">The CURATE Principle</span>
+      </div>
+      <div class="section-body gold">
+        <div class="callout gold-hi">
+          <p class="serif">"Return the best 3 matching venues for this speed tier in this market. Never hold back a great match because it's well-known."</p>
+          <p>CURATE's job is to return the <strong>best 3 matches</strong> for the member's speed tier. Full stop. For <strong class="gold">Vanguard</strong> members, the Four Seasons and Ritz-Carlton ARE the answer. For <strong class="gold">Sanctuary, Atelier, and Estate</strong> members, a lesser-known discovery is usually the better match — but never exclude a great match simply because it's well-known.</p>
+        </div>
+        <div class="row"><div class="row-label">The test</div><div class="row-value">Does the result genuinely match this member's speed tier at ultra-luxury caliber? That's the only test. Not "have they heard of it" but "is it the right answer for their speed?"</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Quality Over Count -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">00A</span>
+        <span class="section-title">Quality Over Count <span class="new-badge">New — June 30</span></span>
+      </div>
+      <div class="section-body red">
+        <div class="callout gold-hi">
+          <p class="serif">"1 exceptional venue + honest contextMessage is always better than 3 mediocre venues with no message."</p>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:16px;">The platform's entire value is curation credibility. A member who sees a mediocre or questionable venue loses trust in every other recommendation. The AI is explicitly instructed: never stretch a venue's fit to clear a count threshold. If in doubt, the answer is no.</p>
+        <div class="subhead">Thin Market Honesty</div>
+        <div class="row"><div class="row-label">When contextMessage fires</div><div class="row-value">Whenever the AI cannot find 3 venues it is <em>fully</em> confident belong at this caliber with no hesitation. This is quality-based, not count-based. Even if there are 3 results, if the AI isn't certain about one of them, contextMessage should be set.</div></div>
+        <div class="row"><div class="row-label">When contextMessage is null</div><div class="row-value">Only when there are 3 or more venues the AI is fully, unambiguously confident in. If any doubt exists, set the message.</div></div>
+        <div class="row"><div class="row-label">Example message</div><div class="row-value">"Seattle is thin on luxury outdoor dining — weather-permitting patios typically open June through September. The venue below genuinely earns it; we'd rather tell you than pad the list."</div></div>
+        <div class="row"><div class="row-label">contextMessage placement</div><div class="row-value">Rendered <strong>above</strong> the venue listings, not below. 16px Cormorant Garamond italic, rgba(255,255,255,0.72), gold left border. Always the first thing the member reads when results are thin.</div></div>
+        <div class="subhead">The Core Principle in Code (server.js prompt)</div>
+        <div class="callout red-bg">
+          <p><strong>NEVER:</strong> stretch a venue's fit to clear a count threshold. If you are uncertain whether a venue belongs, the answer is no. Return 1 or 2 venues with a contextMessage rather than 3 venues where one is a compromise.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 01: Overview -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <span class="section-title">Overview</span>
+      </div>
+      <div class="section-body amber">
+        <div class="row"><div class="row-label">Model</div><div class="row-value">Claude Sonnet 4.6: one call that generates and self-verifies in a single pass.</div></div>
+        <div class="row"><div class="row-label">Cache-first</div><div class="row-value">Before calling Claude, server checks market_venue_cache for a stored result matching market + intent + environment. Hit: results returned instantly, $0.00 Sonnet cost. Miss: Claude called, result cached asynchronously.</div></div>
+        <div class="row"><div class="row-label">Quality standard</div><div class="row-value">Ultra-luxury caliber: properties operating at the level of Forbes Five Star, Michelin Key, or AAA Five Diamond. Formal credentials are reference points, not a hard gate.</div></div>
+        <div class="row"><div class="row-label">Streaming</div><div class="row-value">On a cache miss, Claude's response is streamed via SSE. First card ~3s, all 3 by ~7s. Skeleton cards fill the space while streaming.</div></div>
+        <div class="row"><div class="row-label">Final output</div><div class="row-value">Up to 3 venue cards + 1 Wild Card. Claude returns fewer than 3 if it cannot confidently identify enough qualifying properties. A short honest list beats a padded one.</div></div>
+        <div class="row"><div class="row-label">Cost per AI run</div><div class="row-value">~$0.004–0.007 USD (one Sonnet call, max 1,200 tokens). Cache hits cost $0.00.</div></div>
+      </div>
+    </div>
+
+    <!-- NEW: Post-Filter Chain -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <span class="section-title">Post-Filter Chain <span class="updated-badge">Updated — June 30</span></span>
+      </div>
+      <div class="section-body orange">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:20px;">After Claude returns its venue list, three sequential server-side filters run in order before anything is sent to the client. Each filter checks by venue name (case-insensitive) against the seed data flags.</p>
+        <div class="filter-chain">
+          <div class="filter-step">
+            <div class="filter-num" style="background:rgba(255,100,100,0.12);border:2px solid rgba(255,100,100,0.4);color:rgba(255,100,100,0.8)">1</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:rgba(255,100,100,0.8)">Seed-Block Filter</div>
+              <div class="filter-detail">Removes venues marked <code>blocked: true</code> in seed.js. These are venues confirmed too casual, wrong tier, or otherwise not appropriate for the platform regardless of environment. Logged as <code>[seed-block]</code> in Railway.</div>
+            </div>
+          </div>
+          <div class="filter-step">
+            <div class="filter-num" style="background:rgba(232,147,74,0.12);border:2px solid rgba(232,147,74,0.4);color:#e8934a">2</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:#e8934a">Environment-Block Filter</div>
+              <div class="filter-detail">Removes venues that are valid on the platform generally but are blocked for THIS specific environment. Controlled by <code>environment_blocked: ['Verandah']</code> on a seed entry. Venue stays available for other environments; only stripped when the requested environment matches. Logged as <code>[env-block]</code>.</div>
+            </div>
+          </div>
+          <div class="filter-step" style="border-bottom:none">
+            <div class="filter-num" style="background:rgba(74,184,232,0.12);border:2px solid rgba(74,184,232,0.4);color:#4ab8e8">3</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:#4ab8e8">Surrounding Filter</div>
+              <div class="filter-detail">When <code>includeSurrounding</code> is false (default), removes all venues marked <code>surrounding: true</code> in seed.js. These are venues in the surrounding metro area that should only appear when the member explicitly checks the toggle. Logged as <code>[surrounding-block]</code>.</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:20px;">
+          <p><strong>Adding a blocked venue:</strong> Set <code>blocked: true</code> on the seed entry. The venue is excluded from Claude's calibration prompt AND stripped from final results.</p>
+          <p><strong>Adding an environment block:</strong> Set <code>environment_blocked: ['Verandah']</code> on the seed entry. The venue remains available in all other environments.</p>
+          <p><strong>Named examples:</strong> Canlis and Goldfinch Tavern both have <code>environment_blocked: ['Verandah']</code> — they're valid indoor Seattle dining venues but should never appear when a member requests Verandah (physically-outdoors) results.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04B: Beta Configuration -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04B</span>
+        <span class="section-title">Beta Configuration <span class="new-badge">New — June 30</span></span>
+      </div>
+      <div class="section-body purple">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:16px;">Live beta uses a pared-down environment set and market list. All hidden items are commented out in code — not deleted — and can be re-enabled with a single line change.</p>
+        <div class="subhead">Active Markets</div>
+        <div class="row"><div class="row-label">Live for beta</div><div class="row-value">Scottsdale · Seattle · Maui · Santa Barbara</div></div>
+        <div class="row"><div class="row-label">Hidden (commented out)</div><div class="row-value">Bellevue · Miami · Nashville · Los Angeles · Charleston</div></div>
+        <div class="row"><div class="row-label">File</div><div class="row-value"><code>DashboardPage.jsx</code> — MARKETS array, lines 56–67. Re-enable by uncommenting the relevant object.</div></div>
+        <div class="subhead">Hidden Environments (Beta)</div>
+        <div class="row"><div class="row-label">Verandah — hidden from TABLE</div><div class="row-value">Verandah is hidden from the dining speed selector for beta. It remains active in SOCIAL. Wild card adjacency map confirmed safe — none of the active TABLE environments have Verandah as an adjacent speed.</div></div>
+        <div class="row"><div class="row-label">Vanguard — hidden from STAY</div><div class="row-value">Vanguard is hidden from the stay speed selector for beta. Wild card adjacency map confirmed safe.</div></div>
+        <div class="row"><div class="row-label">File</div><div class="row-value"><code>DashboardPage.jsx</code> — EXPLORE_SPEEDS object. Move environment string from comment back into the array to re-enable.</div></div>
+        <div class="subhead">Surrounding Areas Labels (per market)</div>
+        <div class="row"><div class="row-label">Seattle</div><div class="row-value">"Include Eastside &amp; Woodinville" — checkbox only appears when Seattle is selected</div></div>
+        <div class="row"><div class="row-label">Scottsdale</div><div class="row-value">"Include Greater Phoenix" — checkbox only appears when Scottsdale is selected</div></div>
+        <div class="row"><div class="row-label">Maui</div><div class="row-value">"Include Upcountry, Hana &amp; North Shore" — checkbox only appears when Maui is selected</div></div>
+        <div class="row"><div class="row-label">Santa Barbara</div><div class="row-value">No surrounding areas — checkbox does not appear</div></div>
+      </div>
+    </div>
+
+    <!-- 02: Quality Standard -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <span class="section-title">Generation: Quality Standard</span>
+      </div>
+      <div class="section-body blue">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:16px;">The target is properties operating at genuine ultra-luxury caliber. Formal accreditations are used as reference points, not as a mandatory gate.</p>
+        <div class="subhead">Qualifying Signals</div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Forbes Travel Guide Five Star (Four Star does not meet the bar)</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Michelin Guide 1, 2, or 3 Keys</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">AAA Five Diamond (Four Diamond is a full tier below)</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Relais &amp; Châteaux member property</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Preferred Hotels &amp; Resorts: Legend Collection only</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Leading Hotels of the World / Small Luxury Hotels of the World</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Condé Nast Traveler Gold List or T+L World's Best: top-ranked, not just mentioned</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Flagship tier of a recognized ultra-luxury brand: Aman, Four Seasons, Ritz-Carlton, Rosewood</span></div>
+        <div class="subhead">Does NOT Qualify</div>
+        <div class="check-item"><span class="fail">✕</span><span class="text-fail">Five Star Alliance: a booking platform, not an accreditor</span></div>
+        <div class="check-item"><span class="fail">✕</span><span class="text-fail">TripAdvisor rankings or Travelers' Choice awards</span></div>
+        <div class="check-item"><span class="fail">✕</span><span class="text-fail">AAA Four Diamond: frequently confused with Five Diamond. It is mid-luxury.</span></div>
+        <div class="check-item"><span class="fail">✕</span><span class="text-fail">Regional "best of" awards: local lifestyle publications</span></div>
+        <div class="check-item"><span class="fail">✕</span><span class="text-fail">A well-reviewed boutique hotel in the $200–$350/night range regardless of design</span></div>
+      </div>
+    </div>
+
+    <!-- 04A: Environment Classification Rules -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04A</span>
+        <span class="section-title">Speed Environment Classification Rules <span class="updated-badge">Updated — June 30</span></span>
+      </div>
+      <div class="section-body gold">
+        <div class="env-rule">
+          <div class="env-name">Verandah <span class="updated-badge">Definition Updated</span></div>
+          <div class="env-def">PHYSICALLY OUTDOORS is the primary identity — the table itself is outside, under the sky, in open air. The guest is not inside looking at a view.</div>
+          <div class="env-dis">✕ Do NOT include indoor restaurants with lake views, glass walls, or picture windows facing nature — those are Provision or Pulse. Canlis (indoor, Lake Union views through glass) is NOT Verandah. Goldfinch Tavern (indoor glass-walled room) is NOT Verandah. Verandah means the dining experience is literally outside: open terrace, rooftop under the sky, garden table, covered patio open to the elements.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Atelier</div>
+          <div class="env-def">Architecture, materials, and spatial decisions are the primary identity. The building has a clear point of view and the design is the lead editorial narrative.</div>
+          <div class="env-dis">✕ Not if primarily known for pool scene, wellness, historic legacy, or brand prestige. Flagship names (Four Seasons, Ritz-Carlton) are CALIBER signals only. They do not make a property Atelier.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Sanctuary</div>
+          <div class="env-def">Relaxation and privacy are the product. Intimate, restorative, zero scene. The world waits outside.</div>
+          <div class="env-dis">✕ Not wellness/spa resorts where treatments are the primary draw.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Vanguard</div>
+          <div class="env-def">The globally recognized luxury brand flagships. Four Seasons, Ritz-Carlton, Rosewood, Fairmont, Aman, St. Regis. The name alone sets the expectation.</div>
+          <div class="env-dis">✕ Not independent boutiques, not design-led properties, not historic properties without a global brand.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Estate</div>
+          <div class="env-def">Historic heritage is the primary identity. Genuine age, old-world architecture, a story that predates modern luxury brands.</div>
+          <div class="env-dis">✕ Not modern luxury brand flagships. Not properties that simply "feel classic." Estate requires genuine architectural heritage.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Provision</div>
+          <div class="env-def">Energy without performance. A room alive with real conversation, full bar, tables buzzing. Atmosphere is the product but it's organic. Excellent food required.</div>
+          <div class="env-dis">✕ Not if energy is manufactured (DJ, bottle service) — that's Electric. Not quiet and intimate — that's Shadow.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Couture</div>
+          <div class="env-def">The room takes you somewhere else. Immersive aesthetic. Design-as-destination.</div>
+          <div class="env-dis">✕ Not standard upscale dining rooms. The design must be so distinctive it fundamentally changes the experience.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Shadow</div>
+          <div class="env-def">Dark, considered, atmospheric. Mood is the amenity. You had to know it was there.</div>
+          <div class="env-dis">✕ Not bright, loud, or high-visibility spots.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Electric</div>
+          <div class="env-def">Scene, energy, the right crowd. Loud on purpose. Alive at full tilt on a Friday night.</div>
+          <div class="env-dis">✕ Not quiet, intimate, or low-visibility venues.</div>
+        </div>
+        <div class="env-rule">
+          <div class="env-name">Gallery</div>
+          <div class="env-def">Design you feel before you see. Intimate, selective, visually intelligent.</div>
+          <div class="env-dis">✕ Not large, mainstream, or high-energy venues.</div>
+        </div>
+        <div class="subhead">Named Environment Blocks (seed.js)</div>
+        <div class="callout">
+          <p><strong>environment_blocked field:</strong> A venue can be valid on the platform for some environments but blocked from others. Set <code>environment_blocked: ['Verandah']</code> on a seed entry to strip that venue whenever the requested environment is Verandah — without removing it from the platform entirely.</p>
+          <p><strong>Current blocks:</strong> Canlis — <code>environment_blocked: ['Verandah']</code> (it's a confirmed Provision/Couture venue, never Verandah). Goldfinch Tavern — <code>environment_blocked: ['Verandah']</code> (indoor glass-walled room at Four Seasons, not an outdoor experience).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06: Surrounding Areas -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <span class="section-title">Include Surrounding Areas <span class="updated-badge">Updated — June 30</span></span>
+      </div>
+      <div class="section-body green">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:16px;">A checkbox beneath the location dropdown expands the venue pool beyond the core market. The label is market-specific (not a generic "surrounding areas"). Only appears for markets that have surrounding areas defined.</p>
+        <div class="subhead">How It Works</div>
+        <div class="row"><div class="row-label">Toggle behavior</div><div class="row-value">Checking the box after results are already shown <strong>automatically fires a new curation</strong> — no extra button needed. The <code>includeSurrounding</code> state change triggers a useEffect that calls handleCurate() if hasCurated is true. Unchecking does the same.</div></div>
+        <div class="row"><div class="row-label">Reset on market change</div><div class="row-value">Switching markets auto-unchecks the surrounding areas checkbox and sets includeSurrounding = false.</div></div>
+        <div class="row"><div class="row-label">Frontend filter</div><div class="row-value">MARKETS array in DashboardPage.jsx now has <code>hasSurrounding</code> and <code>surroundingLabel</code> per market. Checkbox only renders when <code>hasSurrounding: true</code>.</div></div>
+        <div class="row"><div class="row-label">Backend — seed filter</div><div class="row-value"><code>(includeSurrounding || !v.surrounding)</code> — surrounding venues are invisible to Claude's calibration prompt when toggle is off. They appear in the seed reference block when toggle is on.</div></div>
+        <div class="row"><div class="row-label">Backend — post-filter</div><div class="row-value">Even if Claude surfaces a surrounding venue from its training data, the surrounding post-filter strips it from finalVenues when <code>!includeSurrounding</code>. This is the safeguard that the seed filter alone doesn't cover.</div></div>
+        <div class="subhead">Surrounding Venues in seed.js</div>
+        <div class="row"><div class="row-label">Flag</div><div class="row-value"><code>surrounding: true</code> on any seed entry marks it as a surrounding venue. No other changes needed.</div></div>
+        <div class="row"><div class="row-label">Seattle surrounding venues</div><div class="row-value">Willows Lodge (STAY), The Herbfarm (TABLE), Salish Lodge (STAY), The Barking Frog (TABLE — Provision, not Verandah)</div></div>
+        <div class="row"><div class="row-label">Scottsdale surrounding venues</div><div class="row-value">Royal Palms (STAY), The Global Ambassador (STAY), Wren &amp; Wolf (TABLE), Théa at Global Ambassador (TABLE), Steak 44 (TABLE)</div></div>
+        <div class="row"><div class="row-label">Maui surrounding</div><div class="row-value">No surrounding venues currently flagged — Maui metro covers the full island for our caliber level.</div></div>
+        <div class="row"><div class="row-label">Santa Barbara</div><div class="row-value">No surrounding areas — Montecito is part of the core metro. No checkbox shown.</div></div>
+      </div>
+    </div>
+
+    <!-- 05: Photo Loading -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <span class="section-title">Per-Card Photo Loading</span>
+      </div>
+      <div class="section-body purple">
+        <div class="row"><div class="row-label">Architecture</div><div class="row-value">Text-first. Member reads venue name, FEEL, and WHY immediately while photos load behind the scenes. Previous architecture fetched all photos before showing results (4–8s delay). Text-first delivers decision content in ~3s.</div></div>
+        <div class="row"><div class="row-label">TABLE photo order</div><div class="row-value">Slot 1: OG image from venue website (if interior). Slots 2–4: Google Places interior shots. Slots 4–5: food photos. OG food shots appended at end, not promoted to slot 1. Logos/graphics silently dropped.</div></div>
+        <div class="row"><div class="row-label">Cache</div><div class="row-value">venue_photos table (Supabase), 7-day TTL. Cache hit = sub-100ms, no Google call.</div></div>
+        <div class="row"><div class="row-label">Photo proxy</div><div class="row-value">All photos proxied through Railway (/api/photo) to avoid CORS. Browser-cached 24 hours.</div></div>
+      </div>
+    </div>
+
+    <!-- 10: Caching -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <span class="section-title">Caching + Show More</span>
+      </div>
+      <div class="section-body orange">
+        <div class="subhead">Layer 0: market_venue_cache — Selection Cache</div>
+        <div class="row"><div class="row-label">Key</div><div class="row-value">market + intent (dining/stay/social) + environment. All three must match for a hit.</div></div>
+        <div class="row"><div class="row-label">Cache hit</div><div class="row-value">Returns stored venues JSON immediately. No Claude call, zero Sonnet cost, sub-100ms.</div></div>
+        <div class="row"><div class="row-label">TTL</div><div class="row-value">No automatic expiry. Clear manually: <code>DELETE FROM market_venue_cache WHERE market = 'seattle';</code></div></div>
+        <div class="row"><div class="row-label">When to clear</div><div class="row-value">After updating seed.js for a market (new venues, reclassification, blocking changes). The content cache (venue_ai_content) does not need clearing — it's keyed by venue name.</div></div>
+        <div class="subhead">Layer 1: venue_ai_content — FEEL/WHY Cache (Permanent)</div>
+        <div class="row"><div class="row-label">Scope</div><div class="row-value">Permanent. Once a venue's FEEL/WHY is generated it's stored indefinitely. One row serves all users. Same copy for every member who sees a venue.</div></div>
+        <div class="subhead">Layer 2: venue_photos — Photo Cache (7-Day TTL)</div>
+        <div class="row"><div class="row-label">Expiry</div><div class="row-value">7 days. After expiry, Google Places is re-queried so photos stay reasonably fresh.</div></div>
+        <div class="subhead">Layer 3: Browser Session (Zustand)</div>
+        <div class="row"><div class="row-label">Scope</div><div class="row-value">In-memory, resets on page refresh. Switching market/intent and back shows previous result instantly.</div></div>
+        <div class="subhead">Show More</div>
+        <div class="row"><div class="row-label">Mechanism</div><div class="row-value">Fresh /api/curate call with currently displayed venue names as excludeVenues. Claude returns 3 new venues it hasn't shown yet. Wild card not included in Show More batches.</div></div>
+      </div>
+    </div>
+
+    <!-- 11: Speed Tier Reference -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <span class="section-title">Speed Tier Reference — Finalized June 2026</span>
+      </div>
+      <div class="section-body gold">
+        <p style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:16px;">These definitions are locked. Before changing any classification in the AI prompt, seed data, or frontend: verify against this section first. The definition lives here. Code follows the definition, never the reverse.</p>
+        <div class="subhead">STAY Tiers</div>
+        <div class="row"><div class="row-label">Vanguard <span style="font-size:10px;color:rgba(255,255,255,0.25);margin-left:6px;">Hidden for beta</span></div><div class="row-value">Where the name alone sets the expectation. Four Seasons, Ritz-Carlton, Rosewood, Fairmont, Aman, St. Regis. Guests book it because of the brand.</div></div>
+        <div class="row"><div class="row-label">Sanctuary</div><div class="row-value">Relaxation is everything. Intimate, hushed, restorative. Guests choose it to unwind and disappear.</div></div>
+        <div class="row"><div class="row-label">Atelier</div><div class="row-value">Architecture is the reason. A design-conscious traveler chose it specifically for what was built.</div></div>
+        <div class="row"><div class="row-label">Estate</div><div class="row-value">History and Charm is everything. Genuine age, old-world architecture, a story predating modern luxury brands.</div></div>
+        <div class="subhead">TABLE Tiers</div>
+        <div class="row"><div class="row-label">Provision</div><div class="row-value">Organic energy in a great room. Lively bar, tables full, real conversation. Excellent food required.</div></div>
+        <div class="row"><div class="row-label">Couture</div><div class="row-value">The room takes you somewhere else. Design-as-destination. You'd go for the room as much as the food.</div></div>
+        <div class="row"><div class="row-label">Pulse (formerly Electric)</div><div class="row-value">Scene, energy, the right crowd. Power tables. Alive at full tilt.</div></div>
+        <div class="row"><div class="row-label">Shadow</div><div class="row-value">Dark, considered, atmospheric. Mood is the amenity. You had to know it was there.</div></div>
+        <div class="row"><div class="row-label">Verandah <span style="font-size:10px;color:rgba(255,255,255,0.25);margin-left:6px;">Hidden from TABLE for beta</span></div><div class="row-value">Physically outdoors. The table itself is outside, under the sky. Still active in SOCIAL.</div></div>
+        <div class="subhead">SOCIAL Tiers</div>
+        <div class="row"><div class="row-label">Electric</div><div class="row-value">Scene, energy, the right crowd.</div></div>
+        <div class="row"><div class="row-label">Shadow</div><div class="row-value">Dark, considered, atmospheric.</div></div>
+        <div class="row"><div class="row-label">Verandah</div><div class="row-value">Outdoor connection is the primary identity.</div></div>
+        <div class="row"><div class="row-label">Gallery</div><div class="row-value">Design you feel before you see. Intimate, selective.</div></div>
+      </div>
+    </div>
+
+    <!-- 12: Discovery Mandate -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <span class="section-title">Discovery Mandate</span>
+      </div>
+      <div class="section-body amber">
+        <div class="callout gold-hi">
+          <p class="serif">"Before you pick a venue, sweep the full geography and the full reference stack."</p>
+        </div>
+        <div class="row"><div class="row-label">Geographic sweep</div><div class="row-value">Claude is explicitly instructed not to anchor to the main luxury hotel corridor or the first results that surface. The full metro geography is always in scope.</div></div>
+        <div class="row"><div class="row-label">Reference sweep</div><div class="row-value">Local awards ('Aipono, Hale 'Aina, James Beard nominees), global credentials (Relais &amp; Châteaux, Michelin, Forbes), local publications (Maui No Ka 'Oi, Phoenix Magazine, The Infatuation city guides).</div></div>
+        <div class="row"><div class="row-label">Why it was added</div><div class="row-value">Maui TABLE deep-dive (June 2026) revealed that default AI behavior missed The Restaurant at Hotel Wailea (Relais &amp; Châteaux), nyloS (14-seat chef's table, 'Aipono Gold), and Nobu Maui. All three required explicit reference sweep to surface.</div></div>
+      </div>
+    </div>
+
+    <!-- 13: Multi-Env Wild Card -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">13</span>
+        <span class="section-title">Multi-Environment Wild Card System</span>
+      </div>
+      <div class="section-body blue">
+        <div class="row"><div class="row-label">Detection</div><div class="row-value">server.js scans all seed entries for the current market + category. Any venue appearing in 2+ environment entries is flagged as a multi-environment venue and promoted as a priority wild card candidate.</div></div>
+        <div class="row"><div class="row-label">How to create</div><div class="row-value">Add a separate seed entry for each environment the venue qualifies in. Same name, same city, same market, same category — different id and environment value. The detection code finds both entries and flags the venue automatically.</div></div>
+        <div class="row"><div class="row-label">Example (Maui)</div><div class="row-value">KOAST seeded as both Provision and Verandah. Mama's Fish House as both Couture and Provision. Cane &amp; Canoe as both Couture and Verandah.</div></div>
+      </div>
+    </div>
+
+    <!-- 14: Chain Disqualifiers -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">14</span>
+        <span class="section-title">Chain Disqualifiers — STAY vs TABLE</span>
+      </div>
+      <div class="section-body red">
+        <div class="callout">
+          <p>Hotel chain disqualifiers apply <strong>to STAY recommendations only</strong>. A great restaurant at a disqualified hotel still qualifies for TABLE on food quality, environment, and experience alone.</p>
+        </div>
+        <div class="subhead">STAY Disqualified (Restaurants Still Qualify for TABLE)</div>
+        <div class="row"><div class="row-value">Marriott (including JW Marriott, Autograph Collection, Renaissance)</div></div>
+        <div class="row"><div class="row-value">Westin / Sheraton / W Hotels / Le Méridien (Marriott portfolio)</div></div>
+        <div class="row"><div class="row-value">Hyatt Regency / Hyatt Place / Hyatt Centric / Thompson Hotels</div></div>
+        <div class="row"><div class="row-value">Hilton / DoubleTree / Embassy Suites / Curio Collection / Conrad</div></div>
+        <div class="row"><div class="row-value">Wyndham / Ramada / La Quinta / Days Inn</div></div>
+      </div>
+    </div>
+
+    <!-- 15: AI-First Architecture -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">15</span>
+        <span class="section-title">AI-First Architecture</span>
+      </div>
+      <div class="section-body blue">
+        <div class="callout blue-bg">
+          <p class="serif">"Claude's training knowledge is the engine. Seed data is the reference."</p>
+        </div>
+        <div class="row"><div class="row-label">What seed data does</div><div class="row-value">Quality anchor: shows Claude what ultra-luxury looks like in this specific market. Environment calibration: confirmed classifications give Claude concrete examples to reason from.</div></div>
+        <div class="row"><div class="row-label">What seed data does NOT do</div><div class="row-value">Constrain Claude to a pre-approved list. Claude freely surfaces venues it knows from training regardless of seed. Gate new markets — a city with zero seed venues still returns quality curations.</div></div>
+        <div class="row"><div class="row-label">Adding a new market</div><div class="row-value">Step 1: add market to MARKETS object in seed.js (name, state, metro cities). Step 2: add pill to MARKETS array in DashboardPage.jsx. That's it — Claude curates immediately. Seed venues are optional and can be added any time.</div></div>
+      </div>
+    </div>
+
+    <!-- 16: The Scout -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">16</span>
+        <span class="section-title">The Scout — Reservation Platform Detector</span>
+      </div>
+      <div class="section-body amber">
+        <div class="callout gold-hi">
+          <p class="serif">"The Scout goes ahead of the member, finds the reservation door, and comes back with the right link."</p>
+        </div>
+        <div class="row"><div class="row-label">Trigger</div><div class="row-value">POST /api/find-reservation — called when a member views a venue detail page. Fires once, caches 30 days.</div></div>
+        <div class="row"><div class="row-label">4-step pipeline</div><div class="row-value">00 Supabase Cache → 01 Google Places (get website) → 02 Puppeteer headless crawl (PRIMARY) → 03 HTTP regex scan (FALLBACK) → 04 Google CSE fallback (scoped to OpenTable, Resy, SevenRooms, Tock domains)</div></div>
+        <div class="row"><div class="row-label">Cache policy</div><div class="row-value">Successful finds only — 30-day TTL. "Not found" results are never cached so The Scout retries fresh on every visit until it finds something.</div></div>
+        <div class="row"><div class="row-label">Reserve button fallback</div><div class="row-value">If platform found: links directly. If only website found: { platform: 'Website', url: venueWebsite }. If nothing found: Reserve button hidden or disabled.</div></div>
+      </div>
+    </div>
+
+    <!-- Database Schema -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">17</span>
+        <span class="section-title">Database Schema</span>
+      </div>
+      <div class="section-body gold">
+        <div class="subhead">Supabase Tables</div>
+        <div class="row"><div class="row-label">members</div><div class="row-value">id, first_name, last_name, email (UNIQUE), phone, city/city_2/city_3, invite_code (UNIQUE), member_number, invited_at, accepted_at, profile_completed_at, status (invited·accepted·complete), speed_profile (JSONB), stay_answers/table_answers/social_answers (JSONB)</div></div>
+        <div class="row"><div class="row-label">invite_requests</div><div class="row-value">id, full_name, first_name, last_name, email, city, net_worth, travel_frequency, note, status (pending·approved·rejected·waitlisted), created_at</div></div>
+        <div class="row"><div class="row-label">venue_ai_content</div><div class="row-value">venue_name (PK), market, category, environment, feels_like, match_note, description, luxury_credential — Permanent, no TTL</div></div>
+        <div class="row"><div class="row-label">venue_photos</div><div class="row-value">venue_name (PK), photos (text[]), fetched_at — 7-day TTL</div></div>
+        <div class="row"><div class="row-label">venue_reservation_links</div><div class="row-value">venue_name (PK), city, platform, url, checked_at — 30-day TTL</div></div>
+        <div class="row"><div class="row-label">market_venue_cache</div><div class="row-value">id (PK), market, intent, environment, venues (JSONB), wild_card (JSONB), updated_at — Manual clear only (SELECTION CACHE: Layer 0)</div></div>
+        <div class="subhead">Speed Profile SQL Override</div>
+        <div class="code-block">
+          <span class="kw">UPDATE</span> members<br>
+          <span class="kw">SET</span> speed_profile = <span class="str">'{"stay":"atelier","table":"couture","social":"shadow","stayLabel":"The Atelier","tableLabel":"The Couture","socialLabel":"The Shadow"}'</span><br>
+          <span class="kw">WHERE</span> email = <span class="str">'member@example.com'</span>;
+        </div>
+      </div>
+    </div>
+
+    <!-- Future Features -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">18</span>
+        <span class="section-title">Future Features</span>
+      </div>
+      <div class="section-body purple">
+        <div class="row"><div class="row-label">Curate Book (embedded reservations)</div><div class="row-value">Built, off by default. Flip <code>USE_EMBEDDED_BOOKING = true</code> in VenueDetailPage.jsx line 11 to re-enable instantly. Off because Tock blocks iframe embedding (X-Frame-Options: DENY).</div></div>
+        <div class="row"><div class="row-label">Affiliate IDs</div><div class="row-value">OpenTable: email affiliates@opentable.com. Resy: email partnerships@resy.com. Once live, add applyAffiliateParams() in server.js to append before URL is returned.</div></div>
+        <div class="row"><div class="row-label">Google OAuth — production</div><div class="row-value">Currently in Testing mode. Needs Publish in Google Cloud Console to allow accounts outside the test list. Task #36.</div></div>
+        <div class="subhead">Beta Re-enable Checklist</div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Add Verandah back to EXPLORE_SPEEDS.dining in DashboardPage.jsx</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Add Vanguard back to EXPLORE_SPEEDS.stay in DashboardPage.jsx</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Uncomment additional markets in MARKETS array (Bellevue, Miami, Nashville, etc.)</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Publish Google OAuth app (Testing → Production)</span></div>
+      </div>
+    </div>
+
+    <!-- Definition Drift Rule -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">99</span>
+        <span class="section-title">The Definition Drift Rule</span>
+      </div>
+      <div class="section-body red">
+        <div class="callout red-bg">
+          <p><strong>The single biggest source of classification errors in this project</strong> was definitions evolving in conversation while old code ran with stale definitions. Four Seasons was tagged Estate in the AI prompt while Vanguard was simultaneously defined as brand flagships. These errors required human intervention to catch, multiple times.</p>
+        </div>
+        <div class="subhead">The Rule: Definition First. Always.</div>
+        <div class="row"><div class="row-label">1. Definitions live here</div><div class="row-value">This document is the source of truth. Not the AI prompt. Not seed.js. Not a conversation. Here.</div></div>
+        <div class="row"><div class="row-label">2. Order of operations</div><div class="row-value">Update this doc → update ENV_DEFINITIONS in server.js → update seed.js. In that order. Never the reverse.</div></div>
+        <div class="row"><div class="row-label">3. Never update code mid-conversation</div><div class="row-value">Confirming a definition in chat and immediately coding it without updating this doc is how drift happens. Lock it here first.</div></div>
+        <div class="subhead">Pre-Change Checklist</div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Definition updated in this doc</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">ENV_DEFINITIONS in server.js matches this doc</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Named examples in AI prompt match this doc</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">All properties in seed.js classified per this doc</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Hit RESET on dashboard after deploying to clear Zustand cache</span></div>
+        <div class="check-item"><span class="pass">✓</span><span class="text-pass">Clear market_venue_cache in Supabase for any affected markets</span></div>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.9;">
+      <strong style="color:rgba(255,255,255,0.3)">Cost per AI run:</strong> ~$0.004–0.007 USD. One Claude Sonnet 4.6 call (max 1,200 output tokens) ≈ $0.004–0.006. Google Places photo lookups ≈ $0.002. Cache hits cost $0.00. &nbsp;·&nbsp;
+      <strong style="color:rgba(255,255,255,0.3)">The Scout:</strong> Puppeteer crawl fires once per venue (~10s), cached 30 days. All subsequent Reserve button taps serve from cache in under 100ms. &nbsp;·&nbsp;
+      <strong style="color:rgba(255,255,255,0.3)">Doc version:</strong> June 30, 2026 — includes surrounding toggle v2, quality-over-count principle, environment_blocked field, Verandah definition update, beta paring.
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── SHA-256 helper ──────────────────────────────────────────────────────────
+  async function sha256(text) {
+    const data = new TextEncoder().encode(text);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // ── Auth state ──────────────────────────────────────────────────────────────
+  function getAuthState() {
+    const user = localStorage.getItem('curate_admin_user');
+    const hash = localStorage.getItem('curate_admin_hash');
+    const session = sessionStorage.getItem('curate_admin_session');
+    if (!user || !hash) return 'setup';
+    if (!session) return 'login';
+    return 'authenticated';
+  }
+
+  function showScreen(name) {
+    document.getElementById('screen-setup').style.display = 'none';
+    document.getElementById('screen-login').style.display = 'none';
+    document.getElementById('screen-docs').style.display = 'none';
+    if (name === 'setup') document.getElementById('screen-setup').style.display = 'flex';
+    if (name === 'login') document.getElementById('screen-login').style.display = 'flex';
+    if (name === 'docs')  document.getElementById('screen-docs').style.display = 'block';
+  }
+
+  function showAuthError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+  function clearAuthError(id) {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    el.textContent = '';
+  }
+
+  // ── Setup ───────────────────────────────────────────────────────────────────
+  async function handleSetup() {
+    clearAuthError('setup-error');
+    const user = document.getElementById('setup-user').value.trim();
+    const pass = document.getElementById('setup-pass').value;
+    const confirm = document.getElementById('setup-confirm').value;
+    if (!user) { showAuthError('setup-error', 'Username is required.'); return; }
+    if (pass.length < 8) { showAuthError('setup-error', 'Password must be at least 8 characters.'); return; }
+    if (pass !== confirm) { showAuthError('setup-error', 'Passwords do not match.'); return; }
+    const hash = await sha256(pass);
+    localStorage.setItem('curate_admin_user', user);
+    localStorage.setItem('curate_admin_hash', hash);
+    sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
+    showScreen('docs');
+  }
+
+  // ── Login ───────────────────────────────────────────────────────────────────
+  async function handleLogin() {
+    clearAuthError('login-error');
+    const user = document.getElementById('login-user').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const storedUser = localStorage.getItem('curate_admin_user');
+    const storedHash = localStorage.getItem('curate_admin_hash');
+    if (!user || !pass) { showAuthError('login-error', 'Username and password required.'); return; }
+    const hash = await sha256(pass);
+    if (user !== storedUser || hash !== storedHash) {
+      showAuthError('login-error', 'Invalid credentials.');
+      return;
+    }
+    sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
+    showScreen('docs');
+  }
+
+  // ── Sign out ────────────────────────────────────────────────────────────────
+  function handleSignOut() {
+    sessionStorage.removeItem('curate_admin_session');
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    showScreen('login');
+  }
+
+  // ── Password modal ──────────────────────────────────────────────────────────
+  function openPwModal() {
+    document.getElementById('modal-pw').classList.add('open');
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value = '';
+    document.getElementById('pw-confirm').value = '';
+    clearAuthError('pw-error');
+    document.getElementById('pw-success').style.display = 'none';
+  }
+  function closePwModal() {
+    document.getElementById('modal-pw').classList.remove('open');
+  }
+
+  async function handlePwChange() {
+    clearAuthError('pw-error');
+    document.getElementById('pw-success').style.display = 'none';
+    const current = document.getElementById('pw-current').value;
+    const newPw   = document.getElementById('pw-new').value;
+    const confirm = document.getElementById('pw-confirm').value;
+    const storedHash = localStorage.getItem('curate_admin_hash');
+    const currentHash = await sha256(current);
+    if (currentHash !== storedHash) { showAuthError('pw-error', 'Current password is incorrect.'); return; }
+    if (newPw.length < 8) { showAuthError('pw-error', 'New password must be at least 8 characters.'); return; }
+    if (newPw !== confirm) { showAuthError('pw-error', 'New passwords do not match.'); return; }
+    const newHash = await sha256(newPw);
+    localStorage.setItem('curate_admin_hash', newHash);
+    const s = document.getElementById('pw-success');
+    s.textContent = 'Password updated successfully.';
+    s.style.display = 'block';
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value = '';
+    document.getElementById('pw-confirm').value = '';
+  }
+
+  // ── Keyboard: Enter to submit ───────────────────────────────────────────────
+  document.getElementById('setup-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handleSetup(); });
+  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+  document.getElementById('pw-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handlePwChange(); });
+
+  // ── Close modal on backdrop click ───────────────────────────────────────────
+  document.getElementById('modal-pw').addEventListener('click', function(e) {
+    if (e.target === this) closePwModal();
+  });
+
+  // ── Init ────────────────────────────────────────────────────────────────────
+  (function init() {
+    const state = getAuthState();
+    showScreen(state === 'authenticated' ? 'docs' : state);
+  })();
+</script>
+</body>
+</html>
