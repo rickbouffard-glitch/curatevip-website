@@ -1263,11 +1263,69 @@
           <div class="moat-why">Why it matters: once a member speaks the vocabulary, switching to a competitor requires relearning how to express their own preferences. This is a powerful retention mechanism with no direct competitor parallel.</div>
         </div>
 
-        <div class="moat-item" style="border-bottom:none;">
+        <div class="moat-item">
           <div class="moat-title">The Surrounding Areas Architecture</div>
           <div class="moat-detail">The surrounding areas system — with per-market labels, auto-re-curation on toggle, server-side filtering, and seed-level flags — is an expansion mechanism that allows CURATE to deepen each market without adding new markets. Most travel products define geography by city. CURATE defines it by experience radius, which scales laterally (more surrounding areas) as well as vertically (more markets).</div>
           <div class="moat-why">Why it matters: it gives CURATE a natural growth path within existing markets before requiring the operational investment of new market entry.</div>
         </div>
+
+        <div class="moat-item" style="border-bottom:none;">
+          <div class="moat-title">The Live Credential Intelligence Layer <span class="new-badge" style="font-size:9px;vertical-align:middle;">New — June 30</span></div>
+          <div class="moat-detail">Before every curation, the system fires 22 parallel queries via Brave Search API across authoritative sources — Michelin, James Beard, Forbes, Robb Report, Condé Nast Traveler, Leading Hotels of the World, and 16 others — and runs the results through Claude Haiku to extract structured credential signals. This signal block is fed to Claude Sonnet alongside the seed data and member profile. The AI does not recall from training; it reasons from live intelligence. A custom attribution rule — enforced at three separate layers of the pipeline — prevents the most common AI curation error: attributing a chef's prior awards to their current restaurant. Results are cached 7 days per market. See Section H1 for the full technical pipeline.</div>
+          <div class="moat-why">Why it matters: every competitor who builds an AI curation product will encounter the same credential misattribution errors and the same "hallucinated award" problems. CURATE has already identified, documented, and systematically enforced the fixes. That institutional knowledge — encoded into the seed data, the extraction prompt, the signal formatter, and the Sonnet curation prompt — is not available from any API.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- H1: Live Intelligence Pipeline — Investor Technical Brief -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">H1</span>
+        <span class="section-title">Live Intelligence Pipeline — Technical Architecture <span class="new-badge">New — June 30</span></span>
+      </div>
+      <div class="section-body purple">
+        <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.85;margin-bottom:24px;">This section is the investor-facing technical brief. It answers in one read: what exactly happens between a member tapping "TABLE" and receiving three curated venue cards — and why that pipeline cannot be replicated by a competitor who simply calls the same AI APIs.</p>
+
+        <div class="subhead">The Core Claim</div>
+        <div class="callout" style="margin-top:8px;margin-bottom:24px;">
+          <p>CurateVIP does not ask Claude "what are the best restaurants in Seattle." It feeds Claude a structured block of live credential intelligence — fetched seconds before curation — alongside a proprietary seed library of manually confirmed venues and a member-specific speed profile. The AI's job is not to recall; it is to judge, filter, and match. That distinction is the entire moat.</p>
+        </div>
+
+        <div class="subhead">Phase 1 — Live Credential Intelligence</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.75;margin-bottom:16px;">Fires on every cache miss. Results cached 7 days per market + category — a single API cost amortized across hundreds of curations.</p>
+
+        <div class="row"><div class="row-label">Step 1 — Brave Search queries</div><div class="row-value">The system fires parallel queries via Brave Search API across authoritative sources — <strong>8 queries for TABLE</strong> (Michelin Guide, James Beard Foundation, Forbes Five Star, Robb Report Dining, Condé Nast Traveler, The World's 50 Best Restaurants, Eater, Wine Spectator), <strong>9 queries for STAY</strong> (Forbes Five Star, Condé Nast Traveler, Travel + Leisure, Leading Hotels of the World, Small Luxury Hotels, Preferred Hotels, Relais &amp; Châteaux, Mr &amp; Mrs Smith, Design Hotels), and <strong>5 queries for SOCIAL</strong>. All queries run in <code>Promise.all()</code> — the full sweep completes in parallel, not sequentially.</div></div>
+        <div class="row"><div class="row-label">Step 2 — Haiku extraction</div><div class="row-value">Raw search snippets are passed to Claude Haiku with a structured extraction prompt. Haiku returns <code>[{ name, credentials[] }]</code> — venue names mapped to credential signals. Haiku does not rank or curate; it only extracts. Cost: ~$0.0003 per run. Haiku receives a CRITICAL rule at extraction time: chef awards follow venues, not chefs. A James Beard Award earned at a prior employer is context only — it does not become a credential for the chef's current restaurant.</div></div>
+        <div class="row"><div class="row-label">Step 3 — Signal block assembly</div><div class="row-value"><code>formatSignalsBlock()</code> in <code>websearch.js</code> assembles the structured extraction output into a text block formatted for Claude Sonnet. The block lists each credentialed venue and its signals. It also states explicitly: credentials are DISCOVERY SIGNALS, not admission tickets. They tell Sonnet which venues have passed external quality checks — Sonnet still applies the full CCTF protocol to decide whether they belong in this member's curation.</div></div>
+        <div class="row"><div class="row-label">Output</div><div class="row-value">The signal block, plus a count of credentialed venues found (<code>credentialedVenueCount</code>), is returned to <code>server.js</code> and injected into the Sonnet prompt. The member-facing spinner shows the sources being checked in real time — 8–9 sources spread across 25 seconds — so members see the work happening, not a loading spinner.</div></div>
+
+        <div class="subhead" style="margin-top:24px;">Phase 2 — Personalized Curation</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.75;margin-bottom:16px;">Cache-first. On a hit, Phase 2 costs $0.00 and returns in milliseconds. On a miss, Sonnet runs once and the result is cached asynchronously.</p>
+
+        <div class="row"><div class="row-label">Input layer 1 — Live credentials</div><div class="row-value">The signal block from Phase 1 is prepended to the Sonnet prompt. Sonnet sees which venues the live web currently recognizes as credentialed in this market and category.</div></div>
+        <div class="row"><div class="row-label">Input layer 2 — Seed calibration</div><div class="row-value">The proprietary seed database (<code>seed.js</code>) contains every venue that has been manually researched, evaluated against the quality floor, classified by CCTF environment, and confirmed. Seed data tells Claude what ultra-luxury looks like in each specific market — it is a calibration layer, not a simple allowlist. Blocked venues in seed.js are excluded from the calibration prompt entirely, so Claude never considers them.</div></div>
+        <div class="row"><div class="row-label">Input layer 3 — Member speed profile</div><div class="row-value">The member's Speed Tier (Couture / Provision / Shadow / Vanguard / etc.) is passed as a named profile with its full characteristic description. Sonnet matches venue character to member profile — a Shadow member should not receive a Couture venue, even if it's the most credentialed property in the market.</div></div>
+        <div class="row"><div class="row-label">Input layer 4 — Credential attribution enforcement</div><div class="row-value">The Sonnet prompt contains a CREDENTIAL INTERPRETATION section: "Is this credential FOR THIS VENUE, or did the chef earn it at a previous restaurant?" This is the final firewall against the most common AI curation error — attributing a chef's prior awards to their current property.</div></div>
+        <div class="row"><div class="row-label">Output — Three post-filter guards</div><div class="row-value">After Sonnet returns its venue list, three server-side filters run in sequence: (1) Seed-block filter — removes any venue marked <code>blocked: true</code>. (2) Environment-block filter — removes venues blocked for the specific environment requested (e.g. Canlis blocked for Verandah because it's indoors). (3) Surrounding filter — removes venues in surrounding areas if the member hasn't toggled that option. Final output: up to 3 curated venues + 1 Wild Card. Fewer returned if confidence isn't there — a short honest list beats a padded one.</div></div>
+
+        <div class="subhead" style="margin-top:24px;">What a Competitor Would Need to Replicate This</div>
+        <div class="callout" style="margin-top:8px;margin-bottom:8px;">
+          <p><strong>Brave Search API access:</strong> commodity. Any developer can get this in 10 minutes.</p>
+          <p style="margin-top:8px;"><strong>Claude API access:</strong> commodity. Any developer can get this in 10 minutes.</p>
+          <p style="margin-top:8px;"><strong>The CCTF vocabulary and Speed Tier taxonomy:</strong> not replicable without the same iteration history. Each of the 11 Speed Tier names encodes precise definitions, disqualifiers, and worked examples developed over multiple cycles. A competitor can copy the names; they cannot copy what the names mean in the context of a curation decision.</p>
+          <p style="margin-top:8px;"><strong>The seed database:</strong> not replicable without years of manual research. Every entry was evaluated, classified, and confirmed. Blocked entries encode hard-won decisions (Tomo Seattle) that prevent the specific class of errors that make AI curation untrustworthy. A competitor starting today gets generic LLM responses. CURATE's AI gets market-calibrated responses anchored to confirmed classifications.</p>
+          <p style="margin-top:8px;"><strong>The attribution rules and worked-example library:</strong> the James Beard / Canlis / Tomo pattern is documented, seeded into the extraction prompt, the signal block formatter, and the Sonnet curation prompt. A competitor would need to independently discover and document every category of misattribution error. CURATE already has them — and adds new ones as edge cases emerge.</p>
+          <p style="margin-top:8px;"><strong>The three-layer post-filter chain:</strong> each filter encodes classification decisions that took months to surface. Environment blocking (Canlis ≠ Verandah) requires knowing the venue, knowing the environment definition, and deciding to encode the block at the seed level. A competitor cannot guess these entries; they can only discover them by watching the system make errors, which requires having members who notice and report them.</p>
+        </div>
+        <div class="callout" style="margin-top:12px;background:rgba(120,80,220,0.12);border-left-color:rgba(120,80,220,0.5);">
+          <p><strong>The defensible summary for an investor:</strong> The APIs are commodity. The intelligence layered on top of them — seed data, classification vocabulary, attribution rules, post-filter chain, member profile matching — is not. It compounds with every new market, every new blocked venue, every new edge case discovered and encoded. A competitor who launches tomorrow starts with the same APIs and zero of the institutional knowledge. That gap widens, not narrows, with time.</p>
+        </div>
+
+        <div class="subhead" style="margin-top:24px;">Pipeline Cost Structure</div>
+        <div class="row"><div class="row-label">Phase 1 (cache miss)</div><div class="row-value">Brave Search API: ~$0.001–0.003 per run. Claude Haiku extraction: ~$0.0003 per run. Amortized across 7 days of curations per market/category.</div></div>
+        <div class="row"><div class="row-label">Phase 2 (cache miss)</div><div class="row-value">Claude Sonnet: ~$0.004–0.007 per run. Amortized across all curations served from cache for that market + intent + environment combination.</div></div>
+        <div class="row"><div class="row-label">Cached curation</div><div class="row-value">$0.00 AI cost. Infrastructure costs only. The majority of member curations in an active market are served from cache.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Per-member economics</div><div class="row-value">A member who curates 10 times a week in the same market generates, on average, less than $0.01/week in AI API cost once the cache is warm. The economics improve with member density in each market.</div></div>
       </div>
     </div>
 
@@ -1311,190 +1369,5 @@
         </div>
 
         <div class="version-row">
-          <div class="version-tag">v1.6</div>
-          <div><div class="version-date">June 30, 2026</div><div class="version-notes">Live credential source spinner added: sequential display of all sources checked (TABLE: 8, STAY: 9, SOCIAL: 5), spread across ~25 seconds using Math.floor(25000 / msgCount). Status SSE event added — backend sends credentialedVenueCount after Brave/Haiku extraction so frontend can display "Found X verified venues · Curating just for you…". "Paired X matches just for you" message added before venue checkmark sequence. Credential Attribution Rule formalized and enforced at three layers (Haiku prompt, formatSignalsBlock guidance, server.js CREDENTIAL INTERPRETATION section): chef awards from prior employers do not transfer to current restaurant. Tomo Seattle added to seed.js with blocked: true — canonical example of chef-pedigree misattribution. Social tab hidden for Phase 1 with "Coming Soon" badge (opacity 0.4, disabled, non-clickable) — single-line re-enable when ready. Admin credentials table created in Supabase (SHA-256 hashed, username/password_hash schema) with /api/admin-auth and /api/admin-set-password endpoints on Railway backend.</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- J: Confidentiality -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">J</span>
-        <span class="section-title">Confidentiality &amp; Trade Secret Designation</span>
-      </div>
-      <div class="section-body red">
-        <div class="callout red-bg">
-          <p><strong>TRADE SECRET NOTICE.</strong> The methodology, taxonomy, decision protocol, classification rules, worked examples, seed data architecture, wild card logic, and version history contained in this document constitute trade secrets of RMK Group LLC, DBA CURATEvip, protected under the Defend Trade Secrets Act (18 U.S.C. § 1836 et seq.) and applicable state law.</p>
-        </div>
-        <div class="row"><div class="row-label">Reasonable measures taken</div><div class="row-value">This document is stored behind password-authenticated access. The password is hashed (SHA-256) and stored in a private database. Access is limited to the founder, authorized legal counsel, and qualified investors under executed NDA and IP-assignment agreements. No portion of this methodology is published, open-sourced, or disclosed in marketing materials.</div></div>
-        <div class="row"><div class="row-label">What is protected</div><div class="row-value">(1) The Speed Tier vocabulary and definitions. (2) The classification decision protocol. (3) The quality floor criteria and named disqualifiers. (4) The two-axis matching methodology. (5) The wild card adjacency logic. (6) The seed data and its classification assignments. (7) The worked-example library. (8) The surrounding areas architecture. (9) The three-filter post-processing chain. (10) The AI prompt engineering implementing the above.</div></div>
-        <div class="row"><div class="row-label">What is not protected</div><div class="row-value">The names of individual venues (publicly known). The fact that CURATE uses AI (disclosed in marketing). The general categories (STAY, TABLE, SOCIAL). The existence of a speed profile system (disclosed in member onboarding). These are the surface; the methodology is what lies beneath.</div></div>
-        <div class="row"><div class="row-label">Disclosure protocol</div><div class="row-value">Before sharing any portion of this document with any third party (investors, potential acquirers, contractors, legal counsel), obtain an executed NDA with IP-assignment clause and log the disclosure with date, recipient, and scope. Treat any sharing of the classification decision protocol or worked examples with the same care as sharing source code.</div></div>
-        <div class="row"><div class="row-label">Patent potential</div><div class="row-value">The two-axis classification methodology, the surrounding areas expansion architecture, and the multi-environment wild card detection system may contain patentable elements. This determination requires review by a qualified IP attorney. A provisional patent application should be evaluated — it is inexpensive, preserves a priority date, and allows "patent pending" to be claimed during any deal process. Do not over-invest here; trade secret is the primary protection and is more certain. But the provisional is worth the conversation.</div></div>
-        <div class="callout" style="margin-top:20px;border-color:rgba(186,159,117,0.3);">
-          <p style="font-size:12px;line-height:1.7;">Document prepared: June 30, 2026. Owner: Rick Bouffard, RMK Group LLC. Status: Active trade secret. Review annually or upon any material change to the methodology. Consult IP counsel before any M&amp;A or licensing discussion that would require disclosure of this material.</p>
-        </div>
-      </div>
-    </div>
-
-  </div>
-  </div><!-- end tab-ip -->
-
-</div>
-
-<script>
-  const API = 'https://api.curatevip.ai';
-
-  // ── SHA-256 helper ──────────────────────────────────────────────────────────
-  async function sha256(text) {
-    const data = new TextEncoder().encode(text);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  // ── Show/hide screens ───────────────────────────────────────────────────────
-  function showScreen(name) {
-    document.getElementById('screen-login').style.display = 'none';
-    document.getElementById('screen-docs').style.display = 'none';
-    if (name === 'login') document.getElementById('screen-login').style.display = 'flex';
-    if (name === 'docs')  document.getElementById('screen-docs').style.display = 'block';
-  }
-
-  function showAuthError(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-  function clearAuthError(id) {
-    const el = document.getElementById(id);
-    el.style.display = 'none';
-    el.textContent = '';
-  }
-
-  // ── Login ───────────────────────────────────────────────────────────────────
-  async function handleLogin() {
-    clearAuthError('login-error');
-    const user = document.getElementById('login-user').value.trim();
-    const pass = document.getElementById('login-pass').value;
-    if (!user || !pass) { showAuthError('login-error', 'Username and password required.'); return; }
-
-    const btn = document.querySelector('#screen-login .auth-btn');
-    btn.textContent = 'Signing in…';
-    btn.disabled = true;
-
-    try {
-      const hash = await sha256(pass);
-      const res = await fetch(API + '/api/admin-auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: user, passwordHash: hash })
-      });
-      const data = await res.json();
-      if (data.ok) {
-        // Store username in sessionStorage so password change knows who is logged in
-        sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
-        sessionStorage.setItem('curate_admin_user', user);
-        showScreen('docs');
-      } else {
-        showAuthError('login-error', 'Invalid credentials.');
-      }
-    } catch (err) {
-      showAuthError('login-error', 'Could not reach server. Check your connection.');
-    } finally {
-      btn.textContent = 'Sign In';
-      btn.disabled = false;
-    }
-  }
-
-  // ── Sign out ────────────────────────────────────────────────────────────────
-  function handleSignOut() {
-    sessionStorage.removeItem('curate_admin_session');
-    sessionStorage.removeItem('curate_admin_user');
-    document.getElementById('login-user').value = '';
-    document.getElementById('login-pass').value = '';
-    showScreen('login');
-  }
-
-  // ── Password modal ──────────────────────────────────────────────────────────
-  function openPwModal() {
-    document.getElementById('modal-pw').classList.add('open');
-    document.getElementById('pw-current').value = '';
-    document.getElementById('pw-new').value = '';
-    document.getElementById('pw-confirm').value = '';
-    clearAuthError('pw-error');
-    document.getElementById('pw-success').style.display = 'none';
-  }
-  function closePwModal() {
-    document.getElementById('modal-pw').classList.remove('open');
-  }
-
-  async function handlePwChange() {
-    clearAuthError('pw-error');
-    document.getElementById('pw-success').style.display = 'none';
-    const current  = document.getElementById('pw-current').value;
-    const newPw    = document.getElementById('pw-new').value;
-    const confirm  = document.getElementById('pw-confirm').value;
-    const username = sessionStorage.getItem('curate_admin_user') || 'rick';
-
-    if (newPw.length < 8) { showAuthError('pw-error', 'New password must be at least 8 characters.'); return; }
-    if (newPw !== confirm) { showAuthError('pw-error', 'New passwords do not match.'); return; }
-
-    const btn = document.querySelector('#modal-pw .auth-btn');
-    btn.textContent = 'Updating…';
-    btn.disabled = true;
-
-    try {
-      const currentHash = await sha256(current);
-      const newHash     = await sha256(newPw);
-      const res = await fetch(API + '/api/admin-set-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, currentHash, newHash })
-      });
-      const data = await res.json();
-      if (data.ok) {
-        const s = document.getElementById('pw-success');
-        s.textContent = 'Password updated successfully.';
-        s.style.display = 'block';
-        document.getElementById('pw-current').value = '';
-        document.getElementById('pw-new').value = '';
-        document.getElementById('pw-confirm').value = '';
-      } else {
-        showAuthError('pw-error', data.error || 'Update failed.');
-      }
-    } catch (err) {
-      showAuthError('pw-error', 'Could not reach server.');
-    } finally {
-      btn.textContent = 'Update Password';
-      btn.disabled = false;
-    }
-  }
-
-  // ── Keyboard shortcuts ──────────────────────────────────────────────────────
-  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
-  document.getElementById('pw-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handlePwChange(); });
-
-  // ── Close modal on backdrop click ───────────────────────────────────────────
-  document.getElementById('modal-pw').addEventListener('click', function(e) {
-    if (e.target === this) closePwModal();
-  });
-
-  // ── Init ────────────────────────────────────────────────────────────────────
-  // ── Tab switching ───────────────────────────────────────────────────────────
-  function switchTab(name, btn) {
-    document.getElementById('tab-system').classList.remove('active');
-    document.getElementById('tab-ip').classList.remove('active');
-    document.getElementById('tab-' + name).classList.add('active');
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    window.scrollTo(0, 0);
-  }
-
-  (function init() {
-    const session = sessionStorage.getItem('curate_admin_session');
-    showScreen(session ? 'docs' : 'login');
-  })();
-</script>
-</body>
-</html>
+          <div class="version-tag">v1.7</div>
+          <div><div class="version-date">June 30, 2026</div><div class="version-notes">New Section H1 — Live Intelligence
