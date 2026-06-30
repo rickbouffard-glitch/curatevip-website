@@ -1273,7 +1273,7 @@
         <div class="moat-item" style="border-bottom:none;">
           <div class="moat-title">The Live Credential Intelligence Layer <span class="new-badge" style="font-size:9px;vertical-align:middle;">New — June 30</span></div>
           <div class="moat-detail">Before every curation, the system fires 22 parallel queries via Brave Search API across authoritative sources — Michelin, James Beard, Forbes, Robb Report, Condé Nast Traveler, Leading Hotels of the World, and 16 others — and runs the results through Claude Haiku to extract structured credential signals. This signal block is fed to Claude Sonnet alongside the seed data and member profile. The AI does not recall from training; it reasons from live intelligence. A custom attribution rule — enforced at three separate layers of the pipeline — prevents the most common AI curation error: attributing a chef's prior awards to their current restaurant. Results are cached 7 days per market. See Section H1 for the full technical pipeline.</div>
-          <div class="moat-why">Why it matters: every competitor who builds an AI curation product will encounter the same credential misattribution errors and the same "hallucinated award" problems. CURATE has already identified, documented, and systematically enforced the fixes. That institutional knowledge — encoded into the seed data, the extraction prompt, the signal formatter, and the Sonnet curation prompt — is not available from any API.</div>
+          <div class="moat-why">Why it matters: every competitor who builds an AI curation product will encounter the same credential misattribution errors and the same "hallucinated award" problems. CurateVIP has already identified, documented, and systematically enforced the fixes. That institutional knowledge — encoded into the seed data, the extraction prompt, the signal formatter, and the Sonnet curation prompt — is not available from any API.</div>
         </div>
       </div>
     </div>
@@ -1314,8 +1314,8 @@
           <p><strong>Brave Search API access:</strong> commodity. Any developer can get this in 10 minutes.</p>
           <p style="margin-top:8px;"><strong>Claude API access:</strong> commodity. Any developer can get this in 10 minutes.</p>
           <p style="margin-top:8px;"><strong>The CCTF vocabulary and Speed Tier taxonomy:</strong> not replicable without the same iteration history. Each of the 11 Speed Tier names encodes precise definitions, disqualifiers, and worked examples developed over multiple cycles. A competitor can copy the names; they cannot copy what the names mean in the context of a curation decision.</p>
-          <p style="margin-top:8px;"><strong>The seed database:</strong> not replicable without years of manual research. Every entry was evaluated, classified, and confirmed. Blocked entries encode hard-won decisions (Tomo Seattle) that prevent the specific class of errors that make AI curation untrustworthy. A competitor starting today gets generic LLM responses. CURATE's AI gets market-calibrated responses anchored to confirmed classifications.</p>
-          <p style="margin-top:8px;"><strong>The attribution rules and worked-example library:</strong> the James Beard / Canlis / Tomo pattern is documented, seeded into the extraction prompt, the signal block formatter, and the Sonnet curation prompt. A competitor would need to independently discover and document every category of misattribution error. CURATE already has them — and adds new ones as edge cases emerge.</p>
+          <p style="margin-top:8px;"><strong>The seed database:</strong> not replicable without years of manual research. Every entry was evaluated, classified, and confirmed. Blocked entries encode hard-won decisions (Tomo Seattle) that prevent the specific class of errors that make AI curation untrustworthy. A competitor starting today gets generic LLM responses. CurateVIP's AI gets market-calibrated responses anchored to confirmed classifications.</p>
+          <p style="margin-top:8px;"><strong>The attribution rules and worked-example library:</strong> the James Beard / Canlis / Tomo pattern is documented, seeded into the extraction prompt, the signal block formatter, and the Sonnet curation prompt. A competitor would need to independently discover and document every category of misattribution error. CurateVIP already has them — and adds new ones as edge cases emerge.</p>
           <p style="margin-top:8px;"><strong>The three-layer post-filter chain:</strong> each filter encodes classification decisions that took months to surface. Environment blocking (Canlis ≠ Verandah) requires knowing the venue, knowing the environment definition, and deciding to encode the block at the seed level. A competitor cannot guess these entries; they can only discover them by watching the system make errors, which requires having members who notice and report them.</p>
         </div>
         <div class="callout" style="margin-top:12px;background:rgba(120,80,220,0.12);border-left-color:rgba(120,80,220,0.5);">
@@ -1361,4 +1361,204 @@
 
         <div class="version-row">
           <div class="version-tag">v1.4</div>
-          <div><div class="version-date">June 2026</div><div class="version-notes"
+          <div><div class="version-date">June 2026</div><div class="version-notes">environment_blocked field added to seed schema. Verandah definition hardened: "the table itself is outside, under the sky, in open air" — eliminates glass-wall edge cases. Canlis and Goldfinch Tavern added to environment_blocked: ['Verandah']. Discovery Mandate formalized: geographic sweep + reference sweep required before any curation. Maui TABLE deep-dive surfaced nyloS, The Restaurant at Hotel Wailea, and Nobu Maui — all missed by default AI behavior without the mandate.</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.5</div>
+          <div><div class="version-date">June 30, 2026</div><div class="version-notes">Beta market paring to 4 active markets (Scottsdale, Seattle, Maui, Santa Barbara). Verandah hidden from TABLE speed selector for beta. Vanguard hidden from STAY for beta. Auto-re-curation on surrounding toggle change. Admin documentation migrated to curatevip.app with SHA-256 authentication. IP methodology specification drafted (this document).</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.7</div>
+          <div><div class="version-date">June 30, 2026</div><div class="version-notes">New Section H1 — Live Intelligence Pipeline — Technical Architecture: investor-facing brief covering the complete two-phase pipeline (Phase 1: Brave Search 22 parallel queries → Haiku extraction → signal block assembly; Phase 2: Sonnet curation with 4 input layers + 3 post-filter guards). Competitive replication analysis and pipeline cost structure documented. New moat item added to Section H: Live Credential Intelligence Layer with full competitive analysis. Section 15 AI-First Architecture updated: old two-layer model (training + seed) replaced with accurate three-layer model (live credential intelligence + seed calibration + Claude judgment). New quote: "Live credential intelligence is the signal. Seed data is the calibration. Claude's judgment is the engine." Section J Trade Secret list expanded: items 11 (Live Credential Intelligence Layer) and 12 (credential attribution rule system) added.</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.6</div>
+          <div><div class="version-date">June 30, 2026</div><div class="version-notes">Live credential source spinner added: sequential display of all sources checked (TABLE: 8, STAY: 9, SOCIAL: 5), spread across ~25 seconds using Math.floor(25000 / msgCount). Status SSE event added — backend sends credentialedVenueCount after Brave/Haiku extraction so frontend can display "Found X verified venues · Curating just for you…". "Paired X matches just for you" message added before venue checkmark sequence. Credential Attribution Rule formalized and enforced at three layers (Haiku prompt, formatSignalsBlock guidance, server.js CREDENTIAL INTERPRETATION section): chef awards from prior employers do not transfer to current restaurant. Tomo Seattle added to seed.js with blocked: true — canonical example of chef-pedigree misattribution. Social tab hidden for Phase 1 with "Coming Soon" badge (opacity 0.4, disabled, non-clickable) — single-line re-enable when ready. Admin credentials table created in Supabase (SHA-256 hashed, username/password_hash schema) with /api/admin-auth and /api/admin-set-password endpoints on Railway backend.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- J: Confidentiality -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">J</span>
+        <span class="section-title">Confidentiality &amp; Trade Secret Designation</span>
+      </div>
+      <div class="section-body red">
+        <div class="callout red-bg">
+          <p><strong>TRADE SECRET NOTICE.</strong> The methodology, taxonomy, decision protocol, classification rules, worked examples, seed data architecture, wild card logic, and version history contained in this document constitute trade secrets of RMK Group LLC, DBA CURATEvip, protected under the Defend Trade Secrets Act (18 U.S.C. § 1836 et seq.) and applicable state law.</p>
+        </div>
+        <div class="row"><div class="row-label">Reasonable measures taken</div><div class="row-value">This document is stored behind password-authenticated access. The password is hashed (SHA-256) and stored in a private database. Access is limited to the founder, authorized legal counsel, and qualified investors under executed NDA and IP-assignment agreements. No portion of this methodology is published, open-sourced, or disclosed in marketing materials.</div></div>
+        <div class="row"><div class="row-label">What is protected</div><div class="row-value">(1) The Speed Tier vocabulary and definitions. (2) The classification decision protocol. (3) The quality floor criteria and named disqualifiers. (4) The two-axis matching methodology. (5) The wild card adjacency logic. (6) The seed data and its classification assignments. (7) The worked-example library. (8) The surrounding areas architecture. (9) The three-filter post-processing chain. (10) The AI prompt engineering implementing the above. (11) The Live Credential Intelligence Layer: the specific Brave Search query set, the Haiku extraction prompt and attribution rules, and the <code>formatSignalsBlock()</code> signal assembly architecture. (12) The credential attribution rule system: the documented categories of misattribution error, the three-layer enforcement architecture (Haiku prompt → signal formatter → Sonnet curation prompt), and the canonical worked examples (Canlis / Tomo Seattle).</div></div>
+        <div class="row"><div class="row-label">What is not protected</div><div class="row-value">The names of individual venues (publicly known). The fact that CURATE uses AI (disclosed in marketing). The general categories (STAY, TABLE, SOCIAL). The existence of a speed profile system (disclosed in member onboarding). These are the surface; the methodology is what lies beneath.</div></div>
+        <div class="row"><div class="row-label">Disclosure protocol</div><div class="row-value">Before sharing any portion of this document with any third party (investors, potential acquirers, contractors, legal counsel), obtain an executed NDA with IP-assignment clause and log the disclosure with date, recipient, and scope. Treat any sharing of the classification decision protocol or worked examples with the same care as sharing source code.</div></div>
+        <div class="row"><div class="row-label">Patent potential</div><div class="row-value">The two-axis classification methodology, the surrounding areas expansion architecture, and the multi-environment wild card detection system may contain patentable elements. This determination requires review by a qualified IP attorney. A provisional patent application should be evaluated — it is inexpensive, preserves a priority date, and allows "patent pending" to be claimed during any deal process. Do not over-invest here; trade secret is the primary protection and is more certain. But the provisional is worth the conversation.</div></div>
+        <div class="callout" style="margin-top:20px;border-color:rgba(186,159,117,0.3);">
+          <p style="font-size:12px;line-height:1.7;">Document prepared: June 30, 2026. Owner: Rick Bouffard, RMK Group LLC. Status: Active trade secret. Review annually or upon any material change to the methodology. Consult IP counsel before any M&amp;A or licensing discussion that would require disclosure of this material.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- end tab-ip -->
+
+</div>
+
+<script>
+  const API = 'https://api.curatevip.ai';
+
+  // ── SHA-256 helper ──────────────────────────────────────────────────────────
+  async function sha256(text) {
+    const data = new TextEncoder().encode(text);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // ── Show/hide screens ───────────────────────────────────────────────────────
+  function showScreen(name) {
+    document.getElementById('screen-login').style.display = 'none';
+    document.getElementById('screen-docs').style.display = 'none';
+    if (name === 'login') document.getElementById('screen-login').style.display = 'flex';
+    if (name === 'docs')  document.getElementById('screen-docs').style.display = 'block';
+  }
+
+  function showAuthError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+  function clearAuthError(id) {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    el.textContent = '';
+  }
+
+  // ── Login ───────────────────────────────────────────────────────────────────
+  async function handleLogin() {
+    clearAuthError('login-error');
+    const user = document.getElementById('login-user').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    if (!user || !pass) { showAuthError('login-error', 'Username and password required.'); return; }
+
+    const btn = document.querySelector('#screen-login .auth-btn');
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    try {
+      const hash = await sha256(pass);
+      const res = await fetch(API + '/api/admin-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, passwordHash: hash })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        // Store username in sessionStorage so password change knows who is logged in
+        sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
+        sessionStorage.setItem('curate_admin_user', user);
+        showScreen('docs');
+      } else {
+        showAuthError('login-error', 'Invalid credentials.');
+      }
+    } catch (err) {
+      showAuthError('login-error', 'Could not reach server. Check your connection.');
+    } finally {
+      btn.textContent = 'Sign In';
+      btn.disabled = false;
+    }
+  }
+
+  // ── Sign out ────────────────────────────────────────────────────────────────
+  function handleSignOut() {
+    sessionStorage.removeItem('curate_admin_session');
+    sessionStorage.removeItem('curate_admin_user');
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    showScreen('login');
+  }
+
+  // ── Password modal ──────────────────────────────────────────────────────────
+  function openPwModal() {
+    document.getElementById('modal-pw').classList.add('open');
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value = '';
+    document.getElementById('pw-confirm').value = '';
+    clearAuthError('pw-error');
+    document.getElementById('pw-success').style.display = 'none';
+  }
+  function closePwModal() {
+    document.getElementById('modal-pw').classList.remove('open');
+  }
+
+  async function handlePwChange() {
+    clearAuthError('pw-error');
+    document.getElementById('pw-success').style.display = 'none';
+    const current  = document.getElementById('pw-current').value;
+    const newPw    = document.getElementById('pw-new').value;
+    const confirm  = document.getElementById('pw-confirm').value;
+    const username = sessionStorage.getItem('curate_admin_user') || 'rick';
+
+    if (newPw.length < 8) { showAuthError('pw-error', 'New password must be at least 8 characters.'); return; }
+    if (newPw !== confirm) { showAuthError('pw-error', 'New passwords do not match.'); return; }
+
+    const btn = document.querySelector('#modal-pw .auth-btn');
+    btn.textContent = 'Updating…';
+    btn.disabled = true;
+
+    try {
+      const currentHash = await sha256(current);
+      const newHash     = await sha256(newPw);
+      const res = await fetch(API + '/api/admin-set-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, currentHash, newHash })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        const s = document.getElementById('pw-success');
+        s.textContent = 'Password updated successfully.';
+        s.style.display = 'block';
+        document.getElementById('pw-current').value = '';
+        document.getElementById('pw-new').value = '';
+        document.getElementById('pw-confirm').value = '';
+      } else {
+        showAuthError('pw-error', data.error || 'Update failed.');
+      }
+    } catch (err) {
+      showAuthError('pw-error', 'Could not reach server.');
+    } finally {
+      btn.textContent = 'Update Password';
+      btn.disabled = false;
+    }
+  }
+
+  // ── Keyboard shortcuts ──────────────────────────────────────────────────────
+  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+  document.getElementById('pw-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handlePwChange(); });
+
+  // ── Close modal on backdrop click ───────────────────────────────────────────
+  document.getElementById('modal-pw').addEventListener('click', function(e) {
+    if (e.target === this) closePwModal();
+  });
+
+  // ── Init ────────────────────────────────────────────────────────────────────
+  // ── Tab switching ───────────────────────────────────────────────────────────
+  function switchTab(name, btn) {
+    document.getElementById('tab-system').classList.remove('active');
+    document.getElementById('tab-ip').classList.remove('active');
+    document.getElementById('tab-' + name).classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  (function init() {
+    const session = sessionStorage.getItem('curate_admin_session');
+    showScreen(session ? 'docs' : 'login');
+  })();
+</script>
+</body>
+</html>
