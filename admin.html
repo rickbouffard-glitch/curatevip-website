@@ -183,10 +183,84 @@
     /* Updated marker in page header */
     .docs-updated { font-size: 10px; letter-spacing: 0.12em; color: rgba(186,159,117,0.4); text-transform: uppercase; margin-top: 4px; }
 
+    /* ── Tab system ── */
+    .tab-nav {
+      display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0 28px; background: rgba(12,12,13,0.95);
+    }
+    .tab-btn {
+      background: none; border: none; border-bottom: 2px solid transparent;
+      padding: 12px 20px 11px; font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); cursor: pointer;
+      transition: color 0.2s, border-color 0.2s; margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: rgba(255,255,255,0.6); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── IP Methodology extras ── */
+    .ip-intro { margin-bottom: 44px; }
+    .ip-intro-eyebrow { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,100,100,0.5); margin-bottom: 8px; }
+    .ip-intro-title { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 600; color: #fff; margin-bottom: 10px; line-height: 1.1; }
+    .ip-intro-sub { font-size: 13px; color: rgba(255,255,255,0.38); line-height: 1.75; max-width: 580px; margin-bottom: 18px; }
+    .confidential-banner {
+      background: rgba(255,80,80,0.05); border: 1px solid rgba(255,80,80,0.18);
+      border-radius: 10px; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start;
+      margin-bottom: 40px;
+    }
+    .confidential-banner .cb-icon { color: rgba(255,100,100,0.7); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .confidential-banner .cb-text { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.65; }
+    .confidential-banner strong { color: rgba(255,100,100,0.7); }
+
+    .axis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .axis-card { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px 18px; }
+    .axis-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 6px; font-weight: 700; }
+    .axis-value { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #fff; margin-bottom: 6px; }
+    .axis-desc { font-size: 12px; color: rgba(255,255,255,0.35); line-height: 1.55; }
+
+    .tier-block { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .tier-name { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+    .tier-def { font-family: 'Cormorant Garamond', serif; font-size: 17px; color: rgba(255,255,255,0.85); line-height: 1.55; margin-bottom: 8px; font-style: italic; }
+    .tier-test { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 6px; }
+    .tier-dis { font-size: 12px; color: rgba(255,100,100,0.55); line-height: 1.55; }
+
+    .worked-example { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 22px 24px; margin-bottom: 20px; }
+    .we-venue { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #fff; margin-bottom: 4px; }
+    .we-location { font-size: 11px; letter-spacing: 0.14em; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 14px; }
+    .we-step { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .we-step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(186,159,117,0.12); border: 1px solid rgba(186,159,117,0.25); color: var(--gold); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .we-step-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(186,159,117,0.55); font-weight: 700; margin-bottom: 4px; }
+    .we-step-text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .we-verdict { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; background: rgba(186,159,117,0.06); border-radius: 8px; padding: 12px 14px; }
+    .we-verdict-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+    .we-verdict-text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.55; }
+    .we-verdict-no { background: rgba(255,80,80,0.05); }
+    .we-verdict-no .we-verdict-label { color: rgba(255,100,100,0.7); }
+
+    .decision-step { display: flex; gap: 14px; align-items: flex-start; padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .decision-num { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--gold-dim); color: var(--gold); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .decision-q { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 5px; font-weight: 500; }
+    .decision-detail { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.6; }
+    .decision-pass { font-size: 11px; color: #4caf7d; margin-top: 4px; }
+    .decision-fail { font-size: 11px; color: rgba(255,100,100,0.6); margin-top: 4px; }
+
+    .version-row { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .version-tag { font-size: 10px; letter-spacing: 0.1em; background: rgba(186,159,117,0.1); border: 1px solid rgba(186,159,117,0.2); border-radius: 4px; padding: 2px 8px; color: var(--gold); font-weight: 700; flex-shrink: 0; height: fit-content; margin-top: 2px; }
+    .version-date { font-size: 10px; color: rgba(255,255,255,0.25); margin-bottom: 4px; }
+    .version-notes { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    .moat-item { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .moat-title { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; font-weight: 600; margin-bottom: 6px; }
+    .moat-detail { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; }
+    .moat-why { font-size: 12px; color: rgba(186,159,117,0.6); margin-top: 6px; font-style: italic; }
+
     @media (max-width: 600px) {
       .auth-card { padding: 32px 24px; }
       .docs-body { padding: 28px 18px 80px; }
       .docs-header { padding: 12px 18px; }
+      .tab-nav { padding: 0 14px; }
+      .axis-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -239,6 +313,13 @@
     </div>
   </header>
 
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('system', this)">System Docs</button>
+    <button class="tab-btn" onclick="switchTab('ip', this)">IP Methodology</button>
+  </nav>
+
+  <!-- TAB 1: System Docs -->
+  <div id="tab-system" class="tab-panel active">
   <div class="docs-body">
 
     <div class="docs-intro">
@@ -740,6 +821,513 @@
     </div>
 
   </div>
+  </div><!-- end tab-system -->
+
+  <!-- TAB 2: IP Methodology -->
+  <div id="tab-ip" class="tab-panel">
+  <div class="docs-body">
+
+    <div class="ip-intro">
+      <div class="ip-intro-eyebrow">&#9632; Confidential — Trade Secret Documentation</div>
+      <div class="ip-intro-title">The CCTF Engine</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);letter-spacing:0.06em;margin-bottom:10px;">Curate Classification &amp; Taxonomy Framework</div>
+      <div class="ip-intro-sub">A proprietary methodology for mapping hospitality venues to member psychological states using a two-axis classification system. This document constitutes the internal methodology specification for the CCTF Engine — a trade secret asset of RMK Group LLC, DBA CURATEvip. Prepared for internal use, IP counsel review, and qualified investor due diligence under NDA.</div>
+    </div>
+
+    <div class="confidential-banner">
+      <div class="cb-icon">&#9888;</div>
+      <div class="cb-text"><strong>TRADE SECRET — CONFIDENTIAL.</strong> This document contains proprietary methodology, decision logic, classification rules, and worked examples constituting trade secrets of RMK Group LLC. Unauthorized disclosure, reproduction, or use is prohibited. Access to this document should be logged and limited to authorized personnel, legal counsel, and investors under executed NDA and IP-assignment agreements.</div>
+    </div>
+
+    <!-- A: What It Is -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">A</span>
+        <span class="section-title">What the CCTF Engine Is</span>
+      </div>
+      <div class="section-body gold">
+        <div class="callout gold-hi">
+          <p class="serif">"CCTF solves the problem no luxury travel product has solved: mapping a specific person's psychological state to a specific room at a specific moment."</p>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">Most luxury travel products match venues to budgets, categories, or star ratings. None of them model the member's <em>psychological appetite</em> at the moment of travel. The CCTF Engine is the methodology that makes this possible.</p>
+        <div class="subhead">The Core Innovation</div>
+        <div class="row"><div class="row-label">Two-axis classification</div><div class="row-value">Every interaction has two axes: the member's Speed Tier (their psychological appetite) and the venue's Environment (its physical and social character). A curation is a match between these two axes — not a keyword search, not a category filter, not a rating lookup.</div></div>
+        <div class="row"><div class="row-label">Three intent categories</div><div class="row-value">Members are profiled separately for STAY (hotel), TABLE (dining), and SOCIAL (bars, lounges, experiences). The same member can be Vanguard for hotels (brand prestige), Couture for dining (immersive), and Shadow for social (atmospheric). These are independent axes, not a single preference score.</div></div>
+        <div class="row"><div class="row-label">The vocabulary is proprietary</div><div class="row-value">Atelier, Sanctuary, Vanguard, Estate, Provision, Couture, Shadow, Verandah, Pulse, Gallery — these names are not borrowed from the hotel industry. They were created specifically for this system. Each name encodes a precise definition with positive indicators and hard disqualifiers. The vocabulary itself is a moat.</div></div>
+        <div class="row"><div class="row-label">The system is deterministic</div><div class="row-value">Given a venue's physical and social characteristics, its Environment classification can be determined by following the decision protocol. The same trained evaluator applying the same protocol to the same venue always reaches the same classification. This is what makes it a methodology, not a personal opinion, and what makes it legally protectable as trade secret.</div></div>
+        <div class="row"><div class="row-label">The AI is an accelerant, not the engine</div><div class="row-value">Claude is used to apply the CCTF methodology at scale — surfacing venues from its training knowledge, applying the Environment definitions to classify them, and generating editorial content. The methodology predates and governs the AI. The AI executes; the CCTF Engine decides.</div></div>
+      </div>
+    </div>
+
+    <!-- B: The Three-Axis Member Profile -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">B</span>
+        <span class="section-title">The Three-Axis Member Profile</span>
+      </div>
+      <div class="section-body blue">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:20px;">During onboarding, members complete a psychographic intake for each of the three intent categories. The questions are designed to reveal underlying preference patterns through indirect questions — they do not ask "what kind of hotel do you like?" They ask questions whose answer patterns map to a Speed Tier.</p>
+        <div class="axis-grid">
+          <div class="axis-card">
+            <div class="axis-label">Axis 1</div>
+            <div class="axis-value">STAY</div>
+            <div class="axis-desc">Hotel and resort preference. Tiers: Vanguard, Sanctuary, Atelier, Estate. Maps to the member's identity relationship with the property.</div>
+          </div>
+          <div class="axis-card">
+            <div class="axis-label">Axis 2</div>
+            <div class="axis-value">TABLE</div>
+            <div class="axis-desc">Dining preference. Tiers: Provision, Couture, Pulse, Shadow, Verandah. Maps to the social and atmospheric environment they seek at the table.</div>
+          </div>
+          <div class="axis-card">
+            <div class="axis-label">Axis 3</div>
+            <div class="axis-value">SOCIAL</div>
+            <div class="axis-desc">Bar, lounge, and experience preference. Tiers: Electric, Shadow, Verandah, Gallery. Maps to energy level and scene preference.</div>
+          </div>
+          <div class="axis-card" style="border-color:rgba(186,159,117,0.2);">
+            <div class="axis-label">Output</div>
+            <div class="axis-value" style="font-size:16px;color:var(--gold);">Speed Profile</div>
+            <div class="axis-desc">A three-key object: <code>{stay:"atelier", table:"couture", social:"shadow"}</code>. This governs every curation the member receives. It can be updated by the member at any time.</div>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:16px;">
+          <p><strong>The indirect-question design:</strong> Members do not select "Atelier" from a list. They answer questions about how they experienced their last hotel stay, what they noticed first when they walked into the lobby, whether they wanted to hide away or be seen. The speed profile emerges from the pattern of answers. This prevents gaming and reveals genuine preference, not aspirational self-image.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: Speed Tier Taxonomy — Full Reference -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">C</span>
+        <span class="section-title">Speed Tier Taxonomy — Full Classification Reference</span>
+      </div>
+      <div class="section-body gold">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:4px;">Each tier has a canonical definition, a primary test question, and explicit disqualifiers. The definition is the authoritative source. Anything not in code or prompt that conflicts with these definitions is wrong.</p>
+
+        <div class="subhead" style="margin-top:20px;">STAY Tiers</div>
+
+        <div class="tier-block">
+          <div class="tier-name">Vanguard &mdash; STAY</div>
+          <div class="tier-def">"The name alone sets the expectation. You book it because of what it is."</div>
+          <div class="tier-test">Primary test: Is the booking decision driven primarily by the brand name — Four Seasons, Ritz-Carlton, Rosewood, Aman, Fairmont, St. Regis? If yes: Vanguard. If the property is known for its design, history, or setting more than its brand: look elsewhere.</div>
+          <div class="tier-dis">Disqualifies: Independent boutiques regardless of quality. Design-led properties (Atelier). Historic properties (Estate). Any property where the brand is secondary to the experience.</div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-name">Atelier &mdash; STAY</div>
+          <div class="tier-def">"Architecture is the reason. The building has a point of view and the design is the primary editorial narrative."</div>
+          <div class="tier-test">Primary test: Would a design-conscious guest specifically seek this property out because of what was built — the materials, the spatial decisions, the architectural concept? If the design is primarily decorative (nice interiors) rather than conceptual (a bold architectural statement), it is not Atelier.</div>
+          <div class="tier-dis">Disqualifies: Global brand flagships (Vanguard). Wellness/spa as primary identity. Properties primarily known for location or history. "Boutique" hotels with good design but no strong architectural concept.</div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-name">Sanctuary &mdash; STAY</div>
+          <div class="tier-def">"Relaxation is everything. Intimate, hushed, restorative. The world waits outside."</div>
+          <div class="tier-test">Primary test: Does the property's fundamental promise center on privacy, quiet, and escape from stimulation? Would the guest be disappointed if the lobby was busy and social? If yes: Sanctuary.</div>
+          <div class="tier-dis">Disqualifies: Spa resorts where the treatments are the primary draw (the spa is a feature; sanctuary is a disposition). Properties in dense urban cores where street energy enters the building. Scene-forward properties of any kind.</div>
+        </div>
+
+        <div class="tier-block" style="border-bottom:none;">
+          <div class="tier-name">Estate &mdash; STAY</div>
+          <div class="tier-def">"History and heritage are the product. Genuine age. Old-world architecture. A story that predates modern luxury brands."</div>
+          <div class="tier-test">Primary test: Does the property derive its identity from documented historical provenance — actual age, documented past, architectural heritage? A property that "feels classic" or has been designed to look old is not Estate. The history must be real.</div>
+          <div class="tier-dis">Disqualifies: Modern luxury brand flagships regardless of aesthetic. Properties built after 1960 with traditional design. Properties where the historical story is primarily marketing language rather than documented provenance.</div>
+        </div>
+
+        <div class="subhead" style="margin-top:20px;">TABLE Tiers</div>
+
+        <div class="tier-block">
+          <div class="tier-name">Provision &mdash; TABLE</div>
+          <div class="tier-def">"Organic energy in a great room. Lively bar, tables full, real conversation. The atmosphere is the product but it's genuine, not manufactured. Excellent food required."</div>
+          <div class="tier-test">Primary test: Is the room alive with real energy that emerged organically from the crowd and the space — not from a DJ, bottle service, or designed performance? Is the food excellent (not merely acceptable)? If both: Provision.</div>
+          <div class="tier-dis">Disqualifiers: Manufactured energy (DJ, bottle service = Pulse/Electric). Quiet or intimate rooms (Shadow). Design-as-destination rooms (Couture). Food that is mediocre or beside the point.</div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-name">Couture &mdash; TABLE</div>
+          <div class="tier-def">"The room takes you somewhere else. Immersive aesthetic. Design-as-destination. You'd go for the room as much as the food."</div>
+          <div class="tier-test">Primary test: Is the design so distinctive and fully-realized that it fundamentally changes the experience of dining there — not merely a nice backdrop, but an immersive world? Does the room feel like it was built around a singular vision?</div>
+          <div class="tier-dis">Disqualifiers: Standard upscale dining rooms regardless of quality. Rooms with good design that's primarily decorative. Rooms where the food is the sole editorial reason to go.</div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-name">Shadow &mdash; TABLE &amp; SOCIAL</div>
+          <div class="tier-def">"Dark, considered, atmospheric. Mood is the amenity. You had to know it was there."</div>
+          <div class="tier-test">Primary test: Is low visibility a feature, not a bug? Is the room deliberately dark, intimate, and discovered rather than promoted? Would high visibility or a busy, loud room fundamentally change what makes it special?</div>
+          <div class="tier-dis">Disqualifiers: Bright, open rooms. High-visibility spots that appear in mainstream "best restaurants" lists. Loud or energy-forward venues of any kind.</div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-name">Verandah &mdash; TABLE &amp; SOCIAL</div>
+          <div class="tier-def">"PHYSICALLY OUTDOORS is the primary identity. The table itself is outside, under the sky, in open air. The guest is not inside looking at a view."</div>
+          <div class="tier-test">Primary test: Is the dining or drinking surface itself physically outside — not behind glass, not through a window, not on a covered terrace that is functionally indoors? The test is: could it rain on the guest? If no glass separates the guest from the sky: Verandah.</div>
+          <div class="tier-dis">Disqualifiers: Indoor restaurants with outdoor views through glass walls (Canlis). Glassed-in terraces. Indoor rooms with large windows facing nature. Covered patios where glass or substantial roofing creates an indoor feeling. Any venue where "outdoor" is a visual amenity rather than a physical condition of the dining experience.</div>
+        </div>
+
+        <div class="tier-block" style="border-bottom:none;">
+          <div class="tier-name">Pulse &mdash; TABLE (formerly Electric)</div>
+          <div class="tier-def">"Scene, energy, the right crowd. Power tables. Alive at full tilt. Being seen is part of the experience."</div>
+          <div class="tier-test">Primary test: Is social performance — being in the right room with the right people, seen at the right table — a genuine part of the value proposition? Is the energy level high and intentional?</div>
+          <div class="tier-dis">Disqualifiers: Organic energy without performance (Provision). Intimate or hidden venues (Shadow). Outdoor-primary venues (Verandah). Design-immersive venues (Couture).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D: The Quality Floor -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">D</span>
+        <span class="section-title">The Quality Floor — Ultra-Luxury Caliber Definition</span>
+      </div>
+      <div class="section-body red">
+        <div class="callout red-bg">
+          <p class="serif">"The quality floor is what makes CURATE trustworthy. Without it, it's just an opinionated list. With it, it's a methodology."</p>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">Every venue that appears in CURATE must clear the quality floor before Environment classification even begins. A venue that is a perfect Verandah but does not clear the quality floor is not in CURATE. The Environment taxonomy describes the <em>type</em> of experience. The quality floor describes the <em>standard</em> of execution.</p>
+        <div class="subhead">Qualifying Signals (sufficient, not required)</div>
+        <div class="row"><div class="row-label">Forbes Travel Guide</div><div class="row-value">Five Star only. Four Star is mid-luxury and does not clear the floor.</div></div>
+        <div class="row"><div class="row-label">Michelin Guide</div><div class="row-value">1, 2, or 3 Keys (hotels). 1, 2, or 3 Stars (restaurants). Bib Gourmand does not qualify — it is a value indicator, not a luxury indicator.</div></div>
+        <div class="row"><div class="row-label">AAA</div><div class="row-value">Five Diamond only. Four Diamond is a full tier below. This distinction is frequently misunderstood in the industry.</div></div>
+        <div class="row"><div class="row-label">Global collections</div><div class="row-value">Relais &amp; Châteaux, Leading Hotels of the World, Small Luxury Hotels of the World, Preferred Hotels Legend Collection.</div></div>
+        <div class="row"><div class="row-label">Flagship brands</div><div class="row-value">Aman, Four Seasons, Ritz-Carlton, Rosewood: flagship tier only. Sub-brands or midscale extensions do not qualify.</div></div>
+        <div class="row"><div class="row-label">Recognized publications</div><div class="row-value">Condé Nast Traveler Gold List or T+L World's Best: top-ranked entries only, not merely mentioned.</div></div>
+        <div class="subhead">Disqualified Regardless of Other Signals</div>
+        <div class="row"><div class="row-value muted">TripAdvisor Travelers' Choice: a participation award, not a quality threshold.</div></div>
+        <div class="row"><div class="row-value muted">Five Star Alliance: a booking aggregator, not an accreditation body. Does not confer quality certification.</div></div>
+        <div class="row"><div class="row-value muted">AAA Four Diamond: a common misunderstanding. This is mid-luxury, not ultra-luxury.</div></div>
+        <div class="row"><div class="row-value muted">Regional "best of" awards from local lifestyle publications: signal local popularity, not caliber.</div></div>
+        <div class="row"><div class="row-value muted">Chain properties in the Marriott, Hilton, Hyatt portfolios (for STAY): these brands operate at scale that is structurally incompatible with ultra-luxury consistency. Their restaurants are evaluated separately on merit.</div></div>
+        <div class="subhead">The Floor Without Credentials</div>
+        <div class="callout" style="margin-top:8px;">
+          <p>Formal credentials are reference points, not a mandatory gate. A venue can clear the quality floor without any credential if: it operates at a price point and service standard consistent with Five-Star hospitality, it appears in the curated editorial of major luxury travel publications (not rankings, editorial coverage), and a knowledgeable evaluator applying the CCTF protocol would immediately recognize it as ultra-luxury. Conversely, having a credential does not automatically clear the floor — the credential must reflect the actual current state of the property.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- E: The Classification Decision Protocol -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">E</span>
+        <span class="section-title">The Classification Decision Protocol</span>
+      </div>
+      <div class="section-body orange">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:20px;">The protocol is the sequence of questions applied in order to any candidate venue. The protocol is what makes classification deterministic and reproducible by any trained evaluator, independent of personal taste.</p>
+
+        <div class="decision-step">
+          <div class="decision-num">1</div>
+          <div>
+            <div class="decision-q">Does this venue clear the quality floor?</div>
+            <div class="decision-detail">Apply the quality floor criteria. Formal credentials, price point, editorial presence, and evaluator judgment all factor in. One strong qualifying signal is sufficient.</div>
+            <div class="decision-pass">Pass → proceed to step 2.</div>
+            <div class="decision-fail">Fail → stop. The venue does not enter CURATE regardless of any other characteristic.</div>
+          </div>
+        </div>
+
+        <div class="decision-step">
+          <div class="decision-num">2</div>
+          <div>
+            <div class="decision-q">What category does this venue serve? (STAY / TABLE / SOCIAL)</div>
+            <div class="decision-detail">A hotel is STAY. A restaurant is TABLE. A bar, lounge, or experience is SOCIAL. Some properties serve multiple categories — each is classified independently. A hotel's restaurant is classified as TABLE on its own merits, separately from the hotel's STAY classification.</div>
+            <div class="decision-pass">Pass → proceed with the correct category's tier set.</div>
+          </div>
+        </div>
+
+        <div class="decision-step">
+          <div class="decision-num">3</div>
+          <div>
+            <div class="decision-q">Apply the Primary Test for each tier in sequence. Which tier does the venue belong to?</div>
+            <div class="decision-detail">Work through the tier list for the venue's category. Apply the Primary Test for each tier. Stop at the first tier whose Primary Test yields yes and whose disqualifiers yield no. If no tier yields a clean yes, the venue does not clear classification — it has no Environment and cannot be recommended. This is valid and expected. Not every ultra-luxury venue maps cleanly to a tier.</div>
+            <div class="decision-pass">Clean match → record the Environment. Proceed to step 4.</div>
+            <div class="decision-fail">No clean match → the venue is confirmed, quality-cleared, and seeded as <code>blocked: false</code> but not actively recommended (no Environment). Can be revisited if a new tier is added.</div>
+          </div>
+        </div>
+
+        <div class="decision-step">
+          <div class="decision-num">4</div>
+          <div>
+            <div class="decision-q">Does this venue qualify for multiple environments?</div>
+            <div class="decision-detail">Some venues genuinely embody two distinct environments — not as a compromise, but as two separate valid identities. A restaurant with an iconic outdoor terrace (Verandah) and an immersive indoor room (Couture) is a genuine dual-environment venue. Dual classification is conservative: both Primary Tests must yield clean yes answers with no disqualifiers from either tier.</div>
+            <div class="decision-pass">Dual match → seed the venue with both environments (separate seed entries). Flag as wild card candidate.</div>
+          </div>
+        </div>
+
+        <div class="decision-step">
+          <div class="decision-num">5</div>
+          <div>
+            <div class="decision-q">Is this venue in the core market or surrounding area?</div>
+            <div class="decision-detail">Surrounding area venues (e.g., Woodinville relative to Seattle) are flagged <code>surrounding: true</code> and only surface when the member actively opts in via the surrounding toggle. Core market venues are always included.</div>
+            <div class="decision-pass">Core → seed with no surrounding flag. Surrounding → seed with <code>surrounding: true</code>.</div>
+          </div>
+        </div>
+
+        <div class="decision-step" style="border-bottom:none;">
+          <div class="decision-num">6</div>
+          <div>
+            <div class="decision-q">Are there any environment-specific blocks needed?</div>
+            <div class="decision-detail">A venue that is valid on the platform for some environments may be incorrect for others. Example: Canlis in Seattle is a valid Provision/Couture dining venue, but it is incorrectly classified as Verandah (indoor, glass-walled). Setting <code>environment_blocked: ['Verandah']</code> keeps it in the platform but prevents it from surfacing in Verandah curations.</div>
+            <div class="decision-pass">No blocks needed → seed is final. Blocks needed → add <code>environment_blocked</code> array.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F: Worked Examples -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">F</span>
+        <span class="section-title">Worked Examples — Classification Walkthroughs</span>
+      </div>
+      <div class="section-body purple">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:24px;">Each example shows the full protocol applied to a real venue. These walkthroughs prove the system is deterministic and consistently applicable to hard cases. A library of worked examples is what makes a methodology credible to a diligence team or IP attorney.</p>
+
+        <!-- Example 1: Canlis -->
+        <div class="worked-example">
+          <div class="we-venue">Canlis</div>
+          <div class="we-location">Seattle, WA &mdash; TABLE Evaluation</div>
+          <div class="we-step">
+            <div class="we-step-num">1</div>
+            <div><div class="we-step-label">Quality Floor</div><div class="we-step-text">Canlis is a James Beard Award–winning institution operating since 1950. It holds consistent top rankings in regional and national publications. Price point, service level, and editorial presence all clear the floor. Pass.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">2</div>
+            <div><div class="we-step-label">Category</div><div class="we-step-text">Restaurant. TABLE evaluation applies.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">3</div>
+            <div><div class="we-step-label">Tier Classification</div><div class="we-step-text">Couture test: Is the design so distinctive and fully-realized that it takes you somewhere else? The mid-century A-frame overlooking Lake Union is architecturally iconic, the room has a strong point of view, but the primary draw is culinary excellence + occasion dining rather than design immersion. Partial match. Provision test: Is the room alive with organic energy? No — Canlis is intimate and occasion-driven, not buzzy. Shadow test: Dark, considered, atmospheric? The room is open, bright, with panoramic lake views. No. Verandah test: Is the table physically outdoors? No — glass walls throughout. Explicitly disqualified from Verandah.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">4</div>
+            <div><div class="we-step-label">Final Classification</div><div class="we-step-text">Couture (primary) — the architectural identity and singular interior experience is the closest match. The glass-and-view dining room is distinctive enough to qualify, though it is at the conservative end of Couture. Also carries a Provision lean — a note that it has enough energy and food focus to drift toward Provision for some members.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">5</div>
+            <div><div class="we-step-label">Environment Block</div><div class="we-step-text">environment_blocked: ['Verandah'] — the glass-walled room is the defining characteristic. Under no reading of the Verandah definition does Canlis qualify. The block is a safeguard against AI hallucination.</div></div>
+          </div>
+          <div class="we-verdict">
+            <div><div class="we-verdict-label">Classification: Couture · Seattle TABLE</div><div class="we-verdict-text">environment_blocked: ['Verandah']. Surrounding: false (core market). Seed confirmed June 2026.</div></div>
+          </div>
+        </div>
+
+        <!-- Example 2: The Herbfarm -->
+        <div class="worked-example">
+          <div class="we-venue">The Herbfarm</div>
+          <div class="we-location">Woodinville, WA &mdash; TABLE Evaluation (Surrounding Area)</div>
+          <div class="we-step">
+            <div class="we-step-num">1</div>
+            <div><div class="we-step-label">Quality Floor</div><div class="we-step-text">9-course prix fixe, $300–$400 per person, James Beard Award recognition, national editorial coverage in Bon Appétit, Food &amp; Wine, and travel publications. Clears the floor comfortably.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">2</div>
+            <div><div class="we-step-label">Category</div><div class="we-step-text">Restaurant. TABLE evaluation applies.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">3</div>
+            <div><div class="we-step-label">Tier Classification — Hard Case</div><div class="we-step-text">Couture test: Is the room design so distinctive it takes you somewhere else? The dining room is pleasant but not architecturally immersive — the experience is primarily culinary and narrative. Not the strongest Couture match. Estate test (TABLE): does not apply (Estate is STAY-only). Provision test: organic energy, lively bar? No — prix fixe dinner service is formal, not buzzy. Shadow: dark and atmospheric? No — the setting is pastoral and warm, not dark. This is an unusual edge case: the venue's distinctiveness is entirely in the culinary/experiential format (9-course, fixed-seating, storytelling service), not the room or the energy. This is a genuine gap in the tier system — a venue that clears the quality floor but does not map cleanly to any single tier. Current classification: Couture (best available match — the immersive, singular experience format is closest to design-as-destination even without strong architectural identity).</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">4</div>
+            <div><div class="we-step-label">Location</div><div class="we-step-text">Woodinville, WA — part of the Seattle surrounding area (Eastside &amp; Woodinville). Not in Seattle's core market geography.</div></div>
+          </div>
+          <div class="we-verdict">
+            <div><div class="we-verdict-label">Classification: Couture · surrounding: true · Seattle TABLE</div><div class="we-verdict-text">Only surfaces when member checks "Include Eastside &amp; Woodinville." Wild card candidate (distinctive enough to anchor a wild card recommendation). Seed confirmed June 2026. Note: this edge case is a candidate for a future tier addition — an "Immersive" or "Ceremony" tier for format-driven dining experiences without room-primary identity.</div></div>
+          </div>
+        </div>
+
+        <!-- Example 3: nyloS Maui -->
+        <div class="worked-example">
+          <div class="we-venue">nyloS</div>
+          <div class="we-location">Wailea, Maui, HI &mdash; TABLE Evaluation</div>
+          <div class="we-step">
+            <div class="we-step-num">1</div>
+            <div><div class="we-step-label">Quality Floor</div><div class="we-step-text">14-seat chef's table. 'Aipono Award Gold (Hawaii's most respected restaurant awards, operated by the Maui No Ka 'Oi Magazine). Not broadly credentialed nationally, but clears the floor via format (ultra-intimate chef's table) and the strongest available local credential. This is a Discovery Mandate venue — not surfaced by global signals, surfaced by geographic sweep of local reference sources.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">2</div>
+            <div><div class="we-step-label">Category</div><div class="we-step-text">Restaurant (chef's table format). TABLE evaluation applies.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">3</div>
+            <div><div class="we-step-label">Tier Classification</div><div class="we-step-text">Shadow test: Is it dark, considered, known only to those who seek it out? 14-seat chef's table — by definition, you had to know it was there. Intimate, deliberate, no scene. The format itself embodies Shadow. Strong match. Couture adjacency: the chef's table format is immersive in the culinary sense. Dual-environment candidate.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">4</div>
+            <div><div class="we-step-label">Dual Environment</div><div class="we-step-text">Shadow (primary) + Couture (secondary) — the Shadow identity is cleaner. The Couture lean is noted but not seeded as a separate entry due to limited seat inventory (14 seats means limited demand capacity — the venue is better served as a Shadow anchor than split across two environments).</div></div>
+          </div>
+          <div class="we-verdict">
+            <div><div class="we-verdict-label">Classification: Shadow · Maui TABLE</div><div class="we-verdict-text">Discovery Mandate venue — surfaced by Maui-specific reference sweep, not global signals. Example of why the geographic and reference-source sweep is mandatory. Seed confirmed June 2026.</div></div>
+          </div>
+        </div>
+
+        <!-- Example 4: Four Seasons Maui vs Atelier -->
+        <div class="worked-example">
+          <div class="we-venue">Four Seasons Resort Maui at Wailea</div>
+          <div class="we-location">Wailea, Maui, HI &mdash; STAY Evaluation</div>
+          <div class="we-step">
+            <div class="we-step-num">1</div>
+            <div><div class="we-step-label">Quality Floor</div><div class="we-step-text">Four Seasons flagship. Forbes Five Star. AAA Five Diamond. Clears easily.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">3</div>
+            <div><div class="we-step-label">Vanguard test</div><div class="we-step-text">Is the booking decision driven primarily by the brand name? Yes — Four Seasons Maui is booked by guests who trust the Four Seasons brand to deliver a consistent flagship experience. The brand is the primary identity. The location (Wailea beachfront) is a secondary factor.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">4</div>
+            <div><div class="we-step-label">Atelier disqualifier check</div><div class="we-step-text">Is the design so architecturally distinctive that it overrides the brand identity? No. The Four Seasons Maui has beautiful grounds and a well-designed resort, but a guest does not choose it over the Ritz-Carlton Kapalua because of an architectural concept. The brand is primary. Atelier disqualified.</div></div>
+          </div>
+          <div class="we-verdict">
+            <div><div class="we-verdict-label">Classification: Vanguard · Maui STAY</div><div class="we-verdict-text">The key distinction: Four Seasons is CALIBER (it clears the quality floor for any tier) but its IDENTITY is Vanguard (the brand name is the reason). A Sanctuary member who books the Four Seasons is compromising — they should be recommended Lumeria Maui or Hana-Maui Resort. The classification is what makes the match possible. Seed confirmed June 2026.</div></div>
+          </div>
+        </div>
+
+        <!-- Example 5: Soho House — Disqualification -->
+        <div class="worked-example">
+          <div class="we-venue">Soho House (Hypothetical)</div>
+          <div class="we-location">Any Market &mdash; Would It Qualify?</div>
+          <div class="we-step">
+            <div class="we-step-num">1</div>
+            <div><div class="we-step-label">Quality Floor</div><div class="we-step-text">Soho House is a global membership club with properties across major cities. It is a design-forward, scene-forward brand with strong editorial presence. However: it operates at a mid-luxury price point (~$200–$350/night equivalent for hotel rooms), it does not hold Forbes Five Star or AAA Five Diamond accreditations at any property, and it is explicitly a social club first, hotel second. The quality floor is not cleared on its own signals.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">2</div>
+            <div><div class="we-step-label">Brand structure</div><div class="we-step-text">Soho House has extended into the Electric House (more mass-market) and other sub-brands. The core brand operates at a price point and service standard below the ultra-luxury floor. Its value proposition is social access, not hospitality excellence.</div></div>
+          </div>
+          <div class="we-step">
+            <div class="we-step-num">3</div>
+            <div><div class="we-step-label">The CURATE member test</div><div class="we-step-text">Would a Vanguard member staying at the Aman Tokyo feel the recommendation to stay at Soho House was appropriate? No. Would a Sanctuary member seeking privacy find Soho House aligned? No — it is intentionally social. The brand is designed for young creative professionals, not ultra-high-net-worth travelers. The markets overlap at the edges but are not the same.</div></div>
+          </div>
+          <div class="we-verdict we-verdict-no">
+            <div><div class="we-verdict-label">Result: Does Not Qualify</div><div class="we-verdict-text">Soho House does not clear the quality floor for CURATE. It is a legitimate hospitality brand with real market position, but its position is mid-luxury social membership, not ultra-luxury hospitality. This classification is not a judgment of Soho House's quality — it is a statement about the quality floor CURATE maintains. The distinction between "good" and "ultra-luxury" is what makes CURATE's curation credible. Not everything good belongs.</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- G: The Wild Card Architecture -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">G</span>
+        <span class="section-title">The Wild Card Architecture</span>
+      </div>
+      <div class="section-body green">
+        <div class="callout gold-hi">
+          <p class="serif">"The wild card is the recommendation the member didn't think to ask for but immediately recognizes as right."</p>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">The three main results match the member's declared Speed Tier. The Wild Card is selected from an adjacent tier — a venue that is sufficiently close to the member's profile that it's within reach, but distinctly different enough to expand their vocabulary. The wild card is the engine's most sophisticated output.</p>
+        <div class="row"><div class="row-label">Multi-environment venues</div><div class="row-value">The primary wild card source. Any venue that qualifies under two or more environments is a candidate. Example: KOAST in Maui qualifies as Provision (energy, food, full bar) AND Verandah (outdoor deck with ocean views) AND Couture (distinctive design identity). A member who requested Provision gets KOAST as a wild card pointing at both its Verandah and Couture identities — expanding their vocabulary in one recommendation.</div></div>
+        <div class="row"><div class="row-label">Adjacency mapping</div><div class="row-value">Each Speed Tier has defined adjacent tiers — tiers close enough in character that a member could plausibly enjoy them. Provision ↔ Couture (both energy and food forward, but different atmospheres). Shadow ↔ Couture (both considered and design-aware, but different light levels). These adjacencies are hardcoded in the server logic.</div></div>
+        <div class="row"><div class="row-label">Discovery Mandate integration</div><div class="row-value">Wild cards are also drawn from the Discovery Mandate sweep — venues the geographic and reference-source sweep surfaced that the AI might not have included in the main three. A venue like nyloS (14-seat chef's table, local award, not globally credentialed) is an ideal wild card: it proves the system knows things the member doesn't know to ask for.</div></div>
+        <div class="row"><div class="row-label">What the wild card is not</div><div class="row-value">The wild card is not a "fourth recommendation" or an overflow slot. It is editorially distinct from the main three. It is positioned as "outside your usual" and styled differently in the UI. Its purpose is vocabulary expansion — helping the member discover adjacent tastes they didn't know they had.</div></div>
+      </div>
+    </div>
+
+    <!-- H: Competitive Moat -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">H</span>
+        <span class="section-title">Competitive Differentiation &amp; Moat</span>
+      </div>
+      <div class="section-body amber">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:20px;">The question a buyer asks: "What would it cost a competitor to replicate this?" Here is the honest answer for each layer of the moat.</p>
+
+        <div class="moat-item">
+          <div class="moat-title">The Vocabulary</div>
+          <div class="moat-detail">Atelier, Sanctuary, Vanguard, Estate, Provision, Couture, Shadow, Verandah, Pulse, Gallery — these names encode precise definitions developed over multiple iteration cycles. A competitor could copy the names in a day. They could not copy the definitions, the disqualifiers, the decision protocol, or the worked-example library that makes the system deterministic without years of the same iteration.</div>
+          <div class="moat-why">Why it matters: the vocabulary is the user interface for the classification system. A different vocabulary requires starting the member profiling and seed data from scratch.</div>
+        </div>
+
+        <div class="moat-item">
+          <div class="moat-title">The Seed Data</div>
+          <div class="moat-detail">Every venue in seed.js was manually researched, evaluated against the quality floor, run through the classification protocol, and confirmed. The seed data is both a reference library for the AI and a proprietary training signal — it tells Claude what ultra-luxury looks like in each specific market. A competitor starting today with a blank seed file gets generic LLM responses. CURATE's AI gets calibrated, market-specific responses anchored to confirmed classifications.</div>
+          <div class="moat-why">Why it matters: seed data accumulates over time. The more markets are seeded, the harder it is to replicate. This is a compounding moat, not a static one.</div>
+        </div>
+
+        <div class="moat-item">
+          <div class="moat-title">The Classification System as a Learning Loop</div>
+          <div class="moat-detail">Each member's speed profile is a data point. As members use the platform, their curations reveal revealed preferences — venues they tapped into, venues they skipped, how their speed profile updated over time. This data can train a future model that predicts speed tier drift (a Provision member becoming more Shadow over time). No competitor has this data because no competitor has built this classification system.</div>
+          <div class="moat-why">Why it matters: the platform gets smarter with every member interaction. A competitor launching today starts with no revealed preference data. CURATE has a head start that compounds.</div>
+        </div>
+
+        <div class="moat-item">
+          <div class="moat-title">The Two-Axis Display</div>
+          <div class="moat-detail">The curation results are displayed with Speed Tier language visible to the member — they see "Couture" on their card, they see "Shadow" on the wild card. Over time, members internalize the vocabulary and start using it to describe what they want ("I'm looking for something more Shadow this trip"). This is a brand vocabulary lock-in mechanism: members become fluent in a language only CURATE speaks.</div>
+          <div class="moat-why">Why it matters: once a member speaks the vocabulary, switching to a competitor requires relearning how to express their own preferences. This is a powerful retention mechanism with no direct competitor parallel.</div>
+        </div>
+
+        <div class="moat-item" style="border-bottom:none;">
+          <div class="moat-title">The Surrounding Areas Architecture</div>
+          <div class="moat-detail">The surrounding areas system — with per-market labels, auto-re-curation on toggle, server-side filtering, and seed-level flags — is an expansion mechanism that allows CURATE to deepen each market without adding new markets. Most travel products define geography by city. CURATE defines it by experience radius, which scales laterally (more surrounding areas) as well as vertically (more markets).</div>
+          <div class="moat-why">Why it matters: it gives CURATE a natural growth path within existing markets before requiring the operational investment of new market entry.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- I: Version History -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">I</span>
+        <span class="section-title">Version History — Deliberate Evolution Record</span>
+      </div>
+      <div class="section-body blue">
+        <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.75;margin-bottom:20px;">A methodology that evolved deliberately has more legal and commercial weight than one that appeared fully formed. This version history demonstrates that the CCTF Engine is a living system, iterated with intention. For IP counsel: the dates below establish a timeline of development and first use.</p>
+
+        <div class="version-row">
+          <div class="version-tag">v1.0</div>
+          <div><div class="version-date">May 2026</div><div class="version-notes">Initial CCTF Engine: two-axis classification (member Speed Tier × venue Environment). Three intent categories (STAY, TABLE, SOCIAL). Initial Speed Tier vocabulary established. Quality floor defined. Seed data for Scottsdale and Seattle. AI curation pipeline using Claude Sonnet.</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.1</div>
+          <div><div class="version-date">May 2026</div><div class="version-notes">Multi-environment Wild Card system added. Adjacency mapping hardcoded. Dual-environment seed entries introduced. KOAST (Maui) identified as first triple-environment wild card candidate (Provision × Verandah × Couture).</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.2</div>
+          <div><div class="version-date">May–June 2026</div><div class="version-notes">Surrounding areas architecture introduced. Per-market labels. Server-side surrounding filter added as third post-filter in the three-filter chain (seed-block → env-block → surrounding-block). Scottsdale, Seattle, Maui surrounding areas seeded.</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.3</div>
+          <div><div class="version-date">June 2026</div><div class="version-notes">Quality-over-count principle formalized. contextMessage system added: AI returns an honest editorial note when it cannot find 3 venues with full confidence, rather than padding the list. "1 exceptional venue + honest contextMessage is always better than 3 mediocre venues with no message." Quality floor documentation expanded with named disqualifiers (TripAdvisor, Five Star Alliance, AAA Four Diamond).</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.4</div>
+          <div><div class="version-date">June 2026</div><div class="version-notes">environment_blocked field added to seed schema. Verandah definition hardened: "the table itself is outside, under the sky, in open air" — eliminates glass-wall edge cases. Canlis and Goldfinch Tavern added to environment_blocked: ['Verandah']. Discovery Mandate formalized: geographic sweep + reference sweep required before any curation. Maui TABLE deep-dive surfaced nyloS, The Restaurant at Hotel Wailea, and Nobu Maui — all missed by default AI behavior without the mandate.</div></div>
+        </div>
+
+        <div class="version-row">
+          <div class="version-tag">v1.5</div>
+          <div><div class="version-date">June 30, 2026</div><div class="version-notes">Beta market paring to 4 active markets (Scottsdale, Seattle, Maui, Santa Barbara). Verandah hidden from TABLE speed selector for beta. Vanguard hidden from STAY for beta. Auto-re-curation on surrounding toggle change. Admin documentation migrated to curatevip.app with SHA-256 authentication. IP methodology specification drafted (this document).</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- J: Confidentiality -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">J</span>
+        <span class="section-title">Confidentiality &amp; Trade Secret Designation</span>
+      </div>
+      <div class="section-body red">
+        <div class="callout red-bg">
+          <p><strong>TRADE SECRET NOTICE.</strong> The methodology, taxonomy, decision protocol, classification rules, worked examples, seed data architecture, wild card logic, and version history contained in this document constitute trade secrets of RMK Group LLC, DBA CURATEvip, protected under the Defend Trade Secrets Act (18 U.S.C. § 1836 et seq.) and applicable state law.</p>
+        </div>
+        <div class="row"><div class="row-label">Reasonable measures taken</div><div class="row-value">This document is stored behind password-authenticated access. The password is hashed (SHA-256) and stored in a private database. Access is limited to the founder, authorized legal counsel, and qualified investors under executed NDA and IP-assignment agreements. No portion of this methodology is published, open-sourced, or disclosed in marketing materials.</div></div>
+        <div class="row"><div class="row-label">What is protected</div><div class="row-value">(1) The Speed Tier vocabulary and definitions. (2) The classification decision protocol. (3) The quality floor criteria and named disqualifiers. (4) The two-axis matching methodology. (5) The wild card adjacency logic. (6) The seed data and its classification assignments. (7) The worked-example library. (8) The surrounding areas architecture. (9) The three-filter post-processing chain. (10) The AI prompt engineering implementing the above.</div></div>
+        <div class="row"><div class="row-label">What is not protected</div><div class="row-value">The names of individual venues (publicly known). The fact that CURATE uses AI (disclosed in marketing). The general categories (STAY, TABLE, SOCIAL). The existence of a speed profile system (disclosed in member onboarding). These are the surface; the methodology is what lies beneath.</div></div>
+        <div class="row"><div class="row-label">Disclosure protocol</div><div class="row-value">Before sharing any portion of this document with any third party (investors, potential acquirers, contractors, legal counsel), obtain an executed NDA with IP-assignment clause and log the disclosure with date, recipient, and scope. Treat any sharing of the classification decision protocol or worked examples with the same care as sharing source code.</div></div>
+        <div class="row"><div class="row-label">Patent potential</div><div class="row-value">The two-axis classification methodology, the surrounding areas expansion architecture, and the multi-environment wild card detection system may contain patentable elements. This determination requires review by a qualified IP attorney. A provisional patent application should be evaluated — it is inexpensive, preserves a priority date, and allows "patent pending" to be claimed during any deal process. Do not over-invest here; trade secret is the primary protection and is more certain. But the provisional is worth the conversation.</div></div>
+        <div class="callout" style="margin-top:20px;border-color:rgba(186,159,117,0.3);">
+          <p style="font-size:12px;line-height:1.7;">Document prepared: June 30, 2026. Owner: Rick Bouffard, RMK Group LLC. Status: Active trade secret. Review annually or upon any material change to the methodology. Consult IP counsel before any M&amp;A or licensing discussion that would require disclosure of this material.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- end tab-ip -->
+
 </div>
 
 <script>
@@ -880,6 +1468,16 @@
   });
 
   // ── Init ────────────────────────────────────────────────────────────────────
+  // ── Tab switching ───────────────────────────────────────────────────────────
+  function switchTab(name, btn) {
+    document.getElementById('tab-system').classList.remove('active');
+    document.getElementById('tab-ip').classList.remove('active');
+    document.getElementById('tab-' + name).classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
   (function init() {
     const session = sessionStorage.getItem('curate_admin_session');
     showScreen(session ? 'docs' : 'login');
