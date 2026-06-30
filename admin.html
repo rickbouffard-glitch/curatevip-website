@@ -479,8 +479,8 @@
         <div class="row"><div class="row-label">Hidden (commented out)</div><div class="row-value">Bellevue · Miami · Nashville · Los Angeles · Charleston</div></div>
         <div class="row"><div class="row-label">File</div><div class="row-value"><code>DashboardPage.jsx</code> — MARKETS array, lines 56–67. Re-enable by uncommenting the relevant object.</div></div>
         <div class="subhead">Hidden Environments (Beta)</div>
-        <div class="row"><div class="row-label">Verandah — hidden from TABLE</div><div class="row-value">Verandah is hidden from the dining speed selector for beta. It remains active in SOCIAL. Wild card adjacency map confirmed safe — none of the active TABLE environments have Verandah as an adjacent speed.</div></div>
-        <div class="row"><div class="row-label">Vanguard — hidden from STAY</div><div class="row-value">Vanguard is hidden from the stay speed selector for beta. Wild card adjacency map confirmed safe.</div></div>
+        <div class="row"><div class="row-label">Verandah — hidden from TABLE &amp; SOCIAL</div><div class="row-value">Verandah is hidden from member-facing selections in both TABLE and SOCIAL for Phase 1. Members whose quiz result maps to Verandah (social) are assigned Gallery. Wild card adjacency map confirmed safe.</div></div>
+        <div class="row"><div class="row-label">Vanguard — hidden from STAY</div><div class="row-value">Vanguard is hidden from the stay speed selector for Phase 1. Wild card adjacency map confirmed safe.</div></div>
         <div class="row"><div class="row-label">File</div><div class="row-value"><code>DashboardPage.jsx</code> — EXPLORE_SPEEDS object. Move environment string from comment back into the array to re-enable.</div></div>
         <div class="subhead">Surrounding Areas Labels (per market)</div>
         <div class="row"><div class="row-label">Seattle</div><div class="row-value">"Include Eastside &amp; Woodinville" — checkbox only appears when Seattle is selected</div></div>
@@ -519,7 +519,7 @@
         <div class="row"><div class="row-label">Provision (TABLE)</div><div class="row-value">Organic energy, full bar, real conversation, excellent food. Not manufactured — no DJ or bottle service.</div></div>
         <div class="row"><div class="row-label">Couture (TABLE)</div><div class="row-value">The room takes you somewhere else. Design-as-destination. You'd go for the room as much as the food.</div></div>
         <div class="row"><div class="row-label">Shadow (TABLE &amp; SOCIAL)</div><div class="row-value">Dark, considered, atmospheric. Mood is the amenity. You had to know it was there.</div></div>
-        <div class="row"><div class="row-label">Verandah (TABLE &amp; SOCIAL)</div><div class="row-value muted" style="color:rgba(255,100,100,0.7);">The table itself is physically outside, under the sky. Not indoors with views — actually outside. Hidden from TABLE for beta.</div></div>
+        <div class="row"><div class="row-label">Verandah (TABLE &amp; SOCIAL)</div><div class="row-value muted" style="color:rgba(255,100,100,0.7);">The table or bar surface is physically outside, under the sky. Not indoors with views — actually outside. Hidden from TABLE and SOCIAL for Phase 1.</div></div>
         <div class="row"><div class="row-label">Pulse / Electric (TABLE &amp; SOCIAL)</div><div class="row-value">Scene, energy, the right crowd. Being seen is part of the value.</div></div>
         <div class="row"><div class="row-label">Gallery (SOCIAL)</div><div class="row-value">Design you feel before you see. Intimate, selective, visually intelligent.</div></div>
         <div class="subhead">Named Environment Blocks (seed.js)</div>
@@ -912,10 +912,11 @@
         </div>
 
         <div class="tier-block" style="border-bottom:none;">
-          <div class="tier-name">Verandah &mdash; SOCIAL</div>
-          <div class="tier-def">Verandah applies to SOCIAL venues using the same definition as TABLE above — a bar, terrace, or rooftop where the drinking surface is physically outside, under open sky. Active for SOCIAL in all markets.</div>
+          <div class="tier-name">Verandah &mdash; SOCIAL <span style="color:rgba(255,180,50,0.7);font-size:11px;font-weight:400;letter-spacing:0.08em;">[HIDDEN — PHASE 1]</span></div>
+          <div class="tier-def">Verandah applies to SOCIAL venues using the same definition as TABLE above — a bar, terrace, or rooftop where the drinking surface is physically outside, under open sky.</div>
           <div class="tier-test">Same primary test as TABLE: the guest is physically outdoors, not behind glass. Could it rain on them? If yes: Verandah.</div>
           <div class="tier-dis">Same disqualifiers as TABLE Verandah — glass walls, covered indoor terraces, and venues where "outdoor" is a view amenity rather than the actual physical condition.</div>
+          <div class="tier-dis" style="color:rgba(255,180,50,0.6);margin-top:6px;">Phase 1 status: Verandah is hidden from member-facing SOCIAL selections in Phase 1, alongside TABLE. The tier definition, classification logic, and seed architecture are complete. Members whose quiz result maps to Verandah are assigned Gallery for Phase 1. Will be activated once outdoor venue inventory is sufficient across all markets.</div>
         </div>
       </div>
     </div>
