@@ -411,6 +411,54 @@
       </div>
     </div>
 
+    <!-- 00B: The Problem We Solve — Member Time Value -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">00B</span>
+        <span class="section-title">The Problem We Solve — Member Time Value <span class="new-badge">New — June 30</span></span>
+      </div>
+      <div class="section-body green">
+        <div class="callout" style="margin-top:0;margin-bottom:20px;background:rgba(30,180,100,0.1);border-left-color:rgba(30,180,100,0.5);">
+          <p class="serif" style="font-size:16px;">"You've spent hours on this before. Scrolling photos, reading reviews, trying to feel whether a room matches your mood. We built CurateVIP so you never have to do that again."</p>
+        </div>
+
+        <div class="subhead">The Research Problem Every Luxury Traveler Knows</div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.85;margin-bottom:20px;">CurateVIP was built around a specific, real frustration. When a high-net-worth traveler arrives in an unfamiliar city and wants to find the right restaurant or hotel — not just any good one, but the one that matches how they experience spaces — they face a research process that is broken in several distinct ways. The time cost is real, the error rate is high, and no existing product solves it.</p>
+
+        <div class="subhead">What a Thorough Search Actually Costs</div>
+
+        <div class="row"><div class="row-label">Step 1 — Source navigation <span style="color:rgba(255,200,100,0.8);font-size:11px;margin-left:8px;">~14 min</span></div><div class="row-value">A thorough traveler opens 14 tabs: Michelin Guide, James Beard Foundation, Forbes Travel Guide, Eater, Robb Report, Wine Spectator, Food &amp; Wine, Condé Nast Traveler, World's 50 Best, and more. Just navigating each site, finding the city-specific section, and locating the relevant award or list takes roughly a minute per source. This is before reading a single result.</div></div>
+
+        <div class="row"><div class="row-label">Step 2 — Reading each source <span style="color:rgba(255,200,100,0.8);font-size:11px;margin-left:8px;">~42–56 min</span></div><div class="row-value">Each source covers the city differently — some by award tier, some by category, some by year. Reading and noting relevant venues takes 3–4 minutes per source. Across 14 sources: 42–56 minutes of active reading, and most sources surface different venues with no overlap, so nothing can be skipped.</div></div>
+
+        <div class="row"><div class="row-label">Step 3 — Compile and cross-reference <span style="color:rgba(255,200,100,0.8);font-size:11px;margin-left:8px;">~45–60 min</span></div><div class="row-value">Now the traveler has a raw list — dozens of venues across 14 sources with no structure. Compiling it into something usable means identifying which venues appear in multiple lists (a meaningful signal), which awards are recent vs. years old, which are venue-level credentials vs. chef-level accolades that don't actually belong to the current restaurant. This step is deceptively slow. A thorough job takes 45–60 minutes. Most travelers give up halfway through and go with whatever name felt most familiar — which is exactly how bad recommendations happen.</div></div>
+
+        <div class="row"><div class="row-label">Step 4 — Match to personal taste <span style="color:rgba(255,200,100,0.8);font-size:11px;margin-left:8px;">~60 min+ (often 2–3 hrs)</span></div><div class="row-value">This is the step that breaks people. The traveler now has a shortlist of credentialed venues and no way to know which one is actually right for them tonight. So they open each restaurant's website, scroll their Instagram, read Google and Yelp reviews, look at interior photos, try to feel whether the energy of the room — the lighting, the crowd, the vibe — is what they want. It sounds like it should take 10 minutes. It rarely does. For a thorough traveler comparing 6–8 venues, this step alone runs 60 minutes conservatively. Many people spend 2–3 hours here. And at the end of it, they still aren't sure — because photos lie, reviews are generic, and nothing tells you whether this place matches how YOU experience spaces.</div></div>
+
+        <div class="row"><div class="row-label">Step 5 — Credential verification <span style="color:rgba(255,200,100,0.8);font-size:11px;margin-left:8px;">Most people skip this entirely</span></div><div class="row-value">The final step a truly diligent traveler would take: verify that the awards they found actually belong to the venue as it exists today — not a chef who left, not a prior location, not an award earned 8 years ago before a change of ownership. Almost no one does this. The ones who skip it occasionally book a table based on credentials that no longer apply and wonder why the experience didn't match expectations.</div></div>
+
+        <div class="callout" style="margin-top:20px;margin-bottom:20px;background:rgba(255,200,60,0.08);border-left-color:rgba(255,200,60,0.4);">
+          <p><strong>Conservative total: 2.5–3 hours per destination.</strong> For a traveler visiting a new city on a 3-day trip, researching where to eat and stay properly would consume most of a day. Most people don't do it properly — they default to what they've heard of, or ask a concierge, or rely on a recommendation from someone whose taste they only partially share. The research problem is real. The cost is high. And until CurateVIP, no product solved it.</p>
+        </div>
+
+        <div class="subhead">What CurateVIP Does Instead</div>
+        <div class="row"><div class="row-label">Steps 1–3 replaced entirely</div><div class="row-value">All 14 sources are queried in parallel via Brave Search API. Results are extracted by Claude Haiku into a structured credential map. Cross-referencing, recency validation, and credential attribution (chef awards at prior employers do not transfer) are all enforced automatically at three layers of the pipeline. What takes a thorough researcher 2+ hours to compile is assembled in under 30 seconds.</div></div>
+        <div class="row"><div class="row-label">Step 4 eliminated — not compressed</div><div class="row-value">The taste-matching step — the one that costs most travelers an hour or more and still leaves them uncertain — is not compressed. It is eliminated. The Speed Tier profile built during CurateVIP onboarding captures how the member actually experiences spaces: what they notice first walking into a hotel lobby, whether they want to disappear or be seen, whether the food or the room is the reason they're there. Venues are matched to that profile before they ever reach the member. The member doesn't scroll and wonder. They receive three venues and immediately recognize that these are right for them.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Step 5 automated</div><div class="row-value">Credential attribution is enforced at the Haiku extraction prompt, the signal block formatter, and the Sonnet curation prompt. Awards follow venues, not chefs. The step most travelers skip is the step CurateVIP handles automatically.</div></div>
+
+        <div class="subhead">The Number</div>
+        <div class="callout" style="margin-top:8px;background:rgba(30,180,100,0.1);border-left-color:rgba(30,180,100,0.5);">
+          <p style="font-size:15px;font-weight:600;color:rgba(255,255,255,0.9);">~360× faster than a thorough manual research session. And the manual version still doesn't match the member's taste profile, verify credential attribution, apply chain disqualifiers, or classify venues by primary environment.</p>
+        </div>
+
+        <div class="subhead" style="margin-top:20px;">Approved Marketing Copy</div>
+        <div class="row"><div class="row-label">Hero line</div><div class="row-value">"What used to take 3 hours of research across 14 tabs. Now takes 30 seconds."</div></div>
+        <div class="row"><div class="row-label">Pain-point line</div><div class="row-value">"You've spent hours on this before. Scrolling photos, reading reviews, trying to feel whether a room matches your mood. We built CurateVIP so you never have to do that again."</div></div>
+        <div class="row"><div class="row-label">Precision line</div><div class="row-value">"We check 14 authoritative sources in 30 seconds and hand you the three venues that match exactly how you travel."</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Authority line</div><div class="row-value">"The research your travel advisor would take a week to compile — delivered in the time it takes to read this sentence."</div></div>
+      </div>
+    </div>
+
     <!-- 01: Overview -->
     <div class="section">
       <div class="section-header">
