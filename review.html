@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CURATEvip — Engineering Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold: #ba9f75; --gold-dim: rgba(186,159,117,0.5); --bg: #0c0c0d; }
+    body {
+      background: var(--bg); color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Login ── */
+    .auth-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 50% 30%, rgba(186,159,117,0.08) 0%, #0c0c0d 65%);
+      padding: 32px 20px;
+    }
+    .auth-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(186,159,117,0.18);
+      border-radius: 20px; padding: 44px 40px; width: 100%; max-width: 380px;
+    }
+    .auth-logo {
+      font-family: 'Cormorant Garamond', serif; font-size: 26px; letter-spacing: 0.25em;
+      color: var(--gold); text-align: center; margin-bottom: 6px; font-weight: 500;
+    }
+    .auth-subtitle {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25); text-align: center; margin-bottom: 36px;
+    }
+    .auth-field {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 13px 16px; font-size: 14px; color: #fff;
+      outline: none; font-family: inherit; margin-bottom: 12px; transition: border-color 0.2s;
+    }
+    .auth-field:focus { border-color: rgba(186,159,117,0.4); }
+    .auth-btn {
+      width: 100%; margin-top: 4px;
+      background: rgba(186,159,117,0.1); border: 1px solid rgba(186,159,117,0.3);
+      border-radius: 10px; padding: 13px; color: var(--gold);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; font-family: inherit; transition: background 0.2s;
+    }
+    .auth-btn:hover { background: rgba(186,159,117,0.16); }
+    .auth-error {
+      font-size: 12px; color: #e57373; text-align: center;
+      margin-top: 12px; letter-spacing: 0.04em; min-height: 18px;
+    }
+
+    /* ── Viewer ── */
+    .viewer { display: none; flex-direction: column; min-height: 100vh; }
+    .viewer.active { display: flex; }
+
+    .viewer-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      position: sticky; top: 0; background: var(--bg); z-index: 10;
+    }
+    .viewer-wordmark {
+      font-family: 'Cormorant Garamond', serif; font-size: 16px;
+      letter-spacing: 0.22em; color: var(--gold); font-weight: 500;
+    }
+    .viewer-wordmark span {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; letter-spacing: 0.15em; color: rgba(255,255,255,0.2);
+      font-weight: 400; margin-left: 10px;
+    }
+
+    .tab-strip {
+      display: flex; gap: 4px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 40px; padding: 5px;
+    }
+    .tab-btn {
+      background: transparent; border: 1px solid transparent; border-radius: 30px;
+      color: rgba(255,255,255,0.3); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 20px;
+      cursor: pointer; font-family: inherit; transition: all 0.2s; outline: none;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: rgba(186,159,117,0.14); border-color: rgba(186,159,117,0.35);
+      color: var(--gold);
+    }
+
+    .signout-btn {
+      background: none; border: none; cursor: pointer; font-family: inherit;
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.18); transition: color 0.2s;
+    }
+    .signout-btn:hover { color: rgba(255,255,255,0.4); }
+
+    .viewer-body { max-width: 820px; margin: 0 auto; padding: 44px 32px 80px; width: 100%; }
+
+    /* ── Doc styles ── */
+    .doc h1 { color: var(--gold); font-size: 20px; font-weight: 700; margin: 0 0 22px; letter-spacing: 0.04em; font-family: inherit; }
+    .doc h2 {
+      color: rgba(255,255,255,0.85); font-size: 11px; font-weight: 700;
+      margin: 38px 0 14px; letter-spacing: 0.12em; text-transform: uppercase;
+      border-bottom: 1px solid rgba(186,159,117,0.2); padding-bottom: 8px; font-family: inherit;
+    }
+    .doc h3 { color: rgba(186,159,117,0.7); font-size: 11px; font-weight: 700; margin: 22px 0 8px; letter-spacing: 0.1em; text-transform: uppercase; font-family: inherit; }
+    .doc p { color: rgba(255,255,255,0.55); font-size: 13px; line-height: 1.75; margin: 0 0 12px; }
+    .doc hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 28px 0; }
+    .doc ul { padding-left: 18px; margin: 6px 0 16px; }
+    .doc li { color: rgba(255,255,255,0.55); font-size: 13px; line-height: 1.7; margin-bottom: 4px; }
+    .doc pre {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; padding: 16px 18px; font-size: 12px;
+      font-family: 'SF Mono', 'Fira Code', monospace; color: rgba(255,255,255,0.6);
+      overflow-x: auto; margin: 12px 0 20px; line-height: 1.65; white-space: pre;
+    }
+    .doc code {
+      background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 3px;
+      font-size: 12px; font-family: 'SF Mono', 'Fira Code', monospace; color: rgba(255,255,255,0.8);
+    }
+    .doc pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+    .doc table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
+    .doc th {
+      text-align: left; padding: 9px 14px;
+      border-bottom: 1px solid rgba(186,159,117,0.25);
+      color: var(--gold); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+    }
+    .doc td {
+      padding: 8px 14px; color: rgba(255,255,255,0.55);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      vertical-align: top; line-height: 1.55;
+    }
+    .doc strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+    @media (max-width: 600px) {
+      .viewer-header { padding: 14px 18px; flex-wrap: wrap; gap: 12px; }
+      .viewer-body { padding: 28px 18px 60px; }
+      .tab-btn { padding: 8px 12px; font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">CURATE</div>
+    <div class="auth-subtitle">Engineering Review</div>
+    <input class="auth-field" type="text" id="uInput" placeholder="Username" autocomplete="username" />
+    <input class="auth-field" type="password" id="pInput" placeholder="Password" autocomplete="current-password" />
+    <div class="auth-error" id="authError"></div>
+    <button class="auth-btn" onclick="doLogin()">Access</button>
+  </div>
+</div>
+
+<!-- ── Viewer ── -->
+<div class="viewer" id="viewer">
+  <header class="viewer-header">
+    <div class="viewer-wordmark">CURATE<span>/ Engineering Review</span></div>
+    <div class="tab-strip">
+      <button class="tab-btn active" onclick="showTab('readme',this)">README</button>
+      <button class="tab-btn" onclick="showTab('architecture',this)">Architecture</button>
+      <button class="tab-btn" onclick="showTab('schema',this)">Schema</button>
+    </div>
+    <button class="signout-btn" onclick="signOut()">Sign Out</button>
+  </header>
+  <div class="viewer-body">
+    <div class="doc" id="readme"></div>
+    <div class="doc" id="architecture" style="display:none"></div>
+    <div class="doc" id="schema" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+// ┌──────────────────────────────────────────────────────────┐
+// │  REVIEWER CREDENTIALS — edit only these two lines        │
+const ACCESS_USERNAME = 'rick';
+const ACCESS_PASSWORD = 'CurateVip2025';
+// └──────────────────────────────────────────────────────────┘
+
+// ── Auth ────────────────────────────────────────────────────
+function doLogin() {
+  const u = document.getElementById('uInput').value.trim();
+  const p = document.getElementById('pInput').value;
+  if (u === ACCESS_USERNAME && p === ACCESS_PASSWORD) {
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('viewer').classList.add('active');
+    renderAll();
+  } else {
+    document.getElementById('authError').textContent = 'Invalid credentials.';
+  }
+}
+
+document.getElementById('pInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('uInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('pInput').focus();
+});
+
+function signOut() {
+  document.getElementById('authScreen').style.display = '';
+  document.getElementById('viewer').classList.remove('active');
+  document.getElementById('uInput').value = '';
+  document.getElementById('pInput').value = '';
+  document.getElementById('authError').textContent = '';
+}
+
+// ── Tab switching ────────────────────────────────────────────
+function showTab(id, btn) {
+  ['readme','architecture','schema'].forEach(t => {
+    document.getElementById(t).style.display = t === id ? '' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Inline renderer ──────────────────────────────────────────
+function renderInline(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+// ── Markdown renderer ────────────────────────────────────────
+function renderMarkdown(md) {
+  const lines = md.split('\n');
+  let html = '';
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (line.startsWith('# ')) {
+      html += `<h1>${renderInline(line.slice(2))}</h1>`;
+      i++;
+    } else if (line.startsWith('## ')) {
+      html += `<h2>${renderInline(line.slice(3))}</h2>`;
+      i++;
+    } else if (line.startsWith('### ')) {
+      html += `<h3>${renderInline(line.slice(4))}</h3>`;
+      i++;
+    } else if (line.startsWith('```')) {
+      const codeLines = [];
+      i++;
+      while (i < lines.length && !lines[i].startsWith('```')) {
+        codeLines.push(lines[i].replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+        i++;
+      }
+      i++;
+      html += `<pre><code>${codeLines.join('\n')}</code></pre>`;
+    } else if (line.startsWith('|') && line.trim().length > 1) {
+      const tableLines = [];
+      while (i < lines.length && lines[i].startsWith('|')) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+      const rows = tableLines
+        .filter(l => !/^\|[\s\-:|]+\|$/.test(l.replace(/ /g, '')))
+        .map(l => l.split('|').slice(1, -1).map(c => c.trim()));
+      if (rows.length > 0) {
+        html += '<div style="overflow-x:auto;margin:12px 0 20px"><table>';
+        html += '<thead><tr>' + rows[0].map(c => `<th>${renderInline(c)}</th>`).join('') + '</tr></thead>';
+        html += '<tbody>';
+        rows.slice(1).forEach(row => {
+          html += '<tr>' + row.map(c => `<td>${renderInline(c)}</td>`).join('') + '</tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+    } else if (line.trim() === '---') {
+      html += '<hr>';
+      i++;
+    } else if (line.startsWith('- ') || line.startsWith('* ')) {
+      html += '<ul>';
+      while (i < lines.length && (lines[i].startsWith('- ') || lines[i].startsWith('* '))) {
+        html += `<li>${renderInline(lines[i].slice(2))}</li>`;
+        i++;
+      }
+      html += '</ul>';
+    } else if (line.trim() === '') {
+      i++;
+    } else {
+      html += `<p>${renderInline(line)}</p>`;
+      i++;
+    }
+  }
+  return html;
+}
+
+// ── Doc content ──────────────────────────────────────────────
+
+const README_MD = `# curatevip-api
+
+Node/Express API for CurateVIP. Handles AI-driven venue curation, hotel booking, photo sourcing, and member management. Deployed on Railway via Docker.
+
+## Stack
+
+| Layer | Tech |
+|---|---|
+| Runtime | Node 20 |
+| Framework | Express 4 |
+| AI | Anthropic Claude (Sonnet 4.x for curation, Haiku for extraction/validation) |
+| Search | Brave Search API |
+| Database | Supabase (PostgreSQL) |
+| Photos | Google Places API + Puppeteer |
+| Booking | LiteAPI (primary), RateHawk (secondary) |
+| Email | Resend |
+| SMS | Twilio |
+| Headless browser | Puppeteer + system Chromium (via Dockerfile) |
+
+## Local development
+
+\`\`\`bash
+npm install
+cp .env.example .env   # fill in keys
+npm run dev            # nodemon, port 4000
+\`\`\`
+
+The headless browser features (reservation link discovery, og:image fetch) degrade gracefully if Chromium is absent.
+
+## Environment variables
+
+All required unless marked optional.
+
+\`\`\`
+# Anthropic
+ANTHROPIC_API_KEY=
+
+# Brave Search
+BRAVE_API_KEY=
+
+# Supabase
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Google
+GOOGLE_PLACES_API_KEY=
+GOOGLE_CSE_KEY=
+GOOGLE_CSE_ID=
+
+# Booking — LiteAPI
+LITEAPI_API_KEY=
+
+# Booking — RateHawk (optional)
+RATEHAWK_KEY_ID=
+RATEHAWK_API_KEY=
+
+# Email
+RESEND_API_KEY=
+FROM_EMAIL=invites@curatevip.ai
+
+# SMS (optional)
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_PHONE_NUMBER=
+
+# App
+APP_URL=https://curatevip.ai
+ADMIN_SECRET=
+ADMIN_EMAILS=
+PORT=4000
+
+# Puppeteer
+PUPPETEER_EXECUTABLE_PATH=
+\`\`\`
+
+## Deploy
+
+Railway reads the Dockerfile at repo root. Push to main → Railway auto-deploys. Environment variables are managed in the Railway dashboard under the service Variables tab.
+
+## Key files
+
+\`\`\`
+server.js                  — Express routes + middleware (~2,600 lines)
+engine/curate.js           — CCTF curation engine (extracted from server.js)
+seed.js                    — Curated venue registry: confirmed, blocked, environment metadata
+services/
+  websearch.js             — Brave Search + Signal Guard (Haiku validation pass)
+  bookingAdapter.js        — Unified booking interface (LiteAPI + RateHawk waterfall)
+  liteapi.js               — LiteAPI hotel rates + booking
+  ratehawk.js              — RateHawk hotel rates + booking
+  hotelbeds.js             — Hotelbeds integration (not yet wired to routes)
+SUPABASE_SETUP.sql         — Initial schema
+SCHEMA.md                  — Full data model reference
+ARCHITECTURE.md            — Pipeline and system design
+\`\`\`
+
+## Admin endpoints
+
+All /api/admin/* routes require Authorization: Bearer ADMIN_SECRET. The admin panel at curatevip.ai/admin uses the same header.
+
+## Caching
+
+Three layers of cache sit in front of Claude:
+
+- \`market_venue_cache\` — full curation result per market x intent, 7 days
+- \`quality_signals_cache\` — Brave Search results per market x category, 7 days
+- \`venue_photos\` — photo URLs per venue, 7 days`;
+
+const ARCHITECTURE_MD = `# CurateVIP — Backend Architecture
+
+## Overview
+
+CurateVIP curates venues (hotels, restaurants, social spots) for a specific member based on their speed profile — a two-axis classification of the member's pace x environment preference. The core value is in the curation engine: what gets included, what gets filtered, and in what order.
+
+---
+
+## Request lifecycle — /api/curate
+
+### 1. Profile resolution
+
+speedProfile from the member's onboarding carries environment keys per intent (TABLE, STAY, SOCIAL). The server maps those to canonical CCTF environment names and guards against stale defaults that cross category boundaries.
+
+### 2. Cache check
+
+\`market_venue_cache\` is queried first. A hit bypasses Claude entirely and streams the cached result directly. Cache TTL is 7 days. Cache is busted manually via POST /api/reset-cache or the admin panel.
+
+### 3. Brave Search — quality signals
+
+On a cache miss, Brave Search runs before Claude. Three parallel query sets fan out:
+
+- TABLE: 14 queries (Michelin, James Beard, Forbes Table, city-specific dining press)
+- STAY: 9 queries (Forbes Five Star, Michelin Key, AAA Five Diamond, LHW/SLH premium tier)
+- SOCIAL: 6 queries (rooftop, bar, private club, social scene signals)
+
+Results are cached in \`quality_signals_cache\` for 7 days. The raw snippets are passed into the curation prompt as grounding context and held for Signal Guard.
+
+### 4. Claude Sonnet — curation
+
+A structured prompt including:
+- The member's resolved CCTF environment + adjacent environments for cross-tier picks
+- Quality signal block (live Brave Search snippets)
+- Seed reference sweep (confirmed/blocked venues for the market)
+- Hard disqualifiers and quality floor rules
+
+Claude returns a JSON stream. Venue objects are extracted incrementally and streamed to the client as they complete so the frontend can render cards progressively.
+
+### 5. Post-filter chain
+
+After Sonnet picks arrive, six guards run in sequence:
+
+| Guard | What it does |
+|---|---|
+| Signal Guard | Haiku validates each candidate against Brave snippets; drops not_found picks |
+| Geo guard | Removes venues outside the requested market |
+| Tier guard | Removes venues whose environment does not match the resolved tier |
+| Seed block | Hard-removes any venue in seed.js with blocked: true |
+| Env block | Removes venues whose environment conflicts with category |
+| Surrounding block | Removes cross-market venues unless includeSurrounding is set |
+
+Seed-confirmed venues (confirmed: true) bypass Signal Guard — they have a standing signal by definition.
+
+### 6. Signal Guard — Haiku validation pass
+
+Signal Guard sends up to 50 Brave Search snippets plus the Sonnet candidate list to Claude Haiku asking for found | not_found | uncertain per venue. not_found picks are dropped unless seed-confirmed. The call has a 10-second timeout and is non-fatal — if Haiku errors, the guard skips.
+
+### 7. Streaming response
+
+Filtered venues are written as text/event-stream. The frontend renders each card as it arrives. The full result is written to \`market_venue_cache\` at the end.
+
+---
+
+## CCTF — two-axis classification
+
+CCTF (CurateVIP Classification and Tier Framework) maps member intent to one of 11 environments:
+
+- **TABLE:** Provision · Convivial · Electric · Gallery · Vanguard · Verandah
+- **STAY:** Sanctuary · Atelier · Estate · Couture · Vanguard
+- **SOCIAL:** Gallery · Electric · Plunge · Shadow
+
+The two-axis model: speed tier (pace/stimulus level) x environment lean (physical/social character of the space).
+
+---
+
+## Quality floor
+
+**Primary credentials** — qualify a venue standalone regardless of price:
+- Forbes Five Star
+- Michelin Key
+- AAA Five Diamond
+- Flagship brand (Aman, Four Seasons, Ritz-Carlton, etc.)
+
+**Secondary credentials** — qualify only with confirmed $500+/night:
+- Leading Hotels of the World (LHW)
+- Small Luxury Hotels (SLH)
+- Relais & Chateaux
+- Preferred Hotels & Resorts Legend Collection
+
+Venues with only secondary credentials below the price floor are filtered out.
+
+---
+
+## Booking pipeline
+
+Each venue carries a bookingMode:
+
+- \`liteapi\` — LiteAPI attempted first
+- \`ratehawk\` — RateHawk used directly
+- \`request\` — No live rates; frontend shows concierge CTA
+
+The waterfall (LiteAPI → RateHawk → request) is resolved internally by \`bookingAdapter.js\`. Rate deduplication normalizes both provider shapes into a common format.
+
+---
+
+## Layer separation (June 2026 refactor)
+
+The 856-line /api/curate handler was extracted from server.js into \`engine/curate.js\` as a standalone function: curate(params, deps, res). Dependencies (Anthropic client, Supabase client, vision helper) are injected via deps. server.js dropped from ~3,540 to ~2,610 lines. The route is now 3 lines.
+
+---
+
+## Data flow summary
+
+\`\`\`
+Client
+  POST /api/curate
+    Cache hit  → stream from market_venue_cache
+    Cache miss
+      Brave Search (14/9/6 queries, parallelized)
+      Claude Sonnet (structured prompt + stream)
+      Signal Guard (Haiku, non-fatal)
+      Post-filter chain (geo → tier → seed-block → env → surrounding)
+      Photo enrichment (async, parallel)
+      Write market_venue_cache → stream to client
+\`\`\``;
+
+const SCHEMA_MD = `# CurateVIP — Data Model
+
+Supabase (PostgreSQL). All tables use Row Level Security. Backend accesses via the service role key, which bypasses RLS.
+
+---
+
+## members
+
+Admin-created. A member record is created when an invite is sent.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | auto-generated |
+| first_name | text | required |
+| last_name | text | |
+| email | text unique | required |
+| phone | text | SMS invite delivery |
+| city | text | member's primary city |
+| invite_code | text unique | random token; URL path on accept page |
+| member_number | text | display number shown in app |
+| invited_at | timestamptz | default now() |
+| accepted_at | timestamptz | set when member taps accept link |
+| profile_completed_at | timestamptz | set when onboarding quiz finishes |
+| status | text | invited → accepted → complete |
+
+---
+
+## invite_requests
+
+Public form submissions. Reviewed by admin, who can promote to a members record or reject.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | |
+| full_name | text | |
+| email | text | |
+| city | text | |
+| net_worth | text | self-reported range |
+| travel_frequency | text | self-reported |
+| note | text | optional applicant message |
+| status | text | pending → approved or rejected |
+| created_at | timestamptz | |
+
+---
+
+## market_venue_cache
+
+Full curation result per market x intent x environment. Populated at end of a successful /api/curate call. TTL 7 days.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | |
+| market | text | e.g., seattle, scottsdale |
+| intent | text | table, stay, or social |
+| environment | text | resolved CCTF environment (e.g., Provision, Sanctuary) |
+| venues | jsonb | array of fully-enriched venue objects |
+| wild_card | jsonb | single wild-card venue object, or null |
+
+Unique constraint: (market, intent, environment)
+
+### Venue shape (inside venues jsonb)
+
+\`\`\`json
+{
+  "id": "seed-id or ai-generated slug",
+  "name": "Four Seasons Seattle",
+  "market": "seattle",
+  "category": "STAY",
+  "environment": "Sanctuary",
+  "description": "...",
+  "feelsLike": "...",
+  "matchNote": "...",
+  "awards": ["Forbes Five Star"],
+  "luxuryCredential": "Forbes Five Star",
+  "confirmed": true
+}
+\`\`\`
+
+---
+
+## venue_ai_content
+
+Per-venue AI-extracted content. venue_name is the conflict key.
+
+| Column | Type | Notes |
+|---|---|---|
+| venue_name | text unique | matches name in seed.js |
+| market | text | |
+| category | text | TABLE, STAY, or SOCIAL |
+| environment | text | CCTF environment assigned by Sonnet |
+| feels_like | text | short evocative description |
+| match_note | text | why this venue matches the member's profile |
+| description | text | longer venue description |
+| luxury_credential | text | primary credential string |
+| vision_environment | text | environment assigned by Haiku photo vision |
+| vision_confidence | text | high, medium, or low |
+| vision_reasoning | text | Haiku's reasoning |
+| updated_at | timestamptz | |
+
+---
+
+## venue_photos
+
+Google Places photo URLs per venue, cached 7 days.
+
+| Column | Type | Notes |
+|---|---|---|
+| venue_name | text unique | |
+| photos | jsonb | array of photo URL strings |
+| fetched_at | timestamptz | 7-day TTL check |
+
+---
+
+## venue_reservation_links
+
+Cached Puppeteer reservation-link crawler output. TTL 30 days.
+
+| Column | Type | Notes |
+|---|---|---|
+| venue_name | text unique | lowercase, trimmed |
+| city | text | |
+| platform | text | opentable, resy, sevenrooms, tock, yelp, direct, etc. |
+| url | text | direct booking URL |
+| checked_at | timestamptz | TTL and staleness check |
+
+---
+
+## quality_signals_cache
+
+Raw Brave Search snippets per market x category. TTL 7 days.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | |
+| market | text | |
+| category | text | TABLE, STAY, or SOCIAL |
+| signals_json | jsonb | array of { title, description, url } |
+| fetched_at | timestamptz | |
+| expires_at | timestamptz | fetched_at + 7 days |
+
+Unique constraint: (market, category)
+
+---
+
+## Seed vs. database
+
+seed.js is the authoritative venue registry, checked into version control and loaded at startup. Supabase tables store derived, cached, or user-generated data — not the canonical venue list.
+
+| Field | Meaning |
+|---|---|
+| id | Stable slug, unique identifier throughout the app |
+| confirmed: true | Venue passes quality floor — bypasses Signal Guard |
+| blocked: true | Permanently excluded regardless of AI picks |
+| environment | CCTF environment classification |
+| environment_lean | Optional lean modifier (dining, social, hotel) |
+| liteApiId | LiteAPI hotel ID for live rate lookup |
+| bookingMode | liteapi, ratehawk, or request |
+| photoOverride | Override photo — bypasses Google Places entirely |`;
+
+// ── Render all docs on first login ─────────────────────────
+let rendered = false;
+function renderAll() {
+  if (rendered) return;
+  rendered = true;
+  document.getElementById('readme').innerHTML       = renderMarkdown(README_MD);
+  document.getElementById('architecture').innerHTML = renderMarkdown(ARCHITECTURE_MD);
+  document.getElementById('schema').innerHTML       = renderMarkdown(SCHEMA_MD);
+}
+</script>
+</body>
+</html>
