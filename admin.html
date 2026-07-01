@@ -316,12 +316,204 @@
   </header>
 
   <nav class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('system', this)">System Docs</button>
+    <button class="tab-btn active" onclick="switchTab('curate', this)">Curate Process</button>
+    <button class="tab-btn" onclick="switchTab('system', this)">System Docs</button>
     <button class="tab-btn" onclick="switchTab('ip', this)">IP Methodology</button>
   </nav>
 
-  <!-- TAB 1: System Docs -->
-  <div id="tab-system" class="tab-panel active">
+  <!-- TAB 1: Curate Process -->
+  <div id="tab-curate" class="tab-panel active">
+  <div class="docs-body">
+
+    <div class="docs-intro">
+      <div class="docs-intro-tag">Process Overview</div>
+      <div class="docs-intro-title">What happens when<br>you tap Curate</div>
+      <div class="docs-intro-body">A plain-English walkthrough of every step — from tap to cards on screen.</div>
+    </div>
+
+    <!-- Step 1: Cache Check -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <span class="section-title">Cache Check</span>
+      </div>
+      <div class="section-body green">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">The moment you tap Curate, the backend checks if it already has a saved result for your exact combination of market + intent + environment tier. If it does, it skips everything below and streams those venues straight to your screen.</div></div>
+        <div class="row"><div class="row-label">On a hit</div><div class="row-value">No AI call, no web searches, no cost. Results arrive in under 2 seconds.</div></div>
+        <div class="row"><div class="row-label">On a miss</div><div class="row-value">Continues to Step 2. This happens on the first ever request for a market, or after a cache reset.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Cache lifetime</div><div class="row-value">7 days. Busted manually via the admin panel or POST /api/reset-cache when venues need refreshing.</div></div>
+      </div>
+    </div>
+
+    <!-- Step 2: Web Research -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <span class="section-title">Web Research — Quality Signals</span>
+      </div>
+      <div class="section-body blue">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">Before Claude is called, the backend fires a batch of Brave Search queries to pull in live credential signals. These run in parallel so they all finish at the same time. The raw snippets become Claude's grounding context and are also held for the Signal Guard check in Step 4.</div></div>
+        <div class="row"><div class="row-label">Why before Claude</div><div class="row-value">Without live signals, Claude picks from training data alone — which goes stale. Running searches first means Claude sees real, current awards and press before it decides anything.</div></div>
+        <div class="row"><div class="row-label">Cache</div><div class="row-value">Search results are cached in Supabase for 7 days per market &times; category. If fresh results exist, no searches fire and the cached snippets are used directly.</div></div>
+
+        <div class="subhead">TABLE &mdash; 14 Searches</div>
+        <div class="code-block" style="margin-bottom:16px">
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">01</span><span>Michelin star restaurants {city} 2024 2025</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">02</span><span>site:guide.michelin.com {city} restaurant</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">03</span><span>James Beard Award winner nominated restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">04</span><span>site:jamesbeard.org award {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">05</span><span>"World's 50 Best" restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">06</span><span>Robb Report best restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">07</span><span>Wine Spectator Grand Award restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">08</span><span>"Food &amp; Wine" best new restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">09</span><span>"Conde Nast Traveler" OR "Travel + Leisure" best restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">10</span><span>Forbes Travel Guide Five Star restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">11</span><span>site:forbestravelguide.com {city} restaurant</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">12</span><span>Eater best restaurants {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">13</span><span>site:eater.com {city} best restaurants</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">14</span><span>top 10 best restaurants {city} 2024 2025</span></div>
+        </div>
+
+        <div class="subhead">STAY &mdash; 9 Searches</div>
+        <div class="code-block" style="margin-bottom:16px">
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">01</span><span>Forbes Travel Guide Five Star hotels {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">02</span><span>AAA Five Diamond hotels {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">03</span><span>"Leading Hotels of the World" {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">04</span><span>"Relais Chateaux" {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">05</span><span>"Small Luxury Hotels" {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">06</span><span>"Conde Nast Traveler" Gold List hotels {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">07</span><span>"Travel + Leisure" World's Best hotels {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">08</span><span>Robb Report best hotels {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">09</span><span>top 10 best luxury hotels {city} 2024 2025</span></div>
+        </div>
+
+        <div class="subhead">SOCIAL &mdash; 6 Searches</div>
+        <div class="code-block">
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">01</span><span>best cocktail bars {city} award recognized James Beard</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">02</span><span>"Tales of the Cocktail" Spirited Award {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">03</span><span>James Beard "Outstanding Bar" {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">04</span><span>Robb Report best bars cocktail lounges {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">05</span><span>"World's 50 Best Bars" {city}</span></div>
+          <div style="display:flex;gap:10px;padding:5px 0"><span style="color:rgba(186,159,117,0.5);min-width:22px;font-weight:700">06</span><span>top 10 best cocktail bars {city} 2024 2025</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Claude Picks -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <span class="section-title">Claude Picks the Venues</span>
+      </div>
+      <div class="section-body purple">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">All the search snippets get handed to Claude Sonnet as context, alongside the member's speed profile, their resolved CCTF environment tier, and a reference list of every venue already vetted for that market (the seed). Claude reads all of it and selects venues that match — streaming them back as it goes.</div></div>
+        <div class="row"><div class="row-label">Streaming</div><div class="row-value">Claude streams venue objects as JSON as it writes them. The frontend begins extracting and rendering cards before Claude has even finished. The first card typically appears within 3 seconds on a cache miss.</div></div>
+        <div class="row"><div class="row-label">The wild card</div><div class="row-value">Claude is instructed to include one cross-tier discovery pick — a venue just outside the member's primary environment that it judges to be a strong match anyway. This comes last in the stream.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">What Claude sees</div><div class="row-value">Member environment tier + adjacent tiers for cross-tier picks, live quality signal block (the Brave Search snippets from Step 2), seed reference sweep (confirmed and blocked venues for the market), hard disqualifier rules, and the full quality floor definition.</div></div>
+      </div>
+    </div>
+
+    <!-- Step 4: Guards -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <span class="section-title">Every Pick Gets Checked</span>
+      </div>
+      <div class="section-body orange">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">As each venue comes back from Claude, it runs through six filters in sequence. Anything that fails a filter is dropped silently — it never reaches the member.</div></div>
+        <div class="subhead">The Six Guards (run in this order)</div>
+        <div class="filter-chain">
+          <div class="filter-step">
+            <div class="filter-num" style="background:rgba(120,80,220,0.12);border:2px solid rgba(120,80,220,0.4);color:rgba(160,120,255,0.9)">1</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:rgba(160,120,255,0.9)">Signal Guard</div>
+              <div class="filter-detail">A second Claude call (Haiku, fast + cheap) checks each venue name against the raw Brave Search snippets from Step 2. Any venue that does not appear in the live search results — meaning no evidence trail — is dropped. Seed-confirmed venues bypass this check entirely.</div>
+            </div>
+          </div>
+          <div class="filter-step">
+            <div class="filter-num" style="background:rgba(74,184,232,0.12);border:2px solid rgba(74,184,232,0.4);color:#4ab8e8">2</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:#4ab8e8">Geo Guard</div>
+              <div class="filter-detail">Removes any venue outside the requested market. Prevents Claude from hallucinating venues in adjacent cities.</div>
+            </div>
+          </div>
+          <div class="filter-step">
+            <div class="filter-num" style="background:rgba(76,175,125,0.12);border:2px solid rgba(76,175,125,0.4);color:#4caf7d">3</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:#4caf7d">Tier Guard</div>
+              <div class="filter-detail">Removes venues whose CCTF environment classification does not match the member's resolved tier. Keeps the result tightly on-profile.</div>
+            </div>
+          </div>
+          <div class="filter-step">
+            <div class="filter-num" style="background:rgba(255,100,100,0.12);border:2px solid rgba(255,100,100,0.4);color:rgba(255,100,100,0.8)">4</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:rgba(255,100,100,0.8)">Seed Block</div>
+              <div class="filter-detail">Hard-removes any venue marked <code>blocked: true</code> in seed.js. Permanent exclusions — chains, off-standard hotels, venues that have declined in quality — never make it through regardless of what Claude picks.</div>
+            </div>
+          </div>
+          <div class="filter-step">
+            <div class="filter-num" style="background:rgba(232,147,74,0.12);border:2px solid rgba(232,147,74,0.4);color:#e8934a">5</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:#e8934a">Env Block</div>
+              <div class="filter-detail">Removes venues whose declared environment is structurally incompatible with the requested category. Also strips environment-specific blocks set via <code>environment_blocked</code> in seed.js.</div>
+            </div>
+          </div>
+          <div class="filter-step" style="border-bottom:none">
+            <div class="filter-num" style="background:rgba(186,159,117,0.12);border:2px solid rgba(186,159,117,0.3);color:var(--gold)">6</div>
+            <div class="filter-content">
+              <div class="filter-label" style="color:var(--gold)">Surrounding Block</div>
+              <div class="filter-detail">Removes venues from outside the core market unless the member explicitly checked "include surrounding areas" on the dashboard.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Photos -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <span class="section-title">Photos Get Attached</span>
+      </div>
+      <div class="section-body purple">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">Each venue that passes all six guards gets photos pulled in parallel — multiple venues fetch simultaneously so this doesn't add sequential wait time.</div></div>
+        <div class="row"><div class="row-label">Source priority</div><div class="row-value">1. Explicit photo override in seed.js — bypasses all fetching entirely. 2. The venue's own website og:image tag, validated by a Haiku vision check (must show interior or ambiance — not a menu, logo, or exterior). 3. Google Places top photos, each checked by Haiku vision in parallel. First one that passes wins.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Fast fetch mode</div><div class="row-value">Per-card lazy load (/api/venue-photo) skips the vision check to avoid rate limits and returns the first 3 Places photos directly. Used after the initial stream completes.</div></div>
+      </div>
+    </div>
+
+    <!-- Step 6: Cards -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <span class="section-title">Cards Appear on Screen</span>
+      </div>
+      <div class="section-body gold">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">Venues stream to the member one by one as they clear the filters and get photos attached. The member is not staring at a blank screen waiting for all six — cards appear progressively as each one completes.</div></div>
+        <div class="row"><div class="row-label">Order</div><div class="row-value">Venues arrive in the order Claude chose them, which reflects its confidence ranking. The wild card arrives last with a distinct visual treatment.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Timing</div><div class="row-value">Cache hit: under 2 seconds. Cache miss (cold path): first card in ~3 seconds, full set in 15–30 seconds depending on market size and photo availability.</div></div>
+      </div>
+    </div>
+
+    <!-- Step 7: Result Saved -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <span class="section-title">Result Gets Saved</span>
+      </div>
+      <div class="section-body amber">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">Once the full stream completes, the entire result — all venues plus the wild card — is written to market_venue_cache in Supabase, keyed by market + intent + environment.</div></div>
+        <div class="row"><div class="row-label">Effect</div><div class="row-value">The next member (or the same member) requesting the same market &times; intent &times; tier gets an instant cache-hit response. No AI call, no searches, no cost — just the saved result streamed directly.</div></div>
+        <div class="row"><div class="row-label">Lifetime</div><div class="row-value">7 days. After that the cache entry expires and the next request runs the full pipeline again, pulling fresh search signals and a fresh Claude pick.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Cost per cold run</div><div class="row-value">~$0.004–0.007 USD. One Claude Sonnet call &asymp; $0.004–0.006. Google Places photo lookups &asymp; $0.002. Cache hits cost $0.00.</div></div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- TAB 2: System Docs -->
+  <div id="tab-system" class="tab-panel">
   <div class="docs-body">
 
     <div class="docs-intro">
@@ -1641,6 +1833,7 @@
   // ── Init ────────────────────────────────────────────────────────────────────
   // ── Tab switching ───────────────────────────────────────────────────────────
   function switchTab(name, btn) {
+    document.getElementById('tab-curate').classList.remove('active');
     document.getElementById('tab-system').classList.remove('active');
     document.getElementById('tab-ip').classList.remove('active');
     document.getElementById('tab-' + name).classList.add('active');
