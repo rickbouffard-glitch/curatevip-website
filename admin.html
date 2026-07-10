@@ -872,6 +872,68 @@
       </div>
     </div>
 
+    <!-- 11: The Speed Engine -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <span class="section-title">The Speed Engine &mdash; Autonomous Discovery Pipeline <span class="new-badge">New &mdash; July 2026</span></span>
+      </div>
+      <div class="section-body blue">
+        <div class="callout blue-bg">
+          <p class="serif">"The Speed Engine runs while members sleep. It finds, evaluates, and pre-loads every qualifying venue into precomputed pools &mdash; so when a member taps CURATE, the answer is already there."</p>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">The Speed Engine is a background pipeline that continuously discovers, scores, classifies, and pre-ranks venues across all active markets. It runs asynchronously via cron &mdash; entirely separate from the member-facing curation pipeline &mdash; and its output is <code>precomputed_venue_pools</code>: pre-ranked venue lists that feed instant curation results.</p>
+
+        <div class="subhead">Phase 1 &mdash; 4 Scrapers</div>
+        <div class="row"><div class="row-label">Michelin Scraper (v7)</div><div class="row-value">Puppeteer headless Chrome renders Michelin Guide hotel listings per market. Selectors: <code>.card__menu-content</code> for hotel cards, <code>.michelin-award</code> for Key recognition. Extracts name, Michelin Key status, guest score, member privileges. Writes to <code>michelin_hotels</code>. Technology: Puppeteer DOM &mdash; not Brave Search. Ground truth from Michelin's own rendered pages.</div></div>
+        <div class="row"><div class="row-label">Lartisien Scraper (v3)</div><div class="row-value">Puppeteer renders Lartisien city listing pages at <code>/hotels/united-states/{slug}</code>. Walks pages via <code>?page=N</code> until no new hotel slugs appear. City-keyword filtering strips promoted non-market cards. Names extracted from h2/h3 inside hotel links. Markets: Scottsdale, Los Angeles, Santa Barbara. Seattle and Maui skipped (no Lartisien coverage). Writes to <code>lartisien_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">Forbes Scraper</div><div class="row-value">Direct JSON API: fetches <code>forbestravelguide.com/award-winners.json</code> &mdash; 2,400+ properties as structured JSON. No browser required. Filters to <code>propertyType: 'HOTEL'</code> then by city name. Ratings stored: FIVE_STAR, FOUR_STAR, RECOMMENDED. One API fetch covers all 5 markets. Writes to <code>forbes_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">Broad Search Scraper</div><div class="row-value">6 Brave Search queries per market: AAA Five Diamond, Relais &amp; Ch&acirc;teaux, Leading Hotels of the World, Small Luxury Hotels, Cond&eacute; Nast Gold List, T+L World's Best. 5 markets &times; 6 queries = 30 searches. Hotel names from page titles after stripping award and site suffixes. Writes to <code>broad_search_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">scrape_log contract</div><div class="row-value">Every scraper writes a <code>scrape_log</code> entry on success AND error, including source, market, new_venues count, status, and error_message. The AdminDiscoveryPage polls <code>scrape_log</code> for <code>status: 'complete'</code> or <code>status: 'error'</code> to track pipeline progress in real time. If a scraper cannot write to <code>scrape_log</code>, it logs at CRITICAL severity &mdash; this breaks the frontend polling contract.</div></div>
+
+        <div class="subhead">Phase 2 &mdash; Quality Scoring (0&ndash;100 Points)</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:12px;"><code>engine/qualityScore.js</code> reads all 4 scraper tables to compute a composite score per venue. Stored in <code>venue_quality_scores</code>.</p>
+        <div class="row"><div class="row-label">Michelin Key</div><div class="row-value">+25 pts</div></div>
+        <div class="row"><div class="row-label">Forbes Five Star</div><div class="row-value">+25 pts</div></div>
+        <div class="row"><div class="row-label">AAA Five Diamond</div><div class="row-value">+20 pts</div></div>
+        <div class="row"><div class="row-label">Michelin guest score &ge; 19</div><div class="row-value">+15 pts</div></div>
+        <div class="row"><div class="row-label">Lartisien listed</div><div class="row-value">+15 pts</div></div>
+        <div class="row"><div class="row-label">Relais &amp; Ch&acirc;teaux</div><div class="row-value">+12 pts</div></div>
+        <div class="row"><div class="row-label">Leading Hotels of the World</div><div class="row-value">+10 pts</div></div>
+        <div class="row"><div class="row-label">Michelin guest score 18.5&ndash;18.99</div><div class="row-value">+8 pts</div></div>
+        <div class="row"><div class="row-label">Seed confirmed (manual)</div><div class="row-value">+8 pts</div></div>
+        <div class="row"><div class="row-label">Cond&eacute; Nast Gold List</div><div class="row-value">+7 pts</div></div>
+        <div class="row"><div class="row-label">T+L World's Best</div><div class="row-value">+7 pts</div></div>
+        <div class="row"><div class="row-label">Robb Report</div><div class="row-value">+5 pts</div></div>
+        <div class="row"><div class="row-label">Michelin member privileges</div><div class="row-value">+3 pts</div></div>
+        <div class="row"><div class="row-label">3+ source-bucket convergence</div><div class="row-value">+10 pts &nbsp;&mdash; buckets: michelin / forbes / editorial / luxury_curation</div></div>
+        <div class="row"><div class="row-label">2 source-bucket convergence</div><div class="row-value">+5 pts &nbsp;&mdash; total score capped at 100</div></div>
+
+        <div class="subhead">Phase 3 &mdash; Discovery Bridge (3 Passes)</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:12px;"><code>services/discoveryBridge.js</code> evaluates venues from each scraper table not already in seed or pending queue. Three sequential passes with an identical sub-pipeline:</p>
+        <div class="row"><div class="row-label">Pass 1 &mdash; Michelin source</div><div class="row-value">Reads <code>michelin_hotels</code>. Per venue: dedup check against seed.js + pending_venues &rarr; Brave Search enrichment (description + location context) &rarr; cross-reference Forbes + Lartisien tables &rarr; Claude Haiku classifies (CCTF environment + quality_pass) &rarr; computeQuickScore() &rarr; upsert to <code>pending_venues</code>.</div></div>
+        <div class="row"><div class="row-label">Pass 2 &mdash; Forbes source</div><div class="row-value">Reads <code>forbes_hotels</code>. Same sub-pipeline: dedup &rarr; enrich &rarr; cross-reference Michelin + Lartisien &rarr; Haiku classify &rarr; upsert.</div></div>
+        <div class="row"><div class="row-label">Pass 3 &mdash; Broad Search source</div><div class="row-value">Reads <code>broad_search_hotels</code>. Same sub-pipeline: dedup &rarr; enrich &rarr; cross-reference all 3 tables &rarr; Haiku classify &rarr; upsert.</div></div>
+        <div class="row"><div class="row-label">Claude Haiku classification</div><div class="row-value">Receives: venue name, description, location, scraped signals, cross-reference hits. Returns: <code>environment</code> (CCTF tier &mdash; Atelier, Sanctuary, Estate, Vanguard) and <code>quality_pass: true/false</code>. This is the quality gate decision for each discovered venue.</div></div>
+        <div class="row"><div class="row-label">Error philosophy</div><div class="row-value">Dedup query errors: warn + continue (assume venue exists &mdash; conservative, prevents false duplicates). Cross-source lookup errors: warn + continue (signal absent this run; quality score will be lower). Delete-before-rewrite failure: throw immediately &mdash; abort market, prevent stale/fresh data mix. Batch upsert failures: tracked per batch, thrown as aggregate after processing.</div></div>
+
+        <div class="subhead">Phase 4 &mdash; Quality Gate</div>
+        <div class="row"><div class="row-label">quality_pass: true</div><div class="row-value">Venue <code>status = 'approved'</code>. Goes live immediately &mdash; included in the next precompute run without any manual review.</div></div>
+        <div class="row"><div class="row-label">quality_pass: false</div><div class="row-value">Venue <code>status = 'pending'</code>. Enters the admin review queue. Requires manual approval before appearing in member curations.</div></div>
+        <div class="row"><div class="row-label">Storage</div><div class="row-value"><code>pending_venues</code> holds all discovered venues in both states. Approved venues enter precompute. Pending venues wait in the queue.</div></div>
+
+        <div class="subhead">Phase 5 &mdash; Precompute</div>
+        <div class="row"><div class="row-label">What it does</div><div class="row-value"><code>services/precompute.js</code> reads all non-blocked seed venues plus approved discovered venues per market. Ranks by quality score &times; intent affinity &times; environment match. Writes to <code>precomputed_venue_pools</code> &mdash; one row per market + intent + environment combination.</div></div>
+        <div class="row"><div class="row-label">Delete-rewrite integrity</div><div class="row-value">Old pool rows are deleted before new rows are written. Delete failure &rarr; throw immediately (prevents a stale/fresh pool mix). Any batch write failure is tracked and thrown after completion. These are the highest-severity guards in the entire pipeline.</div></div>
+        <div class="row"><div class="row-label">Output</div><div class="row-value"><code>precomputed_venue_pools</code> &mdash; queried by the curation pipeline for instant results when a member taps CURATE. A pool hit = sub-100ms delivery. The entire Speed Engine exists to make this table complete and accurate.</div></div>
+
+        <div class="subhead">Pipeline Endpoints</div>
+        <div class="row"><div class="row-label">Full pipeline (cron + manual)</div><div class="row-value"><code>POST /internal/run-scrapers</code> with <code>x-cron-secret</code> header &mdash; all 4 scrapers &rarr; discovery bridge (3 passes) &rarr; precompute (all markets). Monitored via AdminDiscoveryPage polling <code>scrape_log</code>.</div></div>
+        <div class="row"><div class="row-label">Discovery only</div><div class="row-value"><code>POST /internal/run-discovery</code> &mdash; bridge only, no re-scraping. Use when scraper data is fresh but re-classification or re-scoring is needed.</div></div>
+        <div class="row"><div class="row-label">Precompute only</div><div class="row-value"><code>POST /internal/precompute-all-markets</code> &mdash; reruns precompute only. Use after manually approving pending venues to push them into live pools immediately without waiting for the next full pipeline run.</div></div>
+      </div>
+    </div>
+
     <!-- 12: Discovery Mandate -->
     <div class="section">
       <div class="section-header">
@@ -958,7 +1020,7 @@
     <div class="section">
       <div class="section-header">
         <span class="section-num">17</span>
-        <span class="section-title">Database Schema</span>
+        <span class="section-title">Database Schema <span class="updated-badge">Updated &mdash; July 2026</span></span>
       </div>
       <div class="section-body gold">
         <div class="subhead">Supabase Tables</div>
@@ -968,6 +1030,15 @@
         <div class="row"><div class="row-label">venue_photos</div><div class="row-value">venue_name (PK), photos (text[]), fetched_at — 7-day TTL</div></div>
         <div class="row"><div class="row-label">venue_reservation_links</div><div class="row-value">venue_name (PK), city, platform, url, checked_at — 30-day TTL</div></div>
         <div class="row"><div class="row-label">market_venue_cache</div><div class="row-value">id (PK), market, intent, environment, venues (JSONB), wild_card (JSONB), updated_at — Manual clear only (SELECTION CACHE: Layer 0)</div></div>
+        <div class="subhead">Speed Engine Tables <span class="new-badge">New &mdash; July 2026</span></div>
+        <div class="row"><div class="row-label">michelin_hotels</div><div class="row-value">id, market, name, michelin_key (bool), guest_score (float), member_privileges (bool), scraped_at &mdash; UNIQUE on (market, name)</div></div>
+        <div class="row"><div class="row-label">lartisien_hotels</div><div class="row-value">id, market, name, scraped_at &mdash; UNIQUE on (market, name). Markets: scottsdale, los-angeles, santa-barbara only (seattle + maui skipped, no coverage)</div></div>
+        <div class="row"><div class="row-label">forbes_hotels</div><div class="row-value">id, market, name, forbes_rating (FIVE_STAR &middot; FOUR_STAR &middot; RECOMMENDED), forbes_uri, city, scraped_at &mdash; UNIQUE on (market, name)</div></div>
+        <div class="row"><div class="row-label">broad_search_hotels</div><div class="row-value">id, market, name, query_tag (aaa_five_diamond &middot; relais_chateaux &middot; leading_hotels &middot; small_luxury &middot; conde_nast_gold &middot; tl_worlds_best), scraped_at &mdash; UNIQUE on (market, name)</div></div>
+        <div class="row"><div class="row-label">pending_venues</div><div class="row-value">id, market, name, description, environment (CCTF tier), quality_pass (bool), status (pending &middot; approved &middot; rejected), quality_score (0&ndash;100), signals (JSONB), source (michelin &middot; forbes &middot; broad_search), discovered_at, reviewed_at</div></div>
+        <div class="row"><div class="row-label">venue_quality_scores</div><div class="row-value">venue_id (FK to seed venue id), market, quality_score (0&ndash;100), signals (JSONB breakdown of each signal scored), computed_at &mdash; UNIQUE on (venue_id, market)</div></div>
+        <div class="row"><div class="row-label">precomputed_venue_pools</div><div class="row-value">id, market, intent (dining &middot; stay &middot; social), environment (CCTF tier), venue_list (JSONB ordered array), computed_at &mdash; cleared and fully rewritten on each precompute run. Queried by curation pipeline for sub-100ms pool hits.</div></div>
+        <div class="row"><div class="row-label">scrape_log</div><div class="row-value">id, source (michelin &middot; lartisien &middot; forbes &middot; broad_search &middot; discovery &middot; precompute), market, new_venues, key_changes, status (complete &middot; error), error_message, created_at &mdash; append-only. AdminDiscoveryPage polls for status = 'complete' or 'error'.</div></div>
         <div class="subhead">Speed Profile SQL Override</div>
         <div class="code-block">
           <span class="kw">UPDATE</span> members<br>
@@ -1022,7 +1093,7 @@
     <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.9;">
       <strong style="color:rgba(255,255,255,0.3)">Cost per AI run:</strong> ~$0.004–0.007 USD. One Claude Sonnet 4.6 call (max 1,200 output tokens) ≈ $0.004–0.006. Google Places photo lookups ≈ $0.002. Cache hits cost $0.00. &nbsp;·&nbsp;
       <strong style="color:rgba(255,255,255,0.3)">The Scout:</strong> Puppeteer crawl fires once per venue (~10s), cached 30 days. All subsequent Reserve button taps serve from cache in under 100ms. &nbsp;·&nbsp;
-      <strong style="color:rgba(255,255,255,0.3)">Doc version:</strong> June 30, 2026 — includes surrounding toggle v2, quality-over-count principle, environment_blocked field, Verandah definition update, beta paring.
+      <strong style="color:rgba(255,255,255,0.3)">Doc version:</strong> July 9, 2026 — includes Speed Engine discovery pipeline (4 scrapers + discovery bridge + precompute), error handling audit, quality scoring system, precomputed_venue_pools architecture. Prior: surrounding toggle v2, quality-over-count principle, environment_blocked, beta paring.
     </div>
 
   </div>
@@ -1520,13 +1591,20 @@
           <div class="moat-why">Why it matters: it gives CURATE a natural growth path within existing markets before requiring the operational investment of new market entry.</div>
         </div>
 
-        <div class="moat-item" style="border-bottom:none;">
+        <div class="moat-item">
           <div class="moat-title">The Live Credential Intelligence Layer <span class="new-badge" style="font-size:9px;vertical-align:middle;">New — June 30</span></div>
           <div class="moat-detail">Before every curation, the system fires 22 parallel queries via Brave Search API across authoritative sources — Michelin, James Beard, Forbes, Robb Report, Condé Nast Traveler, Leading Hotels of the World, and 16 others — and runs the results through Claude Haiku to extract structured credential signals. This signal block is fed to Claude Sonnet alongside the seed data and member profile. The live signal block is the primary discovery source: a venue not in seed.js must appear in live signals to be included unless it holds a primary credential. Training knowledge is a supplement of last resort — not the primary discovery engine. This prevents training-memory-only recommendations from reaching the curation output without live validation. A custom attribution rule — enforced at three separate layers of the pipeline — prevents the most common AI curation error: attributing a chef's prior awards to their current restaurant. Results are cached 7 days per market. See Section H1 for the full technical pipeline.</div>
           <div class="moat-why">Why it matters: every competitor who builds an AI curation product will encounter the same credential misattribution errors and the same "hallucinated award" problems. CurateVIP has already identified, documented, and systematically enforced the fixes. That institutional knowledge — encoded into the seed data, the extraction prompt, the signal formatter, and the Sonnet curation prompt — is not available from any API.</div>
         </div>
       </div>
     </div>
+
+
+        <div class="moat-item" style="border-bottom:none;">
+          <div class="moat-title">The Speed Engine &mdash; Autonomous Discovery Pipeline <span class="new-badge" style="font-size:9px;vertical-align:middle;">New &mdash; July 2026</span></div>
+          <div class="moat-detail">Four scrapers (Michelin Puppeteer DOM, Lartisien Puppeteer, Forbes direct JSON API, Broad Brave Search) run autonomously on a cron schedule, continuously discovering qualified venues across all active markets. A three-pass discovery bridge runs Claude Haiku to classify each venue by CCTF environment and apply a quality gate &mdash; auto-approving high-confidence venues and routing borderline cases to admin review. A precompute engine then ranks all seed + approved discovered venues into precomputed pools by market &times; intent &times; environment. The output: instant curation results served from pre-ranked pools, not from real-time AI calls on every member request. A competitor who calls the same APIs gets real-time latency and high per-query cost. CurateVIP's curation is served from pools built by weeks of accumulated autonomous pipeline runs.</div>
+          <div class="moat-why">Why it matters: the pipeline is self-improving. Every run adds newly discovered venues, recalibrates quality scores, and deepens the pool. The gap between a competitor starting fresh and CurateVIP's pre-warmed pools grows with each cron run. The CCTF classifications the discovery bridge assigns are not reproducible without the full taxonomy, worked examples, and institutional knowledge encoded in this system.</div>
+        </div>
 
     <!-- H1: Live Intelligence Pipeline — Investor Technical Brief -->
     <div class="section">
@@ -1606,6 +1684,44 @@
       </div>
     </div>
 
+    <!-- H2: Speed Engine Architecture -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">H2</span>
+        <span class="section-title">Speed Engine &mdash; Background Discovery Architecture <span class="new-badge">New &mdash; July 2026</span></span>
+      </div>
+      <div class="section-body purple">
+        <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.85;margin-bottom:24px;">The Speed Engine is the autonomous background pipeline that discovers and pre-ranks qualifying venues across all active markets. It is distinct from the member-facing pipeline in H1 &mdash; it runs asynchronously on a cron schedule, builds the pool of classified venues that H1 draws from, and is what allows curation results to be served from pre-ranked pools at sub-100ms latency rather than from real-time AI inference on every member request.</p>
+
+        <div class="subhead">The Core Claim</div>
+        <div class="callout" style="margin-top:8px;margin-bottom:24px;">
+          <p>CurateVIP does not surface venues at curation time by asking Claude what's good in this city. Before any member taps CURATE, four autonomous scrapers have already collected every qualifying hotel from Michelin, Lartisien, Forbes, and Brave Search. A discovery bridge has classified each one by CCTF environment and quality-gated them. A precompute engine has ranked them into pools. The member receives a pre-ranked result. The AI at curation time matches, narrates, and personalizes &mdash; it does not discover. Discovery already happened.</p>
+        </div>
+
+        <div class="subhead">The 4-Scraper Architecture</div>
+        <div class="row"><div class="row-label">Michelin (Puppeteer DOM)</div><div class="row-value">Renders Michelin Guide hotel pages. Selectors: <code>.card__menu-content</code>, <code>.michelin-award</code>. Extracts: name, Michelin Key, guest score, member privileges. Not a Brave Search query &mdash; actual DOM parsing of Michelin's rendered listing pages. Writes to <code>michelin_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">Lartisien (Puppeteer + pagination)</div><div class="row-value">Renders Lartisien city pages, walks <code>?page=N</code> pagination until exhausted. City-keyword filter prevents cross-market card contamination. Coverage: Scottsdale, Los Angeles, Santa Barbara. Writes to <code>lartisien_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">Forbes (direct JSON API)</div><div class="row-value">Single fetch of <code>award-winners.json</code> returns 2,400+ properties. No browser. Structured data: property name, city, rating tier. All 5 markets covered in one request. Writes to <code>forbes_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">Broad Search (Brave API)</div><div class="row-value">6 queries per market targeting AAA Five Diamond, Relais &amp; Ch&acirc;teaux, LHW, SLH, CN Gold List, T+L World's Best. 30 queries total across 5 markets. Title parsing extracts hotel names by stripping suffix patterns. Writes to <code>broad_search_hotels</code>.</div></div>
+
+        <div class="subhead">Discovery Bridge &mdash; What Makes It Defensible</div>
+        <div class="row"><div class="row-label">3-pass architecture</div><div class="row-value">Each scraper table is a separate pass through the bridge. Within each pass: dedup check (prevents re-evaluating already-seeded or already-queued venues) &rarr; Brave Search enrichment (description, location context, surrounding signals) &rarr; cross-reference all other scraper tables (multi-source convergence is a quality signal) &rarr; Claude Haiku CCTF classification &rarr; quality gate decision &rarr; upsert to <code>pending_venues</code>.</div></div>
+        <div class="row"><div class="row-label">Haiku as classifier, not curator</div><div class="row-value">Haiku's role in the Speed Engine is classification, not curation. It receives structured signals about a venue and returns: (1) the CCTF environment tier (Atelier, Sanctuary, Estate, Vanguard) and (2) quality_pass: true or false. It does not select venues for members &mdash; that is Sonnet's job at curation time with the member's speed profile. Haiku decides whether a venue clears the quality floor and what its environment is. Cost: ~$0.0003 per venue classified.</div></div>
+        <div class="row"><div class="row-label">Accumulated institutional knowledge</div><div class="row-value">Every venue that enters <code>pending_venues</code> carries its classification decision, quality score, signal breakdown, and discovery source. Every venue manually rejected carries the reason. This creates an institutional memory of what the quality floor looks like in each market &mdash; a judgment library that a competitor cannot reconstruct by running the same APIs, because the CCTF taxonomy governing the classifications is not available from any API.</div></div>
+
+        <div class="subhead">Precomputed Pools &mdash; What They Enable</div>
+        <div class="callout" style="margin-top:8px;margin-bottom:8px;background:rgba(30,180,100,0.08);border-left-color:rgba(30,180,100,0.4);">
+          <p>The precomputed pool is the infrastructure that makes CurateVIP feel instant. A member who curates Sanctuary hotels in Seattle is not waiting for the system to discover, evaluate, and rank hotels in real time. The pool was built before they arrived. Their curation is a retrieval + personalization, not a discovery. This is what separates a product from a demo.</p>
+        </div>
+        <div class="row"><div class="row-label">What competitors experience without this</div><div class="row-value">A competitor who builds an AI curation product without a precompute layer asks Claude "what are good Sanctuary hotels in Seattle?" at curation time, every time. They get training-knowledge responses with no live validation, no quality scoring, no CCTF classification, and latency proportional to the inference call. As their user base grows, their costs scale linearly with curations. CurateVIP's cost per curation trends toward zero as pool hits grow. The architecture is fundamentally more scalable and more defensible.</div></div>
+
+        <div class="subhead">Pipeline Cost Structure</div>
+        <div class="row"><div class="row-label">Full pipeline run (per market)</div><div class="row-value">Brave Search queries (broad scraper): ~$0.002 per market. Haiku classification (new venues only): ~$0.0003/venue &times; new venues found. Precompute (no AI cost): infrastructure only.</div></div>
+        <div class="row"><div class="row-label">Per-curation cost (pool hit)</div><div class="row-value">$0.00 AI cost for discovery. Haiku personalization (if needed): ~$0.0003. Sonnet FEEL/WHY generation: ~$0.004&ndash;0.006 (cached permanently per venue). A warm pool amortizes all Speed Engine costs across every curation served from it.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Economics vs. real-time discovery</div><div class="row-value">Real-time discovery model: every curation requires fresh discovery + classification + ranking, ~$0.01&ndash;0.05/run, scales with curation volume. CurateVIP pool model: discovery cost is fixed per pipeline run, amortized across unlimited curations. As member density per market grows, per-curation economics improve monotonically.</div></div>
+      </div>
+    </div>
+
     <!-- I: Version History -->
     <div class="section">
       <div class="section-header">
@@ -1667,6 +1783,11 @@
       </div>
     </div>
 
+        <div class="version-row">
+          <div class="version-tag">v2.0</div>
+          <div><div class="version-date">July 2026</div><div class="version-notes"><strong>Speed Engine &mdash; Autonomous Discovery Pipeline launched.</strong> Four scrapers introduced: Michelin v7 (Puppeteer DOM, <code>.card__menu-content</code> + <code>.michelin-award</code>, writes to <code>michelin_hotels</code>), Lartisien v3 (Puppeteer + <code>?page=N</code> pagination, city-keyword filtering, writes to <code>lartisien_hotels</code>), Forbes (direct <code>award-winners.json</code> API, no browser, writes to <code>forbes_hotels</code>), Broad Search (6 Brave Search queries &times; 5 markets, writes to <code>broad_search_hotels</code>). Quality scoring engine: 0&ndash;100 point scale, 13 weighted signals plus source-bucket convergence bonus, stored in <code>venue_quality_scores</code>. Discovery Bridge: 3 sequential passes, each: dedup &rarr; Brave Search enrichment &rarr; cross-reference all scraper tables &rarr; Claude Haiku classifies (CCTF environment + quality_pass) &rarr; upsert to <code>pending_venues</code>. Quality gate: quality_pass true &rarr; status 'approved' (live immediately); quality_pass false &rarr; status 'pending' (admin review queue). Precompute engine: ranks seed + approved venues by quality score &times; intent &times; environment &rarr; <code>precomputed_venue_pools</code>. Full error handling audit across 9 backend files (55d3b93): 25+ gaps closed; throw on data-corrupting failures (delete+upsert race), warn+continue on signal-absent failures, CRITICAL log when scrape_log unreachable. Pipeline endpoints: /internal/run-scrapers (full), /internal/run-discovery (bridge only), /internal/precompute-all-markets (precompute only). New sections in IP methodology: §H moat item and §H2 Speed Engine Architecture.</div></div>
+        </div>
+
     <!-- J: Confidentiality -->
     <div class="section">
       <div class="section-header">
@@ -1683,7 +1804,7 @@
         <div class="row"><div class="row-label">Disclosure protocol</div><div class="row-value">Before sharing any portion of this document with any third party (investors, potential acquirers, contractors, legal counsel), obtain an executed NDA with IP-assignment clause and log the disclosure with date, recipient, and scope. Treat any sharing of the classification decision protocol or worked examples with the same care as sharing source code.</div></div>
         <div class="row"><div class="row-label">Patent potential</div><div class="row-value">The two-axis classification methodology, the surrounding areas expansion architecture, and the multi-environment wild card detection system may contain patentable elements. This determination requires review by a qualified IP attorney. A provisional patent application should be evaluated — it is inexpensive, preserves a priority date, and allows "patent pending" to be claimed during any deal process. Do not over-invest here; trade secret is the primary protection and is more certain. But the provisional is worth the conversation.</div></div>
         <div class="callout" style="margin-top:20px;border-color:rgba(186,159,117,0.3);">
-          <p style="font-size:12px;line-height:1.7;">Document prepared: June 30, 2026. Owner: Rick Bouffard, RMK Group LLC. Status: Active trade secret. Review annually or upon any material change to the methodology. Consult IP counsel before any M&amp;A or licensing discussion that would require disclosure of this material.</p>
+          <p style="font-size:12px;line-height:1.7;">Document prepared: July 9, 2026. Last updated: July 9, 2026 (v2.0 &mdash; Speed Engine architecture added). Owner: Rick Bouffard, RMK Group LLC. Status: Active trade secret. Review annually or upon any material change to the methodology. Consult IP counsel before any M&amp;A or licensing discussion that would require disclosure of this material.</p>
         </div>
       </div>
     </div>
