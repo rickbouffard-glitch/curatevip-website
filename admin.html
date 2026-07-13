@@ -1212,6 +1212,59 @@
       </div>
     </div>
 
+    <!-- 20: Tech Stack -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">20</span>
+        <span class="section-title">Tech Stack</span>
+      </div>
+      <div class="section-body blue">
+        <div class="row"><div class="row-label">Backend</div><div class="row-value">Node.js / Express on Railway. Single <code>server.js</code> entry point + extracted engine modules (<code>engine/curate.js</code>, <code>engine/taxonomy.js</code>, <code>engine/scoring.js</code>) + services layer (<code>websearch.js</code>, <code>broadSearchScraper.js</code>, <code>michelinScraper.js</code>, <code>lartisienScraper.js</code>, <code>precompute.js</code>, <code>discoveryBridge.js</code>, <code>qualityScore.js</code>, <code>reservationScout.js</code>).</div></div>
+        <div class="row"><div class="row-label">Frontend (web)</div><div class="row-value">React + Vite on Vercel. Shared Supabase auth. React Native (Expo) mobile app in progress &mdash; same backend, same Supabase instance.</div></div>
+        <div class="row"><div class="row-label">Database</div><div class="row-value">Supabase (Postgres). Tables: <code>venues</code>, <code>market_venue_cache</code>, <code>venue_content_cache</code>, <code>venue_photo_cache</code>, <code>vision_classifications</code>, <code>precomputed_venue_pools</code>, <code>michelin_hotels</code>, <code>forbes_hotels</code>, <code>lartisien_hotels</code>, <code>broad_search_hotels</code>, <code>pending_venues</code>, <code>venue_quality_scores</code>, <code>scrape_log</code>, <code>admin_credentials</code>, <code>members</code>, <code>classification_corrections</code>.</div></div>
+        <div class="row"><div class="row-label">AI</div><div class="row-value">Anthropic API. Claude Sonnet 4.6 for curation + FEEL/WHY editorial. Claude Haiku for credential extraction, CCTF classification, Signal Guard, photo vision check.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Search</div><div class="row-value">Brave Search API. 14+ queries per curation run. 30 targeted queries per weekly Speed Engine run. Privacy-respecting, personalization-free results &mdash; more reliable than Google for extracting award-program hotel lists from editorial sources.</div></div>
+      </div>
+    </div>
+
+    <!-- 21: Two-Model AI Architecture -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">21</span>
+        <span class="section-title">Two-Model AI Architecture</span>
+      </div>
+      <div class="section-body blue">
+        <div class="row"><div class="row-label">Claude Sonnet &mdash; The Curator</div><div class="row-value">Handles all member-facing decisions: venue selection against the member&rsquo;s CCTF speed profile, FEEL editorial prose, WHY personalization copy. Receives the full live credential signal block, the seed calibration layer, the quality floor definition, and the member&rsquo;s speed tier. Every recommendation that reaches a member passes through Sonnet&rsquo;s editorial judgment. Cost: ~$0.004&ndash;0.006 per cache-miss curation run. Cached result: $0.00.</div></div>
+        <div class="row"><div class="row-label">Claude Haiku &mdash; The Validator</div><div class="row-value">Handles all background validation and classification: Signal Guard (found / not_found / uncertain per candidate venue), CCTF environment classification in the Speed Engine Discovery Bridge, credential extraction from raw Brave Search snippets, photo vision check (interior / ambiance pass/fail). Fast, cheap, purpose-specific. Cost: ~$0.0003&ndash;0.002 per call depending on task.</div></div>
+        <div class="row"><div class="row-label">Why two models</div><div class="row-value">Sonnet&rsquo;s editorial judgment and contextual reasoning are the right tool for curation. Haiku&rsquo;s speed and cost efficiency are the right tool for classification and validation at pipeline scale. Swapping either model changes an API call, not the architecture &mdash; the system is provider-agnostic at the model level. The split also isolates cost: Sonnet runs once per result set (cached 7 days), Haiku runs on every validation task (individually cheap at scale).</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Decision boundary</div><div class="row-value">Any decision requiring editorial taste, contextual judgment, or member personalization = Sonnet. Any decision requiring fast binary classification, structured extraction, or validation of a specific factual claim = Haiku. The boundary is stable: Sonnet curates, Haiku validates.</div></div>
+      </div>
+    </div>
+
+    <!-- 22: Key Files -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">22</span>
+        <span class="section-title">Key Files Reference</span>
+      </div>
+      <div class="section-body blue">
+        <div class="subhead">Engine</div>
+        <div class="row"><div class="row-label">engine/curate.js</div><div class="row-value">Core curation pipeline. Cache check &rarr; credential queries &rarr; Sonnet curation &rarr; Signal Guard &rarr; post-filters &rarr; photo/vision &rarr; editorial. Called per member tap from server.js.</div></div>
+        <div class="row"><div class="row-label">engine/taxonomy.js</div><div class="row-value">All CCTF taxonomy constants. <code>ENV_COLORS</code>, <code>INTENT_MAP</code>, speed tier names, environment definitions, wild card adjacency map. Single source of truth imported by <code>curate.js</code> and <code>server.js</code>.</div></div>
+        <div class="row"><div class="row-label">engine/scoring.js</div><div class="row-value"><code>computeSpeedProfile()</code> &mdash; maps member CCTF quiz answers to intent affinity scores. Used to rank venues against member preferences when serving from precomputed pools.</div></div>
+        <div class="subhead">Services</div>
+        <div class="row"><div class="row-label">services/michelinScraper.js</div><div class="row-value">Puppeteer headless Chrome. Renders Michelin Guide hotel pages, parses <code>.card__menu-content</code> + <code>.michelin-award</code>. Extracts: name, Michelin Key, guest score, member privileges. Writes to <code>michelin_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">services/lartisienScraper.js</div><div class="row-value">Puppeteer + <code>?page=N</code> pagination. Renders Lartisien city listing pages, walks pagination until exhausted, city-keyword filters to remove cross-market contamination. Writes to <code>lartisien_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">services/forbesScraper.js</div><div class="row-value">Single HTTP fetch of <code>award-winners.json</code>. Returns 2,400+ Forbes-rated properties as structured JSON. No Puppeteer. Filters to <code>propertyType: &lsquo;HOTEL&rsquo;</code> then city. Writes to <code>forbes_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">services/broadSearchScraper.js</div><div class="row-value">Brave Search API award-query scraper. 6 query templates per market &times; 5 markets = 30 queries/run. <code>extractHotelName()</code> with 20+ pattern guards strips article titles to clean hotel names. Writes to <code>broad_search_hotels</code>.</div></div>
+        <div class="row"><div class="row-label">services/discoveryBridge.js</div><div class="row-value">3-pass discovery pipeline (Michelin &rarr; Forbes &rarr; Broad Search). Per venue: dedup &rarr; Brave Search enrichment &rarr; cross-reference all scraper tables &rarr; Haiku classification &rarr; upsert to <code>pending_venues</code>. Auto-approve / pending-review routing.</div></div>
+        <div class="row"><div class="row-label">services/precompute.js</div><div class="row-value">Ranks and writes <code>precomputed_venue_pools</code>. Reads seed + approved discovered venues, scores by quality &times; intent &times; environment, writes ranked pools. Delete-before-rewrite integrity (throw on delete failure).</div></div>
+        <div class="row"><div class="row-label">services/qualityScore.js</div><div class="row-value">13-signal quality scoring model (0&ndash;100). Reads all 4 scraper tables to compute per-venue composite scores. Convergence bonus logic. Writes to <code>venue_quality_scores</code>.</div></div>
+        <div class="row"><div class="row-label">services/websearch.js</div><div class="row-value">Live credential intelligence. Fires 14&ndash;22 parallel Brave Search queries at curation time, feeds raw snippets to Haiku extraction, assembles the signal block for Sonnet. Also contains <code>formatSignalsBlock()</code>.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">services/reservationScout.js</div><div class="row-value">Reservation link discovery for TABLE venues. Puppeteer crawls venue&rsquo;s own site to find the booking platform (OpenTable, Resy, SevenRooms, Tock). Results cached 30 days in <code>venue_reservation_links</code>. Hardcoded overrides for bot-blocking sites.</div></div>
+      </div>
+    </div>
+
     <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.9;">
       <strong style="color:rgba(255,255,255,0.3)">Cost per AI run:</strong> ~$0.004–0.007 USD. One Claude Sonnet 4.6 call (max 1,200 output tokens) ≈ $0.004–0.006. Google Places photo lookups ≈ $0.002. Cache hits cost $0.00. &nbsp;·&nbsp;
       <strong style="color:rgba(255,255,255,0.3)">The Scout:</strong> Puppeteer crawl fires once per venue (~10s), cached 30 days. All subsequent Reserve button taps serve from cache in under 100ms. &nbsp;·&nbsp;
