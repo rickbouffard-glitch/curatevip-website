@@ -2120,16 +2120,16 @@
       listEl.innerHTML = data.users.map(u => {
         const isSelf = u.username === currentUser;
         const date = u.updated_at ? new Date(u.updated_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '';
-        return \`<div class="user-row">
+        return `<div class="user-row">
           <div>
-            <div class="user-name">\${u.username}\${isSelf ? ' <span style="font-size:10px;color:rgba(186,159,117,0.5);margin-left:6px;">you</span>' : ''}</div>
-            \${date ? \`<div class="user-date">Password last changed \${date}</div>\` : ''}
+            <div class="user-name">${u.username}${isSelf ? ' <span style="font-size:10px;color:rgba(186,159,117,0.5);margin-left:6px;">you</span>' : ''}</div>
+            ${date ? `<div class="user-date">Password last changed ${date}</div>` : ''}
           </div>
           <div class="user-actions">
-            <button class="user-btn reset" onclick="startReset('\${u.username}')">Reset PW</button>
-            \${!isSelf ? \`<button class="user-btn del" onclick="handleDeleteUser('\${u.username}')">Delete</button>\` : ''}
+            <button class="user-btn reset" onclick="startReset('${u.username}')">Reset PW</button>
+            ${!isSelf ? `<button class="user-btn del" onclick="handleDeleteUser('${u.username}')">Delete</button>` : ''}
           </div>
-        </div>\`;
+        </div>`;
       }).join('');
     } catch (err) {
       listEl.innerHTML = '<div style="font-size:13px;color:rgba(255,100,100,0.7);padding:8px 0;">Server unreachable.</div>';
@@ -2160,7 +2160,7 @@
       if (data.ok) {
         usernameEl.value = '';
         passEl.value = '';
-        okEl.textContent = \`User "\${username}" created. Share their username and initial password with them — they can change it after login.\`;
+        okEl.textContent = `User "${username}" created. Share their username and initial password with them — they can change it after login.`;
         okEl.style.display = 'block';
         await loadUsersList();
       } else {
@@ -2202,14 +2202,14 @@
 
     const newHash = await sha256(newPass);
     try {
-      const res = await fetch(API + \`/api/admin-users/\${encodeURIComponent(resetTargetUsername)}/reset\`, {
+      const res = await fetch(API + `/api/admin-users/${encodeURIComponent(resetTargetUsername)}/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': adminAuthHeader() },
         body: JSON.stringify({ newHash })
       });
       const data = await res.json();
       if (data.ok) {
-        okEl.textContent = \`Password for "\${resetTargetUsername}" has been reset.\`;
+        okEl.textContent = `Password for "${resetTargetUsername}" has been reset.`;
         okEl.style.display = 'block';
         cancelReset();
         await loadUsersList();
@@ -2224,19 +2224,19 @@
   }
 
   async function handleDeleteUser(username) {
-    if (!confirm(\`Delete user "\${username}"? This cannot be undone.\`)) return;
+    if (!confirm(`Delete user "${username}"? This cannot be undone.`)) return;
     const errEl = document.getElementById('users-error');
     const okEl = document.getElementById('users-success');
     errEl.style.display = 'none';
     okEl.style.display = 'none';
     try {
-      const res = await fetch(API + \`/api/admin-users/\${encodeURIComponent(username)}\`, {
+      const res = await fetch(API + `/api/admin-users/${encodeURIComponent(username)}`, {
         method: 'DELETE',
         headers: { 'Authorization': adminAuthHeader() }
       });
       const data = await res.json();
       if (data.ok) {
-        okEl.textContent = \`User "\${username}" deleted.\`;
+        okEl.textContent = `User "${username}" deleted.`;
         okEl.style.display = 'block';
         await loadUsersList();
       } else {
