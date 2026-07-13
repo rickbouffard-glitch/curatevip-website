@@ -400,6 +400,23 @@
       <div class="docs-intro-body">A plain-English walkthrough of every step — from tap to cards on screen.</div>
     </div>
 
+
+    <!-- Speed Engine callout -->
+    <div style="background:rgba(186,159,117,0.06);border:1px solid rgba(186,159,117,0.22);border-radius:14px;padding:20px 24px;margin-bottom:36px;">
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="font-size:22px;margin-top:1px;flex-shrink:0;">&#9679;</div>
+        <div>
+          <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;">Speed Engine — Always On</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.75;">
+            Before any of the steps below run, results may already be waiting. The Speed Engine works continuously in the background &mdash; scraping Michelin, Forbes, Lartisien, and dozens of award sources, scoring every venue it finds, and pre-loading ranked pools for every market, intent, and environment combination. By the time a member taps CURATE, we&rsquo;ve often already done the work. The pipeline below only runs when the pool doesn&rsquo;t have a ready answer &mdash; which gets rarer with every pipeline run.
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:rgba(186,159,117,0.55);">
+            Full architecture &rarr; <span style="cursor:pointer;text-decoration:underline;color:rgba(186,159,117,0.75);" onclick="switchTab('system',document.querySelector('.tab-btn:nth-child(2)'));setTimeout(()=>document.getElementById('section-11')?.scrollIntoView({behavior:'smooth'}),100)">System Docs &sect;11 &mdash; The Speed Engine</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Step 1: Cache Check -->
     <div class="section">
       <div class="section-header">
