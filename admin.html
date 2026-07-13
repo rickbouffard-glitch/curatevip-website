@@ -264,6 +264,30 @@
       .tab-nav { padding: 0 14px; position: sticky; top: 0; }
       .axis-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Users modal ── */
+    #modal-users { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px; }
+    #modal-users.open { display:flex; }
+    .users-card { background:#111113; border:1px solid rgba(186,159,117,0.2); border-radius:20px; padding:36px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; position:relative; }
+    .users-title { font-family:"Cormorant Garamond",serif; font-size:20px; color:var(--gold); letter-spacing:0.18em; margin-bottom:24px; }
+    .user-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .user-row:last-child { border-bottom:none; }
+    .user-name { font-size:14px; color:rgba(255,255,255,0.8); }
+    .user-date { font-size:11px; color:rgba(255,255,255,0.25); margin-top:2px; }
+    .user-actions { display:flex; gap:8px; }
+    .user-btn { background:none; border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:4px 12px; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+    .user-btn.reset { color:rgba(186,159,117,0.7); }
+    .user-btn.reset:hover { border-color:var(--gold-dim); color:var(--gold); }
+    .user-btn.del { color:rgba(255,80,80,0.5); }
+    .user-btn.del:hover { border-color:rgba(255,80,80,0.4); color:rgba(255,100,100,0.9); }
+    .users-divider { border:none; border-top:1px solid rgba(255,255,255,0.08); margin:20px 0; }
+    .users-section-label { font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-dim); font-weight:700; margin-bottom:14px; }
+    .users-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+    #users-reset-section { display:none; }
+    #users-reset-section.visible { display:block; }
+    .users-reset-target { font-size:12px; color:rgba(255,255,255,0.45); margin-bottom:10px; }
+    .users-reset-target strong { color:rgba(255,200,120,0.85); }
+
   </style>
 </head>
 <body>
@@ -301,6 +325,50 @@
   </div>
 </div>
 
+
+<!-- ══════════════════════ USERS MODAL ══════════════════════ -->
+<div id="modal-users">
+  <div class="users-card">
+    <button class="modal-close" onclick="closeUsersModal()">&times;</button>
+    <div class="users-title">Manage Access</div>
+    <div id="users-error" class="auth-error"></div>
+    <div id="users-success" class="auth-success"></div>
+
+    <!-- Current users list -->
+    <div class="users-section-label">Current Users</div>
+    <div id="users-list"><div style="font-size:13px;color:rgba(255,255,255,0.3);padding:8px 0;">Loading…</div></div>
+
+    <hr class="users-divider">
+
+    <!-- Add new user -->
+    <div class="users-section-label">Add New User</div>
+    <div class="users-grid">
+      <div>
+        <label class="auth-label">Username</label>
+        <input id="new-user-name" class="auth-input" type="text" placeholder="e.g. sarah" autocomplete="off">
+      </div>
+      <div>
+        <label class="auth-label">Initial Password</label>
+        <input id="new-user-pass" class="auth-input" type="password" placeholder="min 8 characters">
+      </div>
+    </div>
+    <button class="auth-btn" onclick="handleCreateUser()" style="margin-bottom:0;">Create User</button>
+
+    <!-- Reset password for another user -->
+    <div id="users-reset-section">
+      <hr class="users-divider">
+      <div class="users-section-label">Reset Password</div>
+      <div class="users-reset-target">Resetting password for: <strong id="reset-target-name"></strong></div>
+      <label class="auth-label">New Password</label>
+      <input id="reset-new-pass" class="auth-input" type="password" placeholder="min 8 characters">
+      <div style="display:flex;gap:10px;">
+        <button class="auth-btn" onclick="handleResetPassword()" style="flex:1;margin-bottom:0;">Set Password</button>
+        <button class="auth-btn" onclick="cancelReset()" style="flex:0 0 auto;width:auto;padding:13px 20px;margin-bottom:0;color:rgba(255,255,255,0.3);">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════════ DOCS SCREEN ══════════════════════ -->
 <div id="screen-docs">
 
@@ -310,6 +378,7 @@
       <div class="docs-updated">Last synced June 30, 2026</div>
     </div>
     <div class="docs-header-actions">
+      <button class="header-btn" onclick="openUsersModal()">Manage Users</button>
       <button class="header-btn" onclick="openPwModal()">Change Password</button>
       <button class="header-btn" onclick="handleSignOut()">Sign Out</button>
     </div>
@@ -1902,9 +1971,10 @@
       });
       const data = await res.json();
       if (data.ok) {
-        // Store username in sessionStorage so password change knows who is logged in
+        // Store username + hash in sessionStorage — hash is used for user management API calls
         sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
         sessionStorage.setItem('curate_admin_user', user);
+        sessionStorage.setItem('curate_admin_hash', hash);
         showScreen('docs');
       } else {
         showAuthError('login-error', 'Invalid credentials.');
@@ -1921,6 +1991,7 @@
   function handleSignOut() {
     sessionStorage.removeItem('curate_admin_session');
     sessionStorage.removeItem('curate_admin_user');
+    sessionStorage.removeItem('curate_admin_hash');
     document.getElementById('login-user').value = '';
     document.getElementById('login-pass').value = '';
     showScreen('login');
@@ -2006,6 +2077,178 @@
     const session = sessionStorage.getItem('curate_admin_session');
     showScreen(session ? 'docs' : 'login');
   })();
+
+  // ── Helper: Basic auth header for user management endpoints ────────────────
+  function adminAuthHeader() {
+    const user = sessionStorage.getItem('curate_admin_user') || '';
+    const hash = sessionStorage.getItem('curate_admin_hash') || '';
+    return 'Basic ' + btoa(user + ':' + hash);
+  }
+
+  // ── Users modal ─────────────────────────────────────────────────────────────
+  let resetTargetUsername = null;
+
+  async function openUsersModal() {
+    document.getElementById('modal-users').classList.add('open');
+    document.getElementById('users-error').style.display = 'none';
+    document.getElementById('users-success').style.display = 'none';
+    document.getElementById('new-user-name').value = '';
+    document.getElementById('new-user-pass').value = '';
+    cancelReset();
+    await loadUsersList();
+  }
+
+  function closeUsersModal() {
+    document.getElementById('modal-users').classList.remove('open');
+    cancelReset();
+  }
+
+  async function loadUsersList() {
+    const listEl = document.getElementById('users-list');
+    listEl.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.3);padding:8px 0;">Loading…</div>';
+    try {
+      const res = await fetch(API + '/api/admin-users', {
+        headers: { 'Authorization': adminAuthHeader() }
+      });
+      const data = await res.json();
+      if (!data.ok) { listEl.innerHTML = '<div style="font-size:13px;color:rgba(255,100,100,0.7);padding:8px 0;">Could not load users.</div>'; return; }
+      const currentUser = sessionStorage.getItem('curate_admin_user') || '';
+      if (!data.users || data.users.length === 0) {
+        listEl.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.3);padding:8px 0;">No users found.</div>';
+        return;
+      }
+      listEl.innerHTML = data.users.map(u => {
+        const isSelf = u.username === currentUser;
+        const date = u.updated_at ? new Date(u.updated_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '';
+        return \`<div class="user-row">
+          <div>
+            <div class="user-name">\${u.username}\${isSelf ? ' <span style="font-size:10px;color:rgba(186,159,117,0.5);margin-left:6px;">you</span>' : ''}</div>
+            \${date ? \`<div class="user-date">Password last changed \${date}</div>\` : ''}
+          </div>
+          <div class="user-actions">
+            <button class="user-btn reset" onclick="startReset('\${u.username}')">Reset PW</button>
+            \${!isSelf ? \`<button class="user-btn del" onclick="handleDeleteUser('\${u.username}')">Delete</button>\` : ''}
+          </div>
+        </div>\`;
+      }).join('');
+    } catch (err) {
+      listEl.innerHTML = '<div style="font-size:13px;color:rgba(255,100,100,0.7);padding:8px 0;">Server unreachable.</div>';
+    }
+  }
+
+  async function handleCreateUser() {
+    const usernameEl = document.getElementById('new-user-name');
+    const passEl = document.getElementById('new-user-pass');
+    const errEl = document.getElementById('users-error');
+    const okEl = document.getElementById('users-success');
+    errEl.style.display = 'none';
+    okEl.style.display = 'none';
+
+    const username = usernameEl.value.trim();
+    const pass = passEl.value;
+    if (!username) { errEl.textContent = 'Username required.'; errEl.style.display = 'block'; return; }
+    if (pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
+
+    const passwordHash = await sha256(pass);
+    try {
+      const res = await fetch(API + '/api/admin-users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': adminAuthHeader() },
+        body: JSON.stringify({ username, passwordHash })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        usernameEl.value = '';
+        passEl.value = '';
+        okEl.textContent = \`User "\${username}" created. Share their username and initial password with them — they can change it after login.\`;
+        okEl.style.display = 'block';
+        await loadUsersList();
+      } else {
+        errEl.textContent = data.error || 'Could not create user.';
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Server unreachable.';
+      errEl.style.display = 'block';
+    }
+  }
+
+  function startReset(username) {
+    resetTargetUsername = username;
+    document.getElementById('reset-target-name').textContent = username;
+    document.getElementById('reset-new-pass').value = '';
+    document.getElementById('users-reset-section').classList.add('visible');
+    document.getElementById('users-reset-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('users-error').style.display = 'none';
+    document.getElementById('users-success').style.display = 'none';
+  }
+
+  function cancelReset() {
+    resetTargetUsername = null;
+    document.getElementById('users-reset-section').classList.remove('visible');
+    document.getElementById('reset-new-pass').value = '';
+  }
+
+  async function handleResetPassword() {
+    if (!resetTargetUsername) return;
+    const passEl = document.getElementById('reset-new-pass');
+    const errEl = document.getElementById('users-error');
+    const okEl = document.getElementById('users-success');
+    errEl.style.display = 'none';
+    okEl.style.display = 'none';
+
+    const newPass = passEl.value;
+    if (newPass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
+
+    const newHash = await sha256(newPass);
+    try {
+      const res = await fetch(API + \`/api/admin-users/\${encodeURIComponent(resetTargetUsername)}/reset\`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': adminAuthHeader() },
+        body: JSON.stringify({ newHash })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        okEl.textContent = \`Password for "\${resetTargetUsername}" has been reset.\`;
+        okEl.style.display = 'block';
+        cancelReset();
+        await loadUsersList();
+      } else {
+        errEl.textContent = data.error || 'Could not reset password.';
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Server unreachable.';
+      errEl.style.display = 'block';
+    }
+  }
+
+  async function handleDeleteUser(username) {
+    if (!confirm(\`Delete user "\${username}"? This cannot be undone.\`)) return;
+    const errEl = document.getElementById('users-error');
+    const okEl = document.getElementById('users-success');
+    errEl.style.display = 'none';
+    okEl.style.display = 'none';
+    try {
+      const res = await fetch(API + \`/api/admin-users/\${encodeURIComponent(username)}\`, {
+        method: 'DELETE',
+        headers: { 'Authorization': adminAuthHeader() }
+      });
+      const data = await res.json();
+      if (data.ok) {
+        okEl.textContent = \`User "\${username}" deleted.\`;
+        okEl.style.display = 'block';
+        await loadUsersList();
+      } else {
+        errEl.textContent = data.error || 'Could not delete user.';
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Server unreachable.';
+      errEl.style.display = 'block';
+    }
+  }
+
 </script>
 </body>
 </html>
