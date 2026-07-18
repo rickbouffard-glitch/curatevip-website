@@ -595,6 +595,20 @@
       </div>
     </div>
 
+    <!-- Step 8: Booking Handoff -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <span class="section-title">The Member Books <span class="new-badge">New &mdash; July 2026</span></span>
+      </div>
+      <div class="section-body gold">
+        <div class="row"><div class="row-label">What happens</div><div class="row-value">The three curated cards are the end of the curation pipeline &mdash; not the end of the journey. When a member opens a STAY venue and taps <strong>Book</strong>, CurateVIP hands off to our branded booking layer with the hotel and dates already selected. Curation stays entirely ours; fulfilment is handled by our White Label partner.</div></div>
+        <div class="row"><div class="row-label">Two paths</div><div class="row-value"><strong>27 of 37 STAY venues</strong> exist in LiteAPI inventory and deep-link to our branded White Label site (<code>book.curatevip.ai</code>) &mdash; a dark, gold, CurateVIP-skinned booking experience where Nuitee is merchant of record. The other <strong>10 venues</strong> are not in LiteAPI and fall back to an Expedia affiliate deep link. Both earn commission.</div></div>
+        <div class="row"><div class="row-label">Deep link</div><div class="row-value">The Book button builds <code>book.curatevip.ai/hotels/{liteApiId}?checkin=&hellip;&amp;checkout=&hellip;&amp;occupancies=&hellip;</code> &mdash; the member lands on the exact hotel, dates pre-filled, never touching a search box.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Why not book in-app</div><div class="row-value">Taking payment ourselves would make CurateVIP the merchant of record &mdash; triggering PCI scope, Seller of Travel registration in CA/FL/HI/WA, and refund/chargeback liability. Routing through the White Label keeps all of that with Nuitee while we keep the brand, the commission, and the curated experience. Full architecture &rarr; System Docs &sect;23.</div></div>
+      </div>
+    </div>
+
   </div>
   </div>
 
@@ -1265,10 +1279,36 @@
       </div>
     </div>
 
+    <!-- 23: Booking & Fulfilment -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">23</span>
+        <span class="section-title">Booking &amp; Fulfilment &mdash; White Label <span class="new-badge">New &mdash; July 2026</span></span>
+      </div>
+      <div class="section-body gold">
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">CurateVIP does not process bookings or take payment directly. STAY venues that exist in LiteAPI inventory deep-link to a branded White Label booking site on our own domain; the rest fall back to Expedia affiliate links. Curation is ours; fulfilment &mdash; and its regulatory burden &mdash; belongs to the partner.</p>
+
+        <div class="subhead">Routing (VenueDetailPage.jsx)</div>
+        <div class="row"><div class="row-label">27 LiteAPI venues</div><div class="row-value">Book button &rarr; <code>book.curatevip.ai/hotels/{liteApiId}</code> with checkin / checkout / occupancies. Mapped in <code>WHITELABEL_HOTEL_IDS</code> (venueId &rarr; lp-id). Nuitee is merchant of record.</div></div>
+        <div class="row"><div class="row-label">10 non-LiteAPI venues</div><div class="row-value">Not in LiteAPI &mdash; the White Label cannot book them. Fall back to Expedia affiliate deep link (<code>EXPEDIA_AFFILIATE_URLS</code> / <code>getExpediaUrl()</code>). This is their only booking path. (1 Hotel Seattle, Lotte, Hermosa Inn, Global Ambassador, San Ysidro Ranch, Chateau Marmont, Sunset Tower, Faena, The Setai, Soho Beach House.)</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Master flag</div><div class="row-value"><code>USE_WHITELABEL_STAY_BOOKING</code>. True = White Label + Expedia fallback (current). False = restores the legacy in-app LiteAPI booking panel + Expedia everywhere. The in-app panel (<code>StayBookingPanel.jsx</code>) is preserved behind this flag as a failsafe.</div></div>
+
+        <div class="subhead">The White Label Site</div>
+        <div class="row"><div class="row-label">Platform</div><div class="row-value">LiteAPI / Nuitee Connect White Label &mdash; a free hosted booking site on our LiteAPI account. Nuitee handles payments, confirmations, cancellations, and 24/7 guest support. We set the commission markup; payouts weekly.</div></div>
+        <div class="row"><div class="row-label">Domain</div><div class="row-value"><code>book.curatevip.ai</code> &mdash; custom domain (CNAME to CloudFront), SSL auto-issued via AWS ACM. Set in the Nuitee dashboard (Settings &rarr; Domains) plus 3 DNS records at Porkbun: one CNAME for the domain, two CNAMEs for SSL validation.</div></div>
+        <div class="row"><div class="row-label">Theming</div><div class="row-value">~30KB custom CSS + custom JS injected via the Nuitee dashboard (Settings &rarr; Custom code). Matches curatevip.ai: gold #ba9f75, near-black background, Cormorant Garamond + Inter. Overrides Nuitee&rsquo;s design tokens (root-cause fix for their blue), hides global search / reviews / rating categories, converts room sizes to sq ft, strips &ldquo;1 x&rdquo; room-count prefixes. Source of truth: <code>whitelabel-assets/curatevip-whitelabel-FINAL.css</code> + <code>curatevip-whitelabel.js</code>.</div></div>
+        <div class="row"><div class="row-label">Inventory guard</div><div class="row-value">The White Label is restricted to our curated hotels via the dashboard inventory allow-list. Combined with deep-linking straight to hotel pages, members never encounter generic global search.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Integrity monitor</div><div class="row-value">A daily scheduled task loads a White Label hotel page and asserts theme integrity (dark background, gold tokens, search hidden, sq ft conversion ran). Alerts only on failure &mdash; catches breakage if Nuitee renames CSS classes in a frontend update. The theme depends on their internal class names, so this is the early-warning system.</div></div>
+
+        <div class="subhead">Why Not Merchant-of-Record</div>
+        <div class="row" style="border-bottom:none"><div class="row-label">The decision</div><div class="row-value">Taking payment directly would make CurateVIP merchant of record: PCI DSS scope, Seller of Travel registration in CA / FL / HI / WA (which apply based on customer residence and cover most of our markets), plus refund/chargeback and E&amp;O exposure. Routing through the White Label keeps all of that with Nuitee while we keep the brand, the commission, and the experience. RateHawk was abandoned for the same reason &mdash; it required a travel-agent license we could not secure. Confirm the exact structure with a travel-industry attorney before ever taking payment in-app.</div></div>
+      </div>
+    </div>
+
     <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.9;">
       <strong style="color:rgba(255,255,255,0.3)">Cost per AI run:</strong> ~$0.004–0.007 USD. One Claude Sonnet 4.6 call (max 1,200 output tokens) ≈ $0.004–0.006. Google Places photo lookups ≈ $0.002. Cache hits cost $0.00. &nbsp;·&nbsp;
       <strong style="color:rgba(255,255,255,0.3)">The Scout:</strong> Puppeteer crawl fires once per venue (~10s), cached 30 days. All subsequent Reserve button taps serve from cache in under 100ms. &nbsp;·&nbsp;
-      <strong style="color:rgba(255,255,255,0.3)">Doc version:</strong> July 9, 2026 — includes Speed Engine discovery pipeline (4 scrapers + discovery bridge + precompute), error handling audit, quality scoring system, precomputed_venue_pools architecture. Prior: surrounding toggle v2, quality-over-count principle, environment_blocked, beta paring.
+      <strong style="color:rgba(255,255,255,0.3)">Doc version:</strong> July 18, 2026 — adds &sect;23 Booking &amp; Fulfilment (LiteAPI White Label on book.curatevip.ai, 27/10 White-Label/Expedia routing, USE_WHITELABEL_STAY_BOOKING failsafe, theme + integrity monitor) and Curate Process Step 08. Prior (July 9): Speed Engine discovery pipeline, error handling audit, quality scoring, precomputed_venue_pools.
     </div>
 
   </div>
@@ -1981,11 +2021,12 @@
         <div class="row"><div class="row-label">(16) Speed Engine pipeline</div><div class="row-value">The four-scraper configuration (Michelin DOM selectors, Lartisien pagination strategy, Forbes JSON endpoint, Broad Search award-query set), the 13-signal quality scoring formula and its exact weights, the three-pass discovery bridge logic, and the precomputed pool schema. The accumulated pool data &mdash; weeks of quality-scored venue records across all markets &mdash; is a trade secret asset independent of the code that generated it.</div></div>
         <div class="row"><div class="row-label">(17) Scraper name-extraction logic</div><div class="row-value">The <code>extractHotelName()</code> function in broadSearchScraper.js: the specific pattern library for stripping article titles from Brave Search page titles (em-dash subtitle strip, geographic suffix strip, 8 generic article-opener guards, 8-word count heuristic). Derived through iterative live-data testing; not derivable from API documentation.</div></div>
         <div class="row"><div class="row-label">(18) Two-model AI architecture</div><div class="row-value">The specific division of labor between Claude Sonnet (curation, FEEL/WHY editorial) and Claude Haiku (credential extraction, CCTF classification, Signal Guard, photo vision check), including the prompt design for each role. The non-obvious reasoning for which decisions are made by which model at which pipeline stage constitutes a distinct engineering judgment that cannot be reconstructed without the decision history.</div></div>
+        <div class="row"><div class="row-label">(19) Booking architecture</div><div class="row-value">The decision to route fulfilment through a branded White Label with the partner as merchant of record &mdash; capturing commission and a fully branded, curated booking experience while keeping PCI scope, Seller of Travel registration, and chargeback liability off CurateVIP &mdash; is a deliberate structural choice reached through direct regulatory analysis. The venue-to-LiteAPI-ID mapping, the 27/10 White-Label/Expedia routing split, the deep-link-plus-inventory-guard design that prevents members from reaching generic hotel search, and the injected-theme integrity monitor are proprietary integration decisions not derivable from any vendor documentation.</div></div>
         <div class="row"><div class="row-label">What is not protected</div><div class="row-value">The names of individual venues (publicly known). The fact that CURATE uses AI (disclosed in marketing). The general categories (STAY, TABLE, SOCIAL). The existence of a speed profile system (disclosed in member onboarding). These are the surface; the methodology is what lies beneath.</div></div>
         <div class="row"><div class="row-label">Disclosure protocol</div><div class="row-value">Before sharing any portion of this document with any third party (investors, potential acquirers, contractors, legal counsel), obtain an executed NDA with IP-assignment clause and log the disclosure with date, recipient, and scope. Treat any sharing of the classification decision protocol or worked examples with the same care as sharing source code.</div></div>
         <div class="row"><div class="row-label">Patent potential</div><div class="row-value">The two-axis classification methodology, the surrounding areas expansion architecture, and the multi-environment wild card detection system may contain patentable elements. This determination requires review by a qualified IP attorney. A provisional patent application should be evaluated — it is inexpensive, preserves a priority date, and allows "patent pending" to be claimed during any deal process. Do not over-invest here; trade secret is the primary protection and is more certain. But the provisional is worth the conversation.</div></div>
         <div class="callout" style="margin-top:20px;border-color:rgba(186,159,117,0.3);">
-          <p style="font-size:12px;line-height:1.7;">Document prepared: July 9, 2026. Last updated: July 9, 2026 (v2.0 &mdash; Speed Engine architecture added). Owner: Rick Bouffard, RMK Group LLC. Status: Active trade secret. Review annually or upon any material change to the methodology. Consult IP counsel before any M&amp;A or licensing discussion that would require disclosure of this material.</p>
+          <p style="font-size:12px;line-height:1.7;">Document prepared: July 9, 2026. Last updated: July 18, 2026 (v2.1 &mdash; booking architecture / White Label fulfilment strategy added; v2.0 &mdash; Speed Engine architecture). Owner: Rick Bouffard, RMK Group LLC. Status: Active trade secret. Review annually or upon any material change to the methodology. Consult IP counsel before any M&amp;A or licensing discussion that would require disclosure of this material.</p>
         </div>
       </div>
     </div>
