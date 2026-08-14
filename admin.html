@@ -1432,6 +1432,7 @@
       </div>
       <div class="section-body gold">
         <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">The platform ran two parallel venue systems: a hand-curated registry checked into source control, and a discovery pipeline writing to the database. They had different storage, different copy fields, and only one of them had a review step. That asymmetry is why the errors in &sect;27 survived so long.</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.75;margin-bottom:16px;">What was removed was the <em>asymmetry</em>, not the registry. The curated registry is retained deliberately and permanently &mdash; it is the calibration corpus the classifier judges new discoveries against (see IP &sect;H5). The principle is simply that a member, and every system downstream of curation, should be unable to tell where a venue came from.</p>
 
         <div class="subhead">One pipeline</div>
         <div class="row"><div class="row-label">What changed</div><div class="row-value">All 140 curated venues were imported into <code>pending_venues</code> alongside discovered ones, keeping their original slug identifiers so affiliate links and White Label hotel mappings continue to resolve. Every venue is now reviewable, fact-checkable and correctable through one admin surface, and subject to the same gate.</div></div>
@@ -2105,6 +2106,49 @@
 
     <div class="section">
       <div class="section-header">
+        <span class="section-num">H4</span>
+        <span class="section-title">The Feel/Why Research Engine <span class="new-badge">Documented &mdash; August 2026</span></span>
+      </div>
+      <div class="section-body blue">
+        <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.75;margin-bottom:18px;">Most travel products describe a venue by reprinting whatever the venue says about itself, or by asking a language model to improvise from training memory. CurateVIP does neither. Every venue&rsquo;s two member-facing fields are <em>researched on the live web, then written to a specification</em>, then stored permanently so the same words appear everywhere the venue is shown. This is the layer that makes the product read like a person who has been there rather than a database with adjectives.</p>
+
+        <div class="subhead">Two fields, deliberately different jobs</div>
+        <div class="row"><div class="row-label">FEEL</div><div class="row-value">What it is actually like to be there. 30&ndash;45 words, present tense, sensory. Required to name concrete real detail &mdash; architecture, materials, light, sound, a named room, a signature dish. This is the field that answers &ldquo;what am I walking into.&rdquo;</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">WHY</div><div class="row-value">Why this venue is the definitive match for <em>this member&rsquo;s Speed</em>. 35&ndash;55 words, and it must cite at least one specific verifiable credential or signature. Crucially, WHY is written <em>against the member&rsquo;s taste profile</em>, not as a general recommendation &mdash; the same hotel is argued differently to an Atelier member than to a Sanctuary member, because the reason it is right differs.</div></div>
+
+        <div class="subhead">How the copy is produced</div>
+        <div class="row"><div class="row-label">1. Live research</div><div class="row-value">Four targeted Brave Search queries per venue, shaped by category: a review query, a category-specific detail query (a hotel is asked about spa, rooms and design; a restaurant about interior, atmosphere and what it is like), a signature-experience query, and a credentials query naming Michelin, Travel + Leisure, Cond&eacute; Nast and James Beard explicitly. Results are deduplicated by URL and capped at 24 high-signal snippets.</div></div>
+        <div class="row"><div class="row-label">2. Taste-aware generation</div><div class="row-value">Claude Sonnet writes both fields with the CCTF definition of that venue&rsquo;s Speed injected into the prompt &mdash; so the model is not writing &ldquo;nice hotel copy&rdquo;, it is arguing a specific case to a specific taste. The research snippets are supplied as the only permitted factual ground.</div></div>
+        <div class="row"><div class="row-label">3. Anti-fabrication rules</div><div class="row-value">The prompt forbids inventing awards, Michelin stars or keys, and named people; requires every specific to be supported by the research or be widely verifiable; and mandates that FEEL and WHY be genuinely different rather than restatements. Generation returns strict JSON and fails closed &mdash; an unparseable or incomplete response stores nothing rather than storing something plausible.</div></div>
+        <div class="row"><div class="row-label">4. Banned language</div><div class="row-value">An explicit clich&eacute; blocklist is enforced at generation: &ldquo;hidden gem&rdquo;, &ldquo;nestled&rdquo;, &ldquo;oasis&rdquo;, &ldquo;home away from home&rdquo;, &ldquo;something for everyone&rdquo;, &ldquo;a feast for the senses&rdquo;. These are the phrases that make AI travel copy instantly recognisable as AI travel copy, and the voice is a brand asset worth defending at the prompt level.</div></div>
+        <div class="row"><div class="row-label">5. Sourced and reversible</div><div class="row-value">The URLs used to ground the copy are stored alongside it with a generation timestamp, and the previous version is stashed before any overwrite &mdash; so copy can be reverted, and any claim can be traced back to what the engine actually read. This is what connects the engine to the Editorial Integrity layer (&sect;H3): generated copy is not merely produced, it is <em>attributable</em>.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">6. Written once, served everywhere</div><div class="row-value">Copy is persisted rather than generated per request, so the result cards, venue detail page and signup teaser all show identical words, and a member never sees the same venue described two different ways. It also means the cost is paid once per venue rather than once per view.</div></div>
+
+        <div class="subhead">Human authority over the machine</div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Editorial control</div><div class="row-value">Every generated field is editable in the admin, with Regenerate, Save and Revert. Human edits take precedence and survive regeneration cycles. The engine is a drafting instrument for an editor, not an autonomous publisher &mdash; the same principle that governs the fact-checker&rsquo;s refusal to write replacement claims unattended.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">H5</span>
+        <span class="section-title">The Calibration Corpus &mdash; Why the Curated Registry Is Never Retired <span class="new-badge">New &mdash; August 2026</span></span>
+      </div>
+      <div class="section-body blue">
+        <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.75;margin-bottom:18px;">A quality bar written as a rule is a sentence a competitor can copy. A quality bar expressed as a corpus of venues a human expert has personally judged worthy is something a competitor would have to <em>rebuild by hand</em>. The curated registry is the second kind, and it is retained as permanent architecture rather than migrated away.</p>
+
+        <div class="subhead">What it does</div>
+        <div class="row"><div class="row-label">The comparison</div><div class="row-value">When discovery surfaces a candidate, the question is not &ldquo;does this venue clear an abstract standard&rdquo; &mdash; abstract standards drift, and a model asked to apply one will drift with it. The question is <strong>&ldquo;is this as good as, or better than, the venues we already know are right?&rdquo;</strong> The registry supplies those reference venues, with their environments, their credentials and their editorial descriptions, as worked examples of the bar rather than a description of it.</div></div>
+        <div class="row"><div class="row-label">Why examples beat rules</div><div class="row-value">Every quality floor written in prose contains words like &ldquo;exceptional&rdquo; and &ldquo;world-class&rdquo; that a language model will happily satisfy on its own terms. A named set of venues an expert has already approved removes that latitude: the model is calibrated against instances, not adjectives. This is the same mechanism that makes the correction loop (&sect;25) effective, applied to the baseline instead of the exceptions.</div></div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Compounding</div><div class="row-value">The corpus grows as venues are approved and as founder field research confirms judgments in person (&sect;25), so the reference standard sharpens with use. It is the accumulated output of expert taste &mdash; the component of the system that cannot be reproduced by reading a prompt.</div></div>
+
+        <div class="subhead">The invariant</div>
+        <div class="row" style="border-bottom:none"><div class="row-label">Origin is not a class</div><div class="row-value">The registry&rsquo;s role is <em>input to classification</em> and nothing else. In every other respect a curated venue and an approved discovered venue are the same object: same copy engine, same fact verification, same duplicate rules, same review surface, same member experience. Two production bugs in August 2026 traced directly to violations of this invariant &mdash; curated venues skipping the review that caught 20 factual errors, and the copy engine enumerating only discovered venues, leaving 129 of 135 curated venues without FEEL copy. Both were failures of the same kind: treating origin as a category when it is only a source.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
         <span class="section-num">I</span>
         <span class="section-title">Version History — Deliberate Evolution Record</span>
       </div>
@@ -2180,7 +2224,7 @@
 
         <div class="version-row">
           <div class="version-tag">v2.3</div>
-          <div><div class="version-date">August 2026</div><div class="version-notes"><strong>Venue registry consolidation and duplicate prevention (&sect;28).</strong> Retired the two-system architecture in which hand-curated venues lived in source control with no review step while discovered venues lived in the database with one &mdash; the asymmetry that allowed the &sect;27 errors to persist. All 140 curated venues imported into the reviewed pipeline retaining their slug identifiers so affiliate and White Label mappings continued to resolve; human admin edits took precedence over original file text; hidden venues imported as rejected; surrounding-area designations preserved. Introduced canonical venue naming (accent folding, punctuation removal, generic lead-in and brand-suffix stripping) with scraper record-id removal gated on preceding word count, so appended ids collapse while numeric venue names survive. Enforced by unique index rather than periodic detection, with a weekly scan retained for spellings the folding rules do not yet anticipate.</div></div>
+          <div><div class="version-date">August 2026</div><div class="version-notes"><strong>Venue registry consolidation and duplicate prevention (&sect;28).</strong> Retired the review <em>asymmetry</em> in which hand-curated venues bypassed the scrutiny discovered venues received &mdash; the gap that allowed the &sect;27 errors to persist. The curated registry itself was deliberately retained as the classifier&rsquo;s calibration corpus (&sect;H5); what changed is that origin no longer determines how a venue is treated. All 140 curated venues imported into the reviewed pipeline retaining their slug identifiers so affiliate and White Label mappings continued to resolve; human admin edits took precedence over original file text; hidden venues imported as rejected; surrounding-area designations preserved. Introduced canonical venue naming (accent folding, punctuation removal, generic lead-in and brand-suffix stripping) with scraper record-id removal gated on preceding word count, so appended ids collapse while numeric venue names survive. Enforced by unique index rather than periodic detection, with a weekly scan retained for spellings the folding rules do not yet anticipate.</div></div>
         </div>
 
         <div class="version-row">
