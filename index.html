@@ -1406,6 +1406,31 @@
         <input type="email" name="email" id="fieldEmail" class="form-input" placeholder="you@example.com" autocomplete="email" />
         <span class="field-error" id="errEmail">Please enter a valid email address.</span>
       </div>
+      <!-- Mobile number + SMS consent.
+           Optional by design: requiring a phone number to request access would
+           cost more applicants than the text channel is worth. But if a number
+           IS given, the consent box must be ticked before the form will send —
+           that tick is the record of opt-in that carrier A2P registration
+           requires, and it has to be a real, unchecked-by-default action. -->
+      <div class="form-group">
+        <label class="form-label">Mobile Number <span style="opacity:0.55;text-transform:none;letter-spacing:0;">— optional, to receive your invitation by text</span></label>
+        <input type="tel" name="phone" id="fieldPhone" class="form-input" placeholder="(206) 555-0123" autocomplete="tel" />
+        <span class="field-error" id="errPhone">Please enter a valid mobile number, or leave this blank.</span>
+      </div>
+      <div class="form-group" id="smsConsentGroup">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;line-height:1.6;">
+          <input type="checkbox" name="sms_consent" id="fieldSmsConsent" value="Yes — consented to SMS" style="margin-top:3px;flex-shrink:0;" />
+          <span style="font-size:13px;opacity:0.75;">
+            I agree to receive my invitation and account notifications from CURATEvip by text message
+            at the number above. Message and data rates may apply. Message frequency varies.
+            Reply STOP to opt out or HELP for help. See our
+            <a href="privacy.html" style="text-decoration:underline;">Privacy Policy</a> and
+            <a href="terms.html" style="text-decoration:underline;">Terms</a>.
+          </span>
+        </label>
+        <span class="field-error" id="errSmsConsent">Please agree to receive texts, or clear the mobile number.</span>
+      </div>
+
       <div class="form-group">
         <label class="form-label">I am a…</label>
         <select name="inquiry_type" id="fieldType" class="form-select">
@@ -1491,6 +1516,10 @@
         { id: 'fieldEmail',     errId: 'errEmail',     test: v => emailRE.test(v) },
         { id: 'fieldType',      errId: 'errType',      test: v => v !== '' },
         { id: 'fieldMessage',   errId: 'errMessage',   test: v => v.length >= 10 },
+        // Blank is valid — the number is optional. Anything entered must look
+        // like a real number, so a half-typed one doesn't reach the admin and
+        // fail silently at send time.
+        { id: 'fieldPhone',     errId: 'errPhone',     test: v => v.trim() === '' || /^\+?[0-9()\s.\-]{10,}$/.test(v.trim()) },
       ]
 
       // Blur (on-leave) validation for each field
@@ -1508,7 +1537,18 @@
         e.preventDefault()
 
         // Run all validations
-        const allValid = fields.every(f => validate(f.id, f.errId, f.test))
+        let allValid = fields.every(f => validate(f.id, f.errId, f.test))
+
+        // Consent gate: a number without a tick is not consent, and sending on
+        // it would be the thing A2P registration exists to prevent. Checked
+        // here rather than in `fields` because it depends on another field.
+        const phoneEl   = document.getElementById('fieldPhone')
+        const consentEl = document.getElementById('fieldSmsConsent')
+        const consentErr = document.getElementById('errSmsConsent')
+        const needsConsent = phoneEl.value.trim() !== '' && !consentEl.checked
+        consentErr.classList.toggle('show', needsConsent)
+        if (needsConsent) { allValid = false; consentEl.focus({ preventScroll: true }) }
+
         if (!allValid) {
           // Scroll to first invalid field
           const firstInvalid = this.querySelector('.invalid')
