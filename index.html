@@ -389,16 +389,22 @@
       gap: 12px;
     }
 
+    /* Stacked: icon, then title, then copy.
+       This was a horizontal flex row with the icon vertically centred — right
+       for a short card in a narrow column, wrong in a tall grid cell, where it
+       pinned the icon to the middle of the left edge and indented every line of
+       text around it. Also dropped: the gold left rule and the diagonal wash,
+       which read as decoration competing with the copy. */
     .about-card {
-      background: linear-gradient(135deg, rgba(186,159,117,0.06) 0%, var(--bg3) 70%);
-      border: 1px solid rgba(186,159,117,0.15);
-      border-left: 3px solid var(--gold);
-      border-radius: 14px;
-      padding: 18px 22px;
+      background: var(--bg2);
+      border: 1px solid var(--border-l);
+      border-radius: 12px;
+      padding: 26px 24px;
       display: flex;
-      align-items: center;
-      gap: 18px;
-      transition: all 0.35s ease;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
       position: relative;
       overflow: hidden;
     }
@@ -413,22 +419,24 @@
       transition: opacity 0.35s ease;
     }
 
+    /* Lift, not slide. translateX shifted a card sideways out of its column,
+       which reads as a glitch once the cards sit in a grid rather than a list. */
     .about-card:hover {
-      border-color: rgba(186,159,117,0.45);
-      border-left-color: var(--gold);
-      box-shadow: 0 8px 48px rgba(186,159,117,0.1), 0 0 0 1px rgba(186,159,117,0.12);
-      transform: translateX(5px);
+      border-color: var(--gold-border);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+      transform: translateY(-3px);
     }
 
     .about-card:hover::after { opacity: 1; }
 
+    /* Smaller and quieter, sitting above the title rather than beside it. The
+       glow was sized to anchor a horizontal card; stacked, it shouted. */
     .card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, rgba(186,159,117,0.14), rgba(186,159,117,0.04));
-      border: 1px solid rgba(186,159,117,0.32);
-      box-shadow: 0 0 24px rgba(186,159,117,0.13);
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: rgba(186,159,117,0.10);
+      border: 1px solid rgba(186,159,117,0.26);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -444,14 +452,18 @@
        heading was losing to its own caption. Fixed by giving the face the size
        and weight it needs: the same serif at 30px (.flow-title) is perfectly
        legible, so the typeface was never the problem, the scale was. */
+    /* White, like the mock. Gold at this size sat at lower contrast than the
+       body copy beneath it, so the title read as the quieter of the two — the
+       opposite of what a heading is for. The Speed cards keep gold via an
+       inline colour, where it's doing categorical work rather than decoration. */
     .card-title {
       font-family: var(--serif);
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 600;
       letter-spacing: 0.015em;
       line-height: 1.3;
-      margin-bottom: 9px;
-      color: #e2caa6;
+      margin-bottom: 10px;
+      color: #fff;
     }
 
     .card-desc {
