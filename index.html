@@ -495,6 +495,11 @@
     }
     .cards-grid .about-card { height: 100%; }
 
+    /* What You Get has FOUR cards. auto-fit fits as many 270px columns as the
+       width allows, which is three — leaving a single orphan on a second row.
+       Four items want an explicit 2×2, not a best-fit flow. */
+    #what-you-get .cards-grid { grid-template-columns: repeat(2, 1fr); }
+
     /* The three Speed cards are lists, not paragraphs — a little more air. */
     .speed-card .card-desc { line-height: 1.9; }
 
@@ -503,7 +508,8 @@
       #your-speed,
       #membership,
       #investors { padding: 72px 24px; }
-      .cards-grid { grid-template-columns: 1fr; }
+      .cards-grid,
+      #what-you-get .cards-grid { grid-template-columns: 1fr; }
     }
 
     .gold-rule {
