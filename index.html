@@ -341,15 +341,17 @@
     }
 
     /* ─── ABOUT ───────────────────────────────────────── */
+    /* Single column: heading and intro across the top, cards in a row beneath.
+       This was a two-column grid (text left, cards stacked right), which left
+       the intro stranded beside a tall stack and gave the pull-quote nowhere
+       sensible to sit. Stacking it matches every other section on the page. */
     #about {
       padding: 120px 72px;
       max-width: 1240px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 88px;
-      align-items: center;
     }
+
+    #about .about-intro { max-width: 760px; margin-bottom: 56px; }
 
     .section-eyebrow {
       font-size: 10px;
@@ -1219,10 +1221,7 @@
   <!-- ── THE PROBLEM ── -->
   <section id="about">
 
-    <!-- Left column. #about is a two-column grid, so everything on the text
-         side has to live inside ONE child — a third top-level child wraps onto
-         a new row and breaks the layout. -->
-    <div class="fade-in">
+    <div class="about-intro fade-in">
       <p class="section-eyebrow">The Problem</p>
       <h2 class="section-h2">Searching for luxury hotels<br />and restaurants ends in <em>homework</em>.</h2>
       <p class="body-text">
@@ -1230,14 +1229,9 @@
         built for everyone — averaged reviews from millions of people who aren't you, and
         top slots sold to whoever paid the most.
       </p>
-
-      <div class="solution-callout" style="margin-top:36px;">
-        <p class="solution-quote">"If I'm committing my time and my money to this place — is it actually going to be my speed?"</p>
-        <p class="solution-sub">Right now, you're guessing. That's the whole problem.</p>
-      </div>
     </div>
 
-    <div class="about-cards fade-in delay-1">
+    <div class="about-cards cards-grid fade-in delay-1">
 
       <div class="about-card">
         <div class="card-icon">
@@ -1280,6 +1274,14 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- Full width, below the cards. .solution-callout centres itself at 780px —
+         it only read as stranded because the old two-column grid confined it to
+         the left half. -->
+    <div class="solution-callout fade-in delay-2">
+      <p class="solution-quote">"If I'm committing my time and my money to this place — is it actually going to be my speed?"</p>
+      <p class="solution-sub">Right now, you're guessing. That's the whole problem.</p>
     </div>
 
   </section>
