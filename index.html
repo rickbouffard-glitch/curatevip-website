@@ -439,13 +439,19 @@
 
     .card-body { flex: 1; }
 
+    /* Cormorant Garamond has a small x-height and thin strokes, so 17px here
+       read smaller and fainter than the 14px sans body text below it — the
+       heading was losing to its own caption. Fixed by giving the face the size
+       and weight it needs: the same serif at 30px (.flow-title) is perfectly
+       legible, so the typeface was never the problem, the scale was. */
     .card-title {
       font-family: var(--serif);
-      font-size: 17px;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-      margin-bottom: 5px;
-      color: #d4b896;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.015em;
+      line-height: 1.3;
+      margin-bottom: 9px;
+      color: #e2caa6;
     }
 
     .card-desc {
