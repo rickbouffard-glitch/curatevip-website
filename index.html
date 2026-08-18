@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" href="C-IconNoBg.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,7 +27,7 @@
       --text-40:     rgba(255,255,255,0.4);
       --text-20:     rgba(255,255,255,0.2);
       --text-10:     rgba(255,255,255,0.1);
-      --serif:       'Cormorant Garamond', Georgia, serif;
+      --serif:       Georgia, 'Times New Roman', serif;
       --sans:        'Inter', -apple-system, sans-serif;
     }
 
@@ -189,8 +189,8 @@
 
     .hero-title {
       font-family: var(--serif);
-      font-size: clamp(34px, 3.6vw, 54px);
-      font-weight: 300;
+      font-size: clamp(32px, 3.2vw, 48px);
+      font-weight: 400;
       line-height: 1.08;
       color: #fff;
       max-width: 600px;
@@ -325,7 +325,7 @@
 
     .stat-num {
       font-family: var(--serif);
-      font-size: 44px;
+      font-size: 38px;
       font-weight: 600;
       color: var(--gold);
       line-height: 1;
@@ -365,7 +365,7 @@
 
     .section-h2 {
       font-family: var(--serif);
-      font-size: clamp(27px, 2.5vw, 40px);
+      font-size: clamp(25px, 2.2vw, 35px);
       font-weight: 300;
       line-height: 1.1;
       margin-bottom: 24px;
@@ -452,19 +452,19 @@
 
     .card-body { flex: 1; }
 
-    /* Cormorant Garamond has a small x-height and thin strokes, so 17px here
-       read smaller and fainter than the 14px sans body text below it — the
-       heading was losing to its own caption. Fixed by giving the face the size
-       and weight it needs: the same serif at 30px (.flow-title) is perfectly
-       legible, so the typeface was never the problem, the scale was. */
+    /* Georgia at 17px/700. The page previously set this in Cormorant Garamond,
+       whose small x-height and thin strokes made a 17px title read smaller and
+       fainter than the 14px sans caption beneath it. Georgia has a high
+       x-height and even strokes, so it holds up at card-title size — which is
+       why the same wording looked stronger in the mock. */
     /* White, like the mock. Gold at this size sat at lower contrast than the
        body copy beneath it, so the title read as the quieter of the two — the
        opposite of what a heading is for. The Speed cards keep gold via an
        inline colour, where it's doing categorical work rather than decoration. */
     .card-title {
       font-family: var(--serif);
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 17px;
+      font-weight: 700;
       letter-spacing: 0.015em;
       line-height: 1.3;
       margin-bottom: 10px;
@@ -611,7 +611,7 @@
 
     .flow-title {
       font-family: var(--serif);
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 400;
       color: #fff;
       line-height: 1.2;
@@ -744,7 +744,7 @@
 
     .solution-quote {
       font-family: var(--serif);
-      font-size: clamp(20px, 2.2vw, 26px);
+      font-size: clamp(18px, 1.9vw, 23px);
       font-weight: 300;
       font-style: italic;
       color: var(--text);
