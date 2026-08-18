@@ -581,9 +581,10 @@
       line-height: 1.75;
     }
 
-    /* Flow steps — app CC-card style */
+    /* Flow steps — app CC-card style. No max-width: this used to be capped at a
+       flat 860px, leaving a gap on the right against the 976px phone mockup
+       below it on wide screens — the same bug as the Problem section. */
     .flow {
-      max-width: 860px;
       margin: 0 0 40px;
       display: flex;
       flex-direction: column;
