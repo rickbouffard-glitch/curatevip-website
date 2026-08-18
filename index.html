@@ -52,9 +52,12 @@
       justify-content: space-between;
       padding: 0 72px;
       height: 88px;
-      background: rgba(10,10,10,0.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      /* Opaque pure black, matching the black plate baked into the logo PNG.
+         At rgba(10,10,10,0.88) the bar sat a shade lighter than the logo's own
+         background, so the image read as a visible rectangle floating on the
+         header. Any translucency reintroduces that seam as content scrolls
+         under, so the blur goes with it. */
+      background: #000;
       border-bottom: 1px solid var(--border);
     }
 
@@ -462,6 +465,45 @@
       margin-bottom: 72px;
     }
 
+    /* ── Sections added in the member-first rewrite ───────────────────────────
+       Padding in this stylesheet is declared per-section-ID (#about,
+       #how-it-works, #contact each carry their own). New sections therefore
+       started life with none at all, which is why their cards ran edge to edge
+       against the viewport. These give them the same measure as the rest. */
+    #what-you-get,
+    #your-speed,
+    #membership,
+    #investors {
+      padding: 120px 72px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    #your-speed { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: none; }
+    #your-speed > * { max-width: 1240px; margin-left: auto; margin-right: auto; }
+
+    /* Cards side by side rather than stacked. .about-cards is a vertical flex
+       column because it sits in the narrow right-hand column of #about; in a
+       full-width section that same stack reads as four heavy bands. */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+    .cards-grid .about-card { height: 100%; }
+
+    /* The three Speed cards are lists, not paragraphs — a little more air. */
+    .speed-card .card-desc { line-height: 1.9; }
+
+    @media (max-width: 900px) {
+      #what-you-get,
+      #your-speed,
+      #membership,
+      #investors { padding: 72px 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+
     .gold-rule {
       width: 36px;
       height: 1px;
@@ -629,6 +671,12 @@
       align-items: flex-end;
       gap: 20px;
       flex-shrink: 0;
+      /* Centred. This block was originally the right-hand half of a two-column
+         row, so it never needed to place itself — flex-start was correct there.
+         Standing alone under the three steps it pinned itself to the left edge
+         and left half the section empty. */
+      justify-content: center;
+      margin: 0 auto;
     }
 
     .phone-secondary {
@@ -918,9 +966,9 @@
       position: fixed;
       top: 88px;
       left: 0; right: 0;
-      background: rgba(10,10,10,0.97);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
+      /* Matches the nav bar above it — a 0.97 alpha panel hanging off an
+         opaque black bar shows a visible seam between the two. */
+      background: #000;
       border-bottom: 1px solid var(--border);
       z-index: 98;
       flex-direction: column;
@@ -1171,6 +1219,9 @@
   <!-- ── THE PROBLEM ── -->
   <section id="about">
 
+    <!-- Left column. #about is a two-column grid, so everything on the text
+         side has to live inside ONE child — a third top-level child wraps onto
+         a new row and breaks the layout. -->
     <div class="fade-in">
       <p class="section-eyebrow">The Problem</p>
       <h2 class="section-h2">Searching for luxury hotels<br />and restaurants ends in <em>homework</em>.</h2>
@@ -1179,6 +1230,11 @@
         built for everyone — averaged reviews from millions of people who aren't you, and
         top slots sold to whoever paid the most.
       </p>
+
+      <div class="solution-callout" style="margin-top:36px;">
+        <p class="solution-quote">"If I'm committing my time and my money to this place — is it actually going to be my speed?"</p>
+        <p class="solution-sub">Right now, you're guessing. That's the whole problem.</p>
+      </div>
     </div>
 
     <div class="about-cards fade-in delay-1">
@@ -1226,11 +1282,6 @@
 
     </div>
 
-    <div class="solution-callout fade-in delay-2">
-      <p class="solution-quote">"If I'm committing my time and my money to this place — is it actually going to be my speed?"</p>
-      <p class="solution-sub">Right now, you're guessing. That's the whole problem.</p>
-    </div>
-
   </section>
 
   <!-- ── WHAT YOU GET ── -->
@@ -1244,7 +1295,7 @@
       </p>
     </div>
 
-    <div class="about-cards fade-in delay-1">
+    <div class="about-cards cards-grid fade-in delay-1">
 
       <div class="about-card">
         <div class="card-icon">
@@ -1316,9 +1367,9 @@
       </p>
     </div>
 
-    <div class="about-cards fade-in delay-1">
+    <div class="about-cards cards-grid fade-in delay-1">
 
-      <div class="about-card">
+      <div class="about-card speed-card">
         <div class="card-body">
           <div class="card-title" style="color:var(--gold);">Where you rest</div>
           <div class="card-desc">
@@ -1329,7 +1380,7 @@
         </div>
       </div>
 
-      <div class="about-card">
+      <div class="about-card speed-card">
         <div class="card-body">
           <div class="card-title" style="color:var(--gold);">Where you dine</div>
           <div class="card-desc">
@@ -1340,7 +1391,7 @@
         </div>
       </div>
 
-      <div class="about-card">
+      <div class="about-card speed-card">
         <div class="card-body">
           <div class="card-title" style="color:var(--gold);">Where the night goes</div>
           <div class="card-desc">
@@ -1489,7 +1540,7 @@
       </div>
     </div>
 
-    <div class="about-cards fade-in delay-2">
+    <div class="about-cards cards-grid fade-in delay-2">
       <div class="about-card">
         <div class="card-body">
           <div class="card-title">Legacy curation was built for everyone else</div>
