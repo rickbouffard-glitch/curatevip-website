@@ -552,12 +552,15 @@
       margin: 20px auto;
     }
 
+    /* One max-width, and left-aligned to sit under the headline. This rule
+       declared max-width twice (60ch then 460px — the second won) and used
+       'margin: 0 auto', which centred the paragraph while its header was
+       left-aligned. It rendered 210px to the right of the headline above it. */
     .section-sub {
       max-width: 60ch;
       font-size: 15px;
       color: var(--text-40);
-      max-width: 460px;
-      margin: 0 auto;
+      margin: 0;
       line-height: 1.75;
     }
 
@@ -1313,7 +1316,7 @@
   <section id="what-you-get">
     <div class="section-header fade-in">
       <p class="section-eyebrow">What You Get</p>
-      <h2 class="section-h2">Not more options.<br /><em>Your</em> options.</h2>
+      <h2 class="section-h2">Not more options. <em>Your</em> options.</h2>
       <p class="section-sub">
         Membership is a standing answer to one question: where should I stay, eat, or go tonight —
         somewhere I'll actually like. Here's what that buys you.
@@ -1476,7 +1479,7 @@
   <section id="membership">
     <div class="section-header fade-in">
       <p class="section-eyebrow">Membership</p>
-      <h2 class="section-h2">$299 a year.<br /><em>By invitation.</em></h2>
+      <h2 class="section-h2">$299 a year. <em>By invitation.</em></h2>
       <p class="section-sub">
         One membership covers every city you travel to and every curation you ask for.
         That's less than the cost of one wrong night away — and roughly the value of the
