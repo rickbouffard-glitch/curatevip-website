@@ -147,7 +147,7 @@
 
     /* Split hero inner layout */
     .hero-inner {
-      max-width: 1240px;
+      max-width: 1120px;
       width: 100%;
       margin: 0 auto;
       display: flex;
@@ -347,7 +347,7 @@
        sensible to sit. Stacking it matches every other section on the page. */
     #about {
       padding: 92px 72px;
-      max-width: 1240px;
+      max-width: 1120px;
       margin: 0 auto;
     }
 
@@ -374,6 +374,11 @@
     .section-h2 em { font-style: italic; color: var(--gold); }
 
     .body-text {
+      /* Measured in ch so the browser counts real characters. The live page
+         was running 101 characters per line; comfortable reading measure is
+         45-75, and that gap — not the fonts or the cards — was what made the
+         page feel unprofessional beside a mock previewed in a narrow panel. */
+      max-width: 66ch;
       font-size: 15px;
       color: var(--text-60);
       line-height: 1.9;
@@ -495,12 +500,12 @@
     #membership,
     #investors {
       padding: 92px 72px;
-      max-width: 1240px;
+      max-width: 1120px;
       margin: 0 auto;
     }
 
     #your-speed { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: none; }
-    #your-speed > * { max-width: 1240px; margin-left: auto; margin-right: auto; }
+    #your-speed > * { max-width: 1120px; margin-left: auto; margin-right: auto; }
 
     /* Cards side by side rather than stacked. .about-cards is a vertical flex
        column because it sits in the narrow right-hand column of #about; in a
@@ -539,6 +544,7 @@
     }
 
     .section-sub {
+      max-width: 60ch;
       font-size: 15px;
       color: var(--text-40);
       max-width: 460px;
