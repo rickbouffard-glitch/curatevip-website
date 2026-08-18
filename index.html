@@ -136,7 +136,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 100px 72px 80px;
+      padding: 100px max(24px, calc((100% - 1120px) / 2 + 72px)) 80px;
       position: relative;
       overflow: hidden;
     }
@@ -485,7 +485,10 @@
 
     /* ─── HOW IT WORKS ────────────────────────────────── */
     #how-it-works {
-      padding: 120px 72px;
+      /* Same inset formula as the nav: full-width background, but contents
+         aligned to the shared 1120px column. A flat 72px put this section's
+         heading 286px left of every other heading on the page. */
+      padding: 92px max(24px, calc((100% - 1120px) / 2 + 72px));
       background: var(--bg2);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
@@ -567,7 +570,7 @@
     /* Flow steps — app CC-card style */
     .flow {
       max-width: 860px;
-      margin: 0 auto 64px;
+      margin: 0 0 64px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -721,6 +724,7 @@
          and left half the section empty. */
       justify-content: center;
       margin: 0 auto;
+      max-width: 1120px;
     }
 
     .phone-secondary {
@@ -1567,7 +1571,7 @@
       </div>
     </div>
 
-    <p class="body-text fade-in delay-3" style="text-align:center;font-size:13px;opacity:0.45;max-width:760px;margin-left:auto;margin-right:auto;">
+    <p class="body-text fade-in delay-3" style="font-size:13px;opacity:0.45;max-width:66ch;">
       Sources: Grand View Research, Luxury Travel Market Report 2033 (8.5% CAGR) · McKinsey; Capgemini;
       Knight Frank; Wealth-X · DQYDJ US millionaire counts. Investor materials available on request —
       select "Investor" in the form below.
