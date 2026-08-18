@@ -516,8 +516,17 @@
     #membership .section-header { text-align: center; }
     #membership .section-sub { margin-left: auto; margin-right: auto; }
 
-    #your-speed { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: none; }
-    #your-speed > * { max-width: 1120px; margin-left: auto; margin-right: auto; }
+    /* Full-bleed background, contents on the shared column — the same pattern as
+       #how-it-works. Previously this section kept a flat 72px padding and then
+       re-centred its children inside the full viewport width, which put its
+       heading 72px left of every other heading on the page. */
+    #your-speed {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      max-width: none;
+      padding: 92px max(24px, calc((100% - 1120px) / 2 + 72px));
+    }
 
     /* Cards side by side rather than stacked. .about-cards is a vertical flex
        column because it sits in the narrow right-hand column of #about; in a
