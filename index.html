@@ -483,6 +483,42 @@
       line-height: 1.7;
     }
 
+    /* Included card — two columns of bulleted items instead of one long
+       stacked list. Falls back to a single column on narrow screens. */
+    .included-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 40px;
+    }
+
+    .included-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .included-list li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.7;
+    }
+
+    .included-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+    }
+
+    .included-list li:last-child { margin-bottom: 0; }
+
+    @media (max-width: 640px) {
+      .included-grid { grid-template-columns: 1fr; }
+    }
+
     /* ─── HOW IT WORKS ────────────────────────────────── */
     #how-it-works {
       /* Same inset formula as the nav: full-width background, but contents
@@ -1496,9 +1532,10 @@
       <p class="section-eyebrow">Membership</p>
       <h2 class="section-h2">$299 a year. <em>By invitation.</em></h2>
       <p class="section-sub">
-        One membership covers every city you travel to and every curation you ask for.
-        That's less than the cost of one wrong night away — and roughly the value of the
-        hours you'd otherwise spend researching to avoid it.
+        One membership covers 7 select US cities today — expanding to new markets every
+        month — and every curation you ask for within them. That's less than the cost of
+        one wrong night away, and roughly the value of the hours you'd otherwise spend
+        researching to avoid it.
       </p>
     </div>
 
@@ -1506,13 +1543,17 @@
       <div class="about-card" style="border-color:var(--gold-border);">
         <div class="card-body">
           <div class="card-title" style="font-size:26px;color:var(--gold);">Included</div>
-          <div class="card-desc" style="line-height:2;">
-            Every curation, in every city we cover<br />
-            Your Speed Profile across Stay, Table and Social<br />
-            A member rate on stays, booked in the app<br />
-            Saved trips and places flagged for later<br />
-            Concierge when you'd rather hand it over<br />
-            No advertising, no paid placements, no crowdsourced ratings
+          <div class="included-grid">
+            <ul class="included-list">
+              <li>Every curation, across the 7 select US cities we cover — expanding monthly</li>
+              <li>Your Speed Profile across Stay, Table and Social</li>
+              <li>A member rate on stays, booked in the app</li>
+            </ul>
+            <ul class="included-list">
+              <li>Saved trips and places flagged for later</li>
+              <li>Concierge when you'd rather hand it over</li>
+              <li>No advertising, no paid placements, no crowdsourced ratings</li>
+            </ul>
           </div>
         </div>
       </div>
