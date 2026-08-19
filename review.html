@@ -302,7 +302,7 @@ Node/Express API for CurateVIP. Handles AI-driven venue curation, hotel booking,
 |---|---|
 | Runtime | Node 20 |
 | Framework | Express 4 |
-| AI | Anthropic Claude (Sonnet 4.x for curation, Haiku for extraction/validation) |
+| AI | Anthropic Claude — three-model split: Sonnet 5 for curation + FEEL/WHY editorial, Fable 5 for CCTF environment/quality_pass classification in the Speed Engine Discovery Bridge, Haiku for credential extraction, Signal Guard, and photo vision checks |
 | Search | Brave Search API |
 | Database | Supabase (PostgreSQL) |
 | Photos | Google Places API + Puppeteer |
