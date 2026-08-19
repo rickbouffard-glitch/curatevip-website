@@ -306,7 +306,7 @@ Node/Express API for CurateVIP. Handles AI-driven venue curation, hotel booking,
 | Search | Brave Search API |
 | Database | Supabase (PostgreSQL) |
 | Photos | Google Places API + Puppeteer |
-| Booking | LiteAPI (primary), RateHawk (secondary) |
+| Booking | LiteAPI (primary, White Label). RateHawk integration is built but deferred — not active for the current phases (per product-owner direction, August 19, 2026); venues that would otherwise route to it fall back to an Expedia affiliate link instead. |
 | Email | Resend |
 | SMS | Twilio |
 | Headless browser | Puppeteer + system Chromium (via Dockerfile) |
@@ -497,11 +497,11 @@ Venues with only secondary credentials below the price floor are filtered out.
 
 Each venue carries a bookingMode:
 
-- \`liteapi\` — LiteAPI attempted first
-- \`ratehawk\` — RateHawk used directly
+- \`liteapi\` — LiteAPI attempted first; the frontend routes these venues to the branded White Label site (book.curatevip.ai), Nuitee as merchant of record
+- \`ratehawk\` — Reserved for venues LiteAPI doesn't cover. \`services/ratehawk.js\` and the \`bookingAdapter.js\` waterfall logic are built, but the integration is currently deferred — not active for the current phases (per product-owner direction, August 19, 2026). \`RATEHAWK_KEY_ID\`/\`RATEHAWK_API_KEY\` are unset, so \`ratehawk\`-mode venues fall through to an Expedia affiliate deep link in the meantime, same as \`request\`-mode venues without one.
 - \`request\` — No live rates; frontend shows concierge CTA
 
-The waterfall (LiteAPI → RateHawk → request) is resolved internally by \`bookingAdapter.js\`. Rate deduplication normalizes both provider shapes into a common format.
+The waterfall (LiteAPI → RateHawk → request) is resolved internally by \`bookingAdapter.js\` and remains the target design once RateHawk is reactivated. Today, only the LiteAPI leg is live; RateHawk-designated venues use the Expedia fallback instead. Rate deduplication normalizes both provider shapes into a common format.
 
 ---
 
