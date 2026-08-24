@@ -150,6 +150,9 @@
     <div class="auth-subtitle">Engineering Review</div>
     <input class="auth-field" type="text" id="uInput" placeholder="Username" autocomplete="username" />
     <input class="auth-field" type="password" id="pInput" placeholder="Password" autocomplete="current-password" />
+    <!-- Shown only when this page is not configured for Supabase sign-in.
+         See the DOCS API CREDENTIAL block in the script below. -->
+    <input class="auth-field" type="password" id="sInput" placeholder="Admin API Secret" autocomplete="off" style="display:none" />
     <div class="auth-error" id="authError"></div>
     <button class="auth-btn" onclick="doLogin()">Access</button>
   </div>
@@ -174,28 +177,108 @@
 </div>
 
 <script>
-// ┌──────────────────────────────────────────────────────────┐
-// │  REVIEWER CREDENTIALS — edit only these two lines        │
-const ACCESS_USERNAME = 'rick';
-const ACCESS_PASSWORD = 'CurateVip2025';
-// └──────────────────────────────────────────────────────────┘
+const API = 'https://api.curatevip.ai';
+
+// ══════════════════════ DOCS API CREDENTIAL ══════════════════════
+// The three documents are NOT in this file. They used to be — as JS template
+// literals guarded by a username and password written in cleartext a few lines
+// from here — so anyone could read the architecture and the full data model
+// with `curl https://curatevip.app/review.html`. Those two constants are gone
+// and that password must be treated as compromised wherever else it was used.
+//
+// Content now comes from GET /api/docs/review, behind the API's server-side
+// requireAdmin check. requireAdmin accepts exactly two credentials:
+//   (a) Authorization: Bearer <Supabase session token> for a member with
+//       is_admin = true (preferred), or
+//   (b) x-admin-secret: <ADMIN_SCRIPT_SECRET>.
+//
+// (a) is off by default because this site carries no Supabase configuration of
+// its own. To enable it, paste the project URL and the ANON (publishable) key
+// below — never the service-role key. With them blank, the page falls back to
+// (b): the admin API secret is typed at sign-in, kept in memory for the life of
+// the tab, and never written to storage of any kind.
+const SUPABASE_URL      = '';
+const SUPABASE_ANON_KEY = '';
+const USE_SUPABASE      = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 // ── Auth ────────────────────────────────────────────────────
-function doLogin() {
+async function sha256(text) {
+  const data = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function supabaseSignIn(email, password) {
+  const res = await fetch(SUPABASE_URL.replace(/\/+$/, '') + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.access_token) return null;
+  return data.access_token;
+}
+
+async function doLogin() {
+  const errEl = document.getElementById('authError');
+  const btn   = document.querySelector('.auth-btn');
+  errEl.textContent = '';
+
   const u = document.getElementById('uInput').value.trim();
   const p = document.getElementById('pInput').value;
-  if (u === ACCESS_USERNAME && p === ACCESS_PASSWORD) {
+  const s = USE_SUPABASE ? '' : document.getElementById('sInput').value.trim();
+  if (!u || !p) { errEl.textContent = 'Username and password required.'; return; }
+  if (!USE_SUPABASE && !s) { errEl.textContent = 'Admin API secret required.'; return; }
+
+  btn.textContent = 'Checking…';
+  btn.disabled = true;
+  try {
+    // Step 1 — a real server-side credential check against admin_credentials,
+    // replacing the two hardcoded constants this file used to compare against.
+    const res = await fetch(API + '/api/admin-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, passwordHash: await sha256(p) })
+    });
+    const data = await res.json();
+    if (!data.ok) { errEl.textContent = 'Invalid credentials.'; return; }
+
+    // Step 2 — a credential the docs API itself accepts.
+    let headers;
+    if (USE_SUPABASE) {
+      const token = await supabaseSignIn(u, p);
+      if (!token) { errEl.textContent = 'Could not establish an admin session.'; return; }
+      headers = { 'Authorization': 'Bearer ' + token };
+    } else {
+      headers = { 'x-admin-secret': s };
+    }
+
+    // Step 3 — the API is the gate. Nothing is shown unless it answers 200.
+    const err = await renderAll(headers);
+    if (err) { errEl.textContent = err; return; }
+
+    document.getElementById('pInput').value = '';
+    if (!USE_SUPABASE) document.getElementById('sInput').value = '';
     document.getElementById('authScreen').style.display = 'none';
     document.getElementById('viewer').classList.add('active');
-    renderAll();
-  } else {
-    document.getElementById('authError').textContent = 'Invalid credentials.';
+  } catch (e) {
+    errEl.textContent = 'Could not reach server. Check your connection.';
+  } finally {
+    btn.textContent = 'Access';
+    btn.disabled = false;
   }
 }
 
 document.getElementById('pInput').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const sEl = document.getElementById('sInput');
+  if (!USE_SUPABASE && !sEl.value.trim()) { sEl.focus(); return; }
+  doLogin();
+});
+document.getElementById('sInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
+document.getElementById('sInput').style.display = USE_SUPABASE ? 'none' : '';
 document.getElementById('uInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('pInput').focus();
 });
@@ -205,7 +288,13 @@ function signOut() {
   document.getElementById('viewer').classList.remove('active');
   document.getElementById('uInput').value = '';
   document.getElementById('pInput').value = '';
+  document.getElementById('sInput').value = '';
   document.getElementById('authError').textContent = '';
+  // Signing out must leave nothing rendered behind.
+  ['readme', 'architecture', 'schema'].forEach(id => {
+    document.getElementById(id).innerHTML = '';
+  });
+  rendered = false;
 }
 
 // ── Tab switching ────────────────────────────────────────────
@@ -290,409 +379,35 @@ function renderMarkdown(md) {
   return html;
 }
 
-// ── Doc content ──────────────────────────────────────────────
-
-const README_MD = `# curatevip-api
-
-Node/Express API for CurateVIP. Handles AI-driven venue curation, hotel booking, photo sourcing, and member management. Deployed on Railway via Docker.
-
-## Stack
-
-| Layer | Tech |
-|---|---|
-| Runtime | Node 20 |
-| Framework | Express 4 |
-| AI | Anthropic Claude — three-model split: Sonnet 5 for curation + FEEL/WHY editorial, Fable 5 for CCTF environment/quality_pass classification in the Speed Engine Discovery Bridge, Haiku for credential extraction, Signal Guard, and photo vision checks |
-| Search | Brave Search API |
-| Database | Supabase (PostgreSQL) |
-| Photos | Google Places API + Puppeteer |
-| Booking | LiteAPI (primary, White Label). RateHawk integration is built but deferred — not active for the current phases (per product-owner direction, August 19, 2026); venues that would otherwise route to it fall back to an Expedia affiliate link instead. |
-| Email | Resend |
-| SMS | Twilio |
-| Headless browser | Puppeteer + system Chromium (via Dockerfile) |
-
-## Local development
-
-\`\`\`bash
-npm install
-cp .env.example .env   # fill in keys
-npm run dev            # nodemon, port 4000
-\`\`\`
-
-The headless browser features (reservation link discovery, og:image fetch) degrade gracefully if Chromium is absent.
-
-## Environment variables
-
-All required unless marked optional.
-
-\`\`\`
-# Anthropic
-ANTHROPIC_API_KEY=
-
-# Brave Search
-BRAVE_API_KEY=
-
-# Supabase
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-
-# Google
-GOOGLE_PLACES_API_KEY=
-GOOGLE_CSE_KEY=
-GOOGLE_CSE_ID=
-
-# Booking — LiteAPI
-LITEAPI_API_KEY=
-
-# Booking — RateHawk (optional)
-RATEHAWK_KEY_ID=
-RATEHAWK_API_KEY=
-
-# Email
-RESEND_API_KEY=
-FROM_EMAIL=invites@curatevip.ai
-
-# SMS (optional)
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_PHONE_NUMBER=
-
-# App
-APP_URL=https://curatevip.ai
-ADMIN_SECRET=
-ADMIN_EMAILS=
-PORT=4000
-
-# Puppeteer
-PUPPETEER_EXECUTABLE_PATH=
-\`\`\`
-
-## Deploy
-
-Railway reads the Dockerfile at repo root. Push to main → Railway auto-deploys. Environment variables are managed in the Railway dashboard under the service Variables tab.
-
-## Key files
-
-\`\`\`
-server.js                  — Express routes + middleware (~2,600 lines)
-engine/curate.js           — CCTF curation engine (extracted from server.js)
-seed.js                    — Curated venue registry: confirmed, blocked, environment metadata
-services/
-  websearch.js             — Brave Search + Signal Guard (Haiku validation pass)
-  bookingAdapter.js        — Unified booking interface (LiteAPI + RateHawk waterfall)
-  liteapi.js               — LiteAPI hotel rates + booking
-  ratehawk.js              — RateHawk hotel rates + booking
-  hotelbeds.js             — Hotelbeds integration (not yet wired to routes)
-SUPABASE_SETUP.sql         — Initial schema
-SCHEMA.md                  — Full data model reference
-ARCHITECTURE.md            — Pipeline and system design
-\`\`\`
-
-## Admin endpoints
-
-All /api/admin/* routes require Authorization: Bearer ADMIN_SECRET. The admin panel at curatevip.ai/admin uses the same header.
-
-## Caching
-
-Three layers of cache sit in front of Claude:
-
-- \`market_venue_cache\` — full curation result per market x intent, 7 days
-- \`quality_signals_cache\` — Brave Search results per market x category, 7 days
-- \`venue_photos\` — photo URLs per venue, 7 days`;
-
-const ARCHITECTURE_MD = `# CurateVIP — Backend Architecture
-
-## Overview
-
-CurateVIP curates venues (hotels, restaurants, social spots) for a specific member based on their speed profile — a two-axis classification of the member's pace x environment preference. The core value is in the curation engine: what gets included, what gets filtered, and in what order.
-
----
-
-## Request lifecycle — /api/curate
-
-### 1. Profile resolution
-
-speedProfile from the member's onboarding carries environment keys per intent (TABLE, STAY, SOCIAL). The server maps those to canonical CCTF environment names and guards against stale defaults that cross category boundaries.
-
-### 2. Cache check
-
-\`market_venue_cache\` is queried first. A hit bypasses Claude entirely and streams the cached result directly. Cache TTL is 7 days. Cache is busted manually via POST /api/reset-cache or the admin panel.
-
-### 3. Brave Search — quality signals
-
-On a cache miss, Brave Search runs before Claude. Three parallel query sets fan out:
-
-- TABLE: 14 queries (Michelin, James Beard, Forbes Table, city-specific dining press)
-- STAY: 9 queries (Forbes Five Star, Michelin Key, AAA Five Diamond, LHW/SLH premium tier)
-- SOCIAL: 6 queries (rooftop, bar, private club, social scene signals)
-
-Results are cached in \`quality_signals_cache\` for 7 days. The raw snippets are passed into the curation prompt as grounding context and held for Signal Guard.
-
-### 4. Claude Sonnet — curation
-
-A structured prompt including:
-- The member's resolved CCTF environment + adjacent environments for cross-tier picks
-- Quality signal block (live Brave Search snippets)
-- Seed reference sweep (confirmed/blocked venues for the market)
-- Hard disqualifiers and quality floor rules
-
-Claude returns a JSON stream. Venue objects are extracted incrementally and streamed to the client as they complete so the frontend can render cards progressively.
-
-### 5. Post-filter chain
-
-After Sonnet picks arrive, six guards run in sequence:
-
-| Guard | What it does |
-|---|---|
-| Signal Guard | Haiku validates each candidate against Brave snippets; drops not_found picks |
-| Geo guard | Removes venues outside the requested market |
-| Tier guard | Removes venues whose environment does not match the resolved tier |
-| Seed block | Hard-removes any venue in seed.js with blocked: true |
-| Env block | Removes venues whose environment conflicts with category |
-| Surrounding block | Removes cross-market venues unless includeSurrounding is set |
-
-Seed-confirmed venues (confirmed: true) bypass Signal Guard — they have a standing signal by definition.
-
-### 6. Signal Guard — Haiku validation pass
-
-Signal Guard sends up to 50 Brave Search snippets plus the Sonnet candidate list to Claude Haiku asking for found | not_found | uncertain per venue. not_found picks are dropped unless seed-confirmed. The call has a 10-second timeout and is non-fatal — if Haiku errors, the guard skips.
-
-### 7. Streaming response
-
-Filtered venues are written as text/event-stream. The frontend renders each card as it arrives. The full result is written to \`market_venue_cache\` at the end.
-
----
-
-## CCTF — two-axis classification
-
-CCTF (CurateVIP Classification and Tier Framework) maps member intent to one of 11 environments:
-
-- **TABLE:** Provision · Convivial · Electric · Gallery · Vanguard · Verandah
-- **STAY:** Sanctuary · Atelier · Estate · Couture · Vanguard
-- **SOCIAL:** Gallery · Electric · Plunge · Shadow
-
-The two-axis model: speed tier (pace/stimulus level) x environment lean (physical/social character of the space).
-
----
-
-## Quality floor
-
-**Primary credentials** — qualify a venue standalone regardless of price:
-- Forbes Five Star
-- Michelin Key
-- AAA Five Diamond
-- Flagship brand (Aman, Four Seasons, Ritz-Carlton, etc.)
-
-**Secondary credentials** — qualify only with confirmed $500+/night:
-- Leading Hotels of the World (LHW)
-- Small Luxury Hotels (SLH)
-- Relais & Chateaux
-- Preferred Hotels & Resorts Legend Collection
-
-Venues with only secondary credentials below the price floor are filtered out.
-
----
-
-## Booking pipeline
-
-Each venue carries a bookingMode:
-
-- \`liteapi\` — LiteAPI attempted first; the frontend routes these venues to the branded White Label site (book.curatevip.ai), Nuitee as merchant of record
-- \`ratehawk\` — Reserved for venues LiteAPI doesn't cover. \`services/ratehawk.js\` and the \`bookingAdapter.js\` waterfall logic are built, but the integration is currently deferred — not active for the current phases (per product-owner direction, August 19, 2026). \`RATEHAWK_KEY_ID\`/\`RATEHAWK_API_KEY\` are unset, so \`ratehawk\`-mode venues fall through to an Expedia affiliate deep link in the meantime, same as \`request\`-mode venues without one.
-- \`request\` — No live rates; frontend shows concierge CTA
-
-The waterfall (LiteAPI → RateHawk → request) is resolved internally by \`bookingAdapter.js\` and remains the target design once RateHawk is reactivated. Today, only the LiteAPI leg is live; RateHawk-designated venues use the Expedia fallback instead. Rate deduplication normalizes both provider shapes into a common format.
-
----
-
-## Layer separation (June 2026 refactor)
-
-The 856-line /api/curate handler was extracted from server.js into \`engine/curate.js\` as a standalone function: curate(params, deps, res). Dependencies (Anthropic client, Supabase client, vision helper) are injected via deps. server.js dropped from ~3,540 to ~2,610 lines. The route is now 3 lines.
-
----
-
-## Data flow summary
-
-\`\`\`
-Client
-  POST /api/curate
-    Cache hit  → stream from market_venue_cache
-    Cache miss
-      Brave Search (14/9/6 queries, parallelized)
-      Claude Sonnet (structured prompt + stream)
-      Signal Guard (Haiku, non-fatal)
-      Post-filter chain (geo → tier → seed-block → env → surrounding)
-      Photo enrichment (async, parallel)
-      Write market_venue_cache → stream to client
-\`\`\``;
-
-const SCHEMA_MD = `# CurateVIP — Data Model
-
-Supabase (PostgreSQL). All tables use Row Level Security. Backend accesses via the service role key, which bypasses RLS.
-
----
-
-## members
-
-Admin-created. A member record is created when an invite is sent.
-
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | auto-generated |
-| first_name | text | required |
-| last_name | text | |
-| email | text unique | required |
-| phone | text | SMS invite delivery |
-| city | text | member's primary city |
-| invite_code | text unique | random token; URL path on accept page |
-| member_number | text | display number shown in app |
-| invited_at | timestamptz | default now() |
-| accepted_at | timestamptz | set when member taps accept link |
-| profile_completed_at | timestamptz | set when onboarding quiz finishes |
-| status | text | invited → accepted → complete |
-
----
-
-## invite_requests
-
-Public form submissions. Reviewed by admin, who can promote to a members record or reject.
-
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | |
-| full_name | text | |
-| email | text | |
-| city | text | |
-| net_worth | text | self-reported range |
-| travel_frequency | text | self-reported |
-| note | text | optional applicant message |
-| status | text | pending → approved or rejected |
-| created_at | timestamptz | |
-
----
-
-## market_venue_cache
-
-Full curation result per market x intent x environment. Populated at end of a successful /api/curate call. TTL 7 days.
-
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | |
-| market | text | e.g., seattle, scottsdale |
-| intent | text | table, stay, or social |
-| environment | text | resolved CCTF environment (e.g., Provision, Sanctuary) |
-| venues | jsonb | array of fully-enriched venue objects |
-| wild_card | jsonb | single wild-card venue object, or null |
-
-Unique constraint: (market, intent, environment)
-
-### Venue shape (inside venues jsonb)
-
-\`\`\`json
-{
-  "id": "seed-id or ai-generated slug",
-  "name": "Four Seasons Seattle",
-  "market": "seattle",
-  "category": "STAY",
-  "environment": "Sanctuary",
-  "description": "...",
-  "feelsLike": "...",
-  "matchNote": "...",
-  "awards": ["Forbes Five Star"],
-  "luxuryCredential": "Forbes Five Star",
-  "confirmed": true
-}
-\`\`\`
-
----
-
-## venue_ai_content
-
-Per-venue AI-extracted content. venue_name is the conflict key.
-
-| Column | Type | Notes |
-|---|---|---|
-| venue_name | text unique | matches name in seed.js |
-| market | text | |
-| category | text | TABLE, STAY, or SOCIAL |
-| environment | text | CCTF environment assigned by Sonnet |
-| feels_like | text | short evocative description |
-| match_note | text | why this venue matches the member's profile |
-| description | text | longer venue description |
-| luxury_credential | text | primary credential string |
-| vision_environment | text | environment assigned by Haiku photo vision |
-| vision_confidence | text | high, medium, or low |
-| vision_reasoning | text | Haiku's reasoning |
-| updated_at | timestamptz | |
-
----
-
-## venue_photos
-
-Google Places photo URLs per venue, cached 7 days.
-
-| Column | Type | Notes |
-|---|---|---|
-| venue_name | text unique | |
-| photos | jsonb | array of photo URL strings |
-| fetched_at | timestamptz | 7-day TTL check |
-
----
-
-## venue_reservation_links
-
-Cached Puppeteer reservation-link crawler output. TTL 30 days.
-
-| Column | Type | Notes |
-|---|---|---|
-| venue_name | text unique | lowercase, trimmed |
-| city | text | |
-| platform | text | opentable, resy, sevenrooms, tock, yelp, direct, etc. |
-| url | text | direct booking URL |
-| checked_at | timestamptz | TTL and staleness check |
-
----
-
-## quality_signals_cache
-
-Raw Brave Search snippets per market x category. TTL 7 days.
-
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | |
-| market | text | |
-| category | text | TABLE, STAY, or SOCIAL |
-| signals_json | jsonb | array of { title, description, url } |
-| fetched_at | timestamptz | |
-| expires_at | timestamptz | fetched_at + 7 days |
-
-Unique constraint: (market, category)
-
----
-
-## Seed vs. database
-
-seed.js is the authoritative venue registry, checked into version control and loaded at startup. Supabase tables store derived, cached, or user-generated data — not the canonical venue list.
-
-| Field | Meaning |
-|---|---|
-| id | Stable slug, unique identifier throughout the app |
-| confirmed: true | Venue passes quality floor — bypasses Signal Guard |
-| blocked: true | Permanently excluded regardless of AI picks |
-| environment | CCTF environment classification |
-| environment_lean | Optional lean modifier (dining, social, hotel) |
-| liteApiId | LiteAPI hotel ID for live rate lookup |
-| bookingMode | liteapi, ratehawk, or request |
-| photoOverride | Override photo — bypasses Google Places entirely |`;
-
-// ── Render all docs on first login ─────────────────────────
+// ── Fetch + render the docs after a successful sign-in ──────
+// Returns an error string on failure, null on success. There is no embedded
+// copy to fall back to by design: if the API will not serve the content, this
+// page shows nothing.
 let rendered = false;
-function renderAll() {
-  if (rendered) return;
+async function renderAll(headers) {
+  if (rendered) return null;
+
+  let res;
+  try {
+    res = await fetch(API + '/api/docs/review', { headers, cache: 'no-store' });
+  } catch (err) {
+    return 'Could not reach the documentation service. Check your connection.';
+  }
+  if (res.status === 401) return 'Not authorized for documentation access.';
+  if (res.status === 403) return 'This account does not have admin access.';
+  if (!res.ok)            return 'Documentation is unavailable (error ' + res.status + ').';
+
+  let data;
+  try { data = await res.json(); } catch (err) { return 'Documentation response was malformed.'; }
+  if (!data || !data.ok || !data.readme || !data.architecture || !data.schema) {
+    return 'Documentation response was incomplete.';
+  }
+
+  document.getElementById('readme').innerHTML       = renderMarkdown(data.readme);
+  document.getElementById('architecture').innerHTML = renderMarkdown(data.architecture);
+  document.getElementById('schema').innerHTML       = renderMarkdown(data.schema);
   rendered = true;
-  document.getElementById('readme').innerHTML       = renderMarkdown(README_MD);
-  document.getElementById('architecture').innerHTML = renderMarkdown(ARCHITECTURE_MD);
-  document.getElementById('schema').innerHTML       = renderMarkdown(SCHEMA_MD);
+  return null;
 }
 </script>
 </body>

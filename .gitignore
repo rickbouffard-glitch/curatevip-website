@@ -1,0 +1,2 @@
+# Never deploy or commit the pre-extraction copies of the doc pages.
+.originals/
