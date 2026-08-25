@@ -537,7 +537,7 @@
     }
     .prog-fill {
       height: 100%;
-      width: 12.5%;
+      width: 11.111%;
       background: var(--gold);
       border-radius: 2px;
       transition: width 0.4s ease;
@@ -703,6 +703,15 @@
       color: #e6a49b;
       line-height: 1.6;
     }
+    /* Same surface, different weather. "Still sending" is not a failure and
+       must not be dressed as one — nothing has gone wrong, the work simply
+       has not landed yet, so the box drops the red and reads in the page's
+       own colour. */
+    .funnel-error.pending {
+      border-color: var(--gold-border);
+      background: rgba(186,159,117,0.07);
+      color: var(--gold-light);
+    }
     .funnel-error button {
       margin-top: 6px;
       background: none;
@@ -844,9 +853,11 @@
       section { scroll-margin-top: 72px; }
       #apply { scroll-margin-top: 76px; }
 
-      /* Every value below is tuned so that the headline, all three fields, the
+      /* Every value below is tuned so that the headline, the single field, the
          Begin button and the reassurance line all clear 844px on a 390px
-         phone — with the consent bar open. Measured, not guessed. */
+         phone — with the consent bar open. Measured, not guessed. Step one is
+         now one text field rather than three, so this has more room than the
+         version these numbers were cut against, not less. */
       #home {
         align-items: flex-start;
         padding: 72px 18px 40px;
@@ -981,73 +992,48 @@
       </div>
 
       <!-- ══ THE FUNNEL ══════════════════════════════════════════════════
-           Step 1 is name + email and nothing else. It POSTs on submit and
-           stores the returned token, so an applicant who quits at question
-           four is still a lead we can reach. Every later answer PATCHes
-           against that token and is queued for retry rather than blocking
-           the applicant. ══ -->
+           Step 1 is one question — home city — and nothing else. It POSTs to
+           /api/funnel/start on submit and stores the returned token, so an
+           applicant who quits at question four is still a row we can measure
+           drop-off against. Contact details come last, at steps 7, 8 and 9,
+           by which point they have already invested six answers. Every answer
+           after step 1 PATCHes against the token and is queued for retry
+           rather than blocking the applicant. ══ -->
       <div id="apply">
         <div class="funnel" id="funnel">
 
           <!-- Progress -->
           <div class="prog-wrap" id="progWrap">
-            <div class="prog-track" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" aria-label="Application progress" id="progBar">
+            <div class="prog-track" role="progressbar" aria-valuemin="1" aria-valuemax="9" aria-valuenow="1" aria-label="Application progress" id="progBar">
               <div class="prog-fill" id="progFill"></div>
             </div>
-            <p class="prog-label" id="progLabel">Question 1 of 8</p>
+            <p class="prog-label" id="progLabel">Question 1 of 9</p>
           </div>
 
           <!-- Live region for step changes and async status -->
           <p aria-live="polite" class="visually-hidden" id="liveStatus" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;"></p>
 
-          <!-- ── STEP 1 — identity. The only step that must succeed. ── -->
+          <!-- ── STEP 1 — home city. One field, and the step that opens the
+               lead record: submitting it POSTs /api/funnel/start. Nothing is
+               sent on page load — an impression is not an applicant. ── -->
           <form class="step" id="step-1" data-step="1" novalidate>
-            <h3 class="step-q" tabindex="-1">Request an invitation.</h3>
-            <p class="step-help">Name and email to begin. Two minutes.</p>
-            <div class="field-stack">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label" for="fFirst">First Name</label>
-                  <input class="form-input" type="text" id="fFirst" name="firstName" autocomplete="given-name" placeholder="First name" required />
-                  <span class="field-error" id="errFirst">Please enter your first name.</span>
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="fLast">Last Name</label>
-                  <input class="form-input" type="text" id="fLast" name="lastName" autocomplete="family-name" placeholder="Last name" required />
-                  <span class="field-error" id="errLast">Please enter your last name.</span>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="fEmail">Email Address</label>
-                <input class="form-input" type="email" id="fEmail" name="email" autocomplete="email" placeholder="you@example.com" required />
-                <span class="field-error" id="errEmail">Please enter a valid email address.</span>
-              </div>
-            </div>
-            <div class="step-actions">
-              <button type="submit" class="btn-primary" id="startBtn">Begin</button>
-            </div>
-          </form>
-
-          <!-- ── STEP 2 — home city ── -->
-          <form class="step" id="step-2" data-step="2" novalidate hidden>
-            <h3 class="step-q" tabindex="-1">Where do you call home?</h3>
-            <p class="step-help">It tells us which markets matter to you first.</p>
+            <h3 class="step-q" tabindex="-1">Let&rsquo;s start with home.</h3>
+            <p class="step-help">It tells us which cities to look at for you first. Nine short questions, about two minutes.</p>
             <div class="form-group">
               <label class="form-label" for="fCity">Home City</label>
               <input class="form-input" type="text" id="fCity" name="city" autocomplete="address-level2" placeholder="Seattle, WA" required />
               <span class="field-error" id="errCity">Please enter your home city.</span>
             </div>
             <div class="step-actions">
-              <button type="button" class="btn-back" data-back>&larr; Back</button>
-              <button type="submit" class="btn-primary">Continue</button>
+              <button type="submit" class="btn-primary" id="startBtn">Begin</button>
             </div>
           </form>
 
-          <!-- ── STEP 3 — occasion spend ── -->
-          <div class="step" id="step-3" data-step="3" hidden>
-            <h3 class="step-q" tabindex="-1" id="q3">On a night that matters, what does dinner usually come to?</h3>
+          <!-- ── STEP 2 — occasion spend ── -->
+          <div class="step" id="step-2" data-step="2" hidden>
+            <h3 class="step-q" tabindex="-1" id="q2">On a night that matters, what does dinner usually come to?</h3>
             <p class="step-help">Per person, before wine gets ambitious.</p>
-            <div class="choices" role="group" aria-labelledby="q3" data-field="netWorth" data-step-index="3">
+            <div class="choices" role="group" aria-labelledby="q2" data-field="netWorth" data-step-index="2">
               <button type="button" class="choice" data-value="Under $200">Under $200</button>
               <button type="button" class="choice" data-value="$200 &ndash; $500">$200 &ndash; $500</button>
               <button type="button" class="choice" data-value="$500 &ndash; $1,000">$500 &ndash; $1,000</button>
@@ -1058,11 +1044,11 @@
             </div>
           </div>
 
-          <!-- ── STEP 4 — hotel nights ── -->
-          <div class="step" id="step-4" data-step="4" hidden>
-            <h3 class="step-q" tabindex="-1" id="q4">How many hotel nights do you book in a year?</h3>
+          <!-- ── STEP 3 — hotel nights ── -->
+          <div class="step" id="step-3" data-step="3" hidden>
+            <h3 class="step-q" tabindex="-1" id="q3">How many hotel nights do you book in a year?</h3>
             <p class="step-help">A rough count is fine.</p>
-            <div class="choices" role="group" aria-labelledby="q4" data-field="travelFrequency" data-step-index="4">
+            <div class="choices" role="group" aria-labelledby="q3" data-field="travelFrequency" data-step-index="3">
               <button type="button" class="choice" data-value="1 &ndash; 5 nights">1 &ndash; 5 nights</button>
               <button type="button" class="choice" data-value="6 &ndash; 15 nights">6 &ndash; 15 nights</button>
               <button type="button" class="choice" data-value="16 &ndash; 30 nights">16 &ndash; 30 nights</button>
@@ -1073,11 +1059,11 @@
             </div>
           </div>
 
-          <!-- ── STEP 5 — nightly rate ── -->
-          <div class="step" id="step-5" data-step="5" hidden>
-            <h3 class="step-q" tabindex="-1" id="q5">And what do you typically pay a night?</h3>
+          <!-- ── STEP 4 — nightly rate ── -->
+          <div class="step" id="step-4" data-step="4" hidden>
+            <h3 class="step-q" tabindex="-1" id="q4">And what do you typically pay a night?</h3>
             <p class="step-help">This sets the shelf we curate from.</p>
-            <div class="choices" role="group" aria-labelledby="q5" data-field="nightlyRate" data-step-index="5">
+            <div class="choices" role="group" aria-labelledby="q4" data-field="nightlyRate" data-step-index="4">
               <button type="button" class="choice" data-value="Under $500">Under $500</button>
               <button type="button" class="choice" data-value="$500 &ndash; $749">$500 &ndash; $749</button>
               <button type="button" class="choice" data-value="$750 &ndash; $999">$750 &ndash; $999</button>
@@ -1088,11 +1074,11 @@
             </div>
           </div>
 
-          <!-- ── STEP 6 — trips per year ── -->
-          <div class="step" id="step-6" data-step="6" hidden>
-            <h3 class="step-q" tabindex="-1" id="q6">How many trips do you take in a year?</h3>
+          <!-- ── STEP 5 — trips per year ── -->
+          <div class="step" id="step-5" data-step="5" hidden>
+            <h3 class="step-q" tabindex="-1" id="q5">How many trips do you take in a year?</h3>
             <p class="step-help">Business and personal together.</p>
-            <div class="choices" role="group" aria-labelledby="q6" data-field="tripsPerYear" data-step-index="6">
+            <div class="choices" role="group" aria-labelledby="q5" data-field="tripsPerYear" data-step-index="5">
               <button type="button" class="choice" data-value="1 &ndash; 2 trips">1 &ndash; 2 trips</button>
               <button type="button" class="choice" data-value="3 &ndash; 5 trips">3 &ndash; 5 trips</button>
               <button type="button" class="choice" data-value="6 &ndash; 10 trips">6 &ndash; 10 trips</button>
@@ -1103,11 +1089,11 @@
             </div>
           </div>
 
-          <!-- ── STEP 7 — private club ── -->
-          <form class="step" id="step-7" data-step="7" novalidate hidden>
-            <h3 class="step-q" tabindex="-1" id="q7">Are you a member of a private club?</h3>
+          <!-- ── STEP 6 — private club ── -->
+          <form class="step" id="step-6" data-step="6" novalidate hidden>
+            <h3 class="step-q" tabindex="-1" id="q6">Are you a member of a private club?</h3>
             <p class="step-help">Golf, city, social, or a members&rsquo; house. It helps us read the room.</p>
-            <div class="choices choices-inline" role="group" aria-labelledby="q7" data-field="privateClubMember" data-step-index="7" data-manual="true">
+            <div class="choices choices-inline" role="group" aria-labelledby="q6" data-field="privateClubMember" data-step-index="6" data-manual="true">
               <button type="button" class="choice" data-value="Yes" aria-pressed="false">Yes</button>
               <button type="button" class="choice" data-value="No" aria-pressed="false">No</button>
             </div>
@@ -1121,14 +1107,57 @@
             </div>
           </form>
 
-          <!-- ── STEP 8 — mobile + SMS consent.
+          <!-- ── STEP 7 — name. Contact details sit at the end now, so this is
+               the first thing we ask that is about the person rather than the
+               way they travel. ── -->
+          <form class="step" id="step-7" data-step="7" novalidate hidden>
+            <h3 class="step-q" tabindex="-1">Those were the questions. Now, your name.</h3>
+            <p class="step-help">We read every application ourselves, so it helps to know who we are reading.</p>
+            <div class="field-stack">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="fFirst">First Name</label>
+                  <input class="form-input" type="text" id="fFirst" name="firstName" autocomplete="given-name" placeholder="First name" required />
+                  <span class="field-error" id="errFirst">Please enter your first name.</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="fLast">Last Name</label>
+                  <input class="form-input" type="text" id="fLast" name="lastName" autocomplete="family-name" placeholder="Last name" required />
+                  <span class="field-error" id="errLast">Please enter your last name.</span>
+                </div>
+              </div>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+              <button type="submit" class="btn-primary">Continue</button>
+            </div>
+          </form>
+
+          <!-- ── STEP 8 — email, alone on its own screen. The highest-friction
+               ask on the page, which is why it sits here rather than first: by
+               this point six questions have already been answered. ── -->
+          <form class="step" id="step-8" data-step="8" novalidate hidden>
+            <h3 class="step-q" tabindex="-1">Where should we send the invitation?</h3>
+            <p class="step-help">That is the only reason we ask for it. A decision comes back by email, usually within 24 hours.</p>
+            <div class="form-group">
+              <label class="form-label" for="fEmail">Email Address</label>
+              <input class="form-input" type="email" id="fEmail" name="email" autocomplete="email" placeholder="you@example.com" required />
+              <span class="field-error" id="errEmail">Please enter a valid email address.</span>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+              <button type="submit" class="btn-primary">Continue</button>
+            </div>
+          </form>
+
+          <!-- ── STEP 9 — mobile + SMS consent.
                The disclosure below is the same wording the main site uses. It is
                read out of the DOM at submit time and sent as smsConsentText, so
                the stored consent record is literally the string displayed here.
                The box is unchecked by default and must stay that way. ── -->
-          <form class="step" id="step-8" data-step="8" novalidate hidden>
-            <h3 class="step-q" tabindex="-1">Last one, and it&rsquo;s optional.</h3>
-            <p class="step-help">If you&rsquo;d rather receive your invitation by text, leave a mobile number. Otherwise skip &mdash; it changes nothing about your application.</p>
+          <form class="step" id="step-9" data-step="9" novalidate hidden>
+            <h3 class="step-q" tabindex="-1">Last one, and it is genuinely optional.</h3>
+            <p class="step-help">If you would rather have your invitation by text, leave a mobile number. Skip it and nothing about your application changes.</p>
             <div class="field-stack">
               <div class="form-group">
                 <label class="form-label" for="fPhone">Mobile Number <span class="opt">(optional)</span></label>
@@ -1357,7 +1386,7 @@
     <div class="band-inner">
       <h2 class="section-h2">Ready when you are.</h2>
       <p class="section-sub">
-        Name and email to begin, then eight short questions. About two minutes.
+        Nine short questions, starting with where you call home. About two minutes.
       </p>
       <a href="#apply" class="btn-primary" id="heroCta">Request an Invitation</a>
       <p class="cta-sub-note">No payment. Nothing is charged unless you accept an invitation.</p>
@@ -1625,12 +1654,51 @@
     }
 
     /* ── Funnel state ─────────────────────────────────────────────────── */
-    var TOTAL_STEPS = 8;
+    var TOTAL_STEPS = 9;
     var current = 1;
     var leadToken = null;
     var tokenDead = false;
     var answers = {};      // API field -> value, so Back can repaint selections
     var identity = { firstName: '', lastName: '', email: '' };
+
+    /* ── What the server has actually confirmed ───────────────────────────
+       `identity` is what the applicant typed. `identityAck` is what the server
+       has told us it holds: a field is written here only when a PATCH carrying
+       it came back ok, never when it was merely enqueued. Values are stored
+       rather than flags so that going Back and editing an email invalidates
+       the old acknowledgement by itself.
+
+       This exists for one reason. The lead row is created anonymously at step
+       1; the name and email arrive at steps 7 and 8 by PATCH. If those patches
+       never land, telling the applicant their application is in leaves them
+       waiting on a reply we have no address to send. The completion screen is
+       therefore gated on this, not on the queue having accepted the work. */
+    var identityAck = { firstName: null, email: null };
+    var completionAcked = false;
+
+    /* Email is the bar: it is the single field that makes a reply possible,
+       and the server refuses a completion without one. firstName is tracked
+       alongside it and used for the greeting, but is deliberately NOT part of
+       this test — holding someone on a finished form over a lost first name,
+       when we can already write to them, would be exactly the trap this change
+       is meant to remove. */
+    function identityAcknowledged() {
+      return !!identity.email && identityAck.email === identity.email;
+    }
+
+    /* Called only on a 2xx, with the body that was actually accepted. */
+    function noteServerAck(body) {
+      if (!body || typeof body !== 'object') return;
+      if (typeof body.firstName === 'string' && body.firstName) identityAck.firstName = body.firstName;
+      if (typeof body.email === 'string' && body.email) identityAck.email = body.email;
+      if (body.complete === true) completionAcked = true;
+    }
+
+    function resetServerAck() {
+      identityAck.firstName = null;
+      identityAck.email = null;
+      completionAcked = false;
+    }
 
     var els = {
       funnel:      document.getElementById('funnel'),
@@ -1648,8 +1716,12 @@
 
     function say(msg) { if (els.live) els.live.textContent = msg; }
 
-    function showError(msg, retryFn) {
+    /* pending=true means "nothing is wrong, this just hasn't landed yet" and
+       only changes how the box is dressed. Every existing caller omits it and
+       gets the error styling unchanged. */
+    function showError(msg, retryFn, pending) {
       els.errorText.textContent = msg;
+      els.error.classList.toggle('pending', !!pending);
       els.error.hidden = false;
       els.retry.hidden = !retryFn;
       els.retry.onclick = retryFn || null;
@@ -1658,6 +1730,7 @@
 
     function clearError() {
       els.error.hidden = true;
+      els.error.classList.remove('pending');
       els.errorText.textContent = '';
       els.retry.onclick = null;
     }
@@ -1695,9 +1768,10 @@
       /* Going back must show what they already chose. Cheap enough to run on
          every transition rather than tracking direction. */
       repaintSelections();
-      /* Symmetric on purpose: coming Back to step 7 has to re-show the club
-         fields for a Yes and re-hide them for a No. */
-      if (n === 7) {
+      /* Symmetric on purpose: coming Back to step 6 has to re-show the club
+         fields for a Yes and re-hide them for a No. Text fields repaint for
+         free — nothing ever clears their values. */
+      if (n === 6) {
         var isYes = answers.privateClubMember === 'Yes';
         clubNameGroup.hidden = !isYes;
         clubContinue.hidden = !isYes;
@@ -1735,6 +1809,10 @@
     var retryTimer = null;
     var retryAttempt = 0;
     var BACKOFF = [2000, 6000, 15000, 40000];
+    /* Message from the most recent 400. A 400 is the server refusing the body
+       itself — an unusable email, a phone it cannot parse, a completion with
+       no email on the record — so it is kept and surfaced rather than retried. */
+    var lastPatchError = null;
 
     function coalesce(items) {
       var merged = {};
@@ -1775,8 +1853,24 @@
           tokenDead = true;
           return false;
         }
+        if (res.status === 400) {
+          /* The server rejected this body. Sending it again unchanged would
+             fail identically for ever and would sit in front of every later
+             answer, so the batch is dropped and the reason kept for whichever
+             step is waiting on it. */
+          return res.json().catch(function () { return {}; }).then(function (d) {
+            lastPatchError = (d && typeof d.error === 'string' && d.error) ? d.error : null;
+            return false;
+          });
+        }
         if (!res.ok) throw new Error('HTTP ' + res.status);
         retryAttempt = 0;
+        /* The server has this batch. Record what was in it before anything
+           else, so that an applicant held on the "not sent yet" notice is
+           released the instant their email lands — including when it lands on
+           a background retry rather than on a button they pressed. */
+        noteServerAck(body);
+        releaseIfSaved();
         /* Answers recorded while this request was in the air are still sitting
            in the queue. Drain them now rather than waiting for the applicant's
            next action, which might never come.
@@ -1839,35 +1933,31 @@
 
     function digits(s) { return String(s).replace(/\D/g, ''); }
 
-    /* ── Step 1: identity + POST /api/funnel/start ────────────────────── */
+    /* ── Step 1: home city + POST /api/funnel/start ───────────────────────
+       start no longer carries a name or an email — it carries attribution and
+       nothing else, and it fires here, on the first answer, rather than on
+       load. An impression is not a lead. The city itself is answered before a
+       token exists, so it rides out in the very first PATCH the moment start
+       returns. */
     var startBtn = document.getElementById('startBtn');
 
     function submitStart() {
-      var first = document.getElementById('fFirst').value.trim();
-      var last  = document.getElementById('fLast').value.trim();
-      var email = document.getElementById('fEmail').value.trim();
-
-      var okFirst = first.length > 0;
-      var okLast  = last.length > 0;
-      var okEmail = EMAIL_RE.test(email);
-      setFieldError('fFirst', 'errFirst', !okFirst);
-      setFieldError('fLast', 'errLast', !okLast);
-      setFieldError('fEmail', 'errEmail', !okEmail);
-      if (!okFirst) { document.getElementById('fFirst').focus(); return; }
-      if (!okLast)  { document.getElementById('fLast').focus(); return; }
-      if (!okEmail) { document.getElementById('fEmail').focus(); return; }
+      var input = document.getElementById('fCity');
+      var city = input.value.trim();
+      var ok = city.length > 1;
+      setFieldError('fCity', 'errCity', !ok);
+      if (!ok) { input.focus(); return; }
 
       /* Coming Back to this step and pressing Begin again must NOT open a
-         second lead. Same three fields plus a live token means the record
-         already exists — just walk forward. */
-      if (leadToken && !tokenDead &&
-          identity.firstName === first && identity.lastName === last && identity.email === email) {
+         second lead. A live token means the record already exists — patch the
+         city if they changed it, then walk forward. */
+      if (leadToken && !tokenDead) {
         clearError();
-        goTo(2);
+        if (answers.city !== city) { record('city', city, 1, 2); }
+        else { goTo(2); }
         return;
       }
 
-      identity = { firstName: first, lastName: last, email: email };
       clearError();
       startBtn.disabled = true;
       startBtn.textContent = 'One moment…';
@@ -1876,9 +1966,6 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          firstName: first,
-          lastName: last,
-          email: email,
           attribution: ATTRIBUTION
         })
       }).then(function (res) {
@@ -1891,28 +1978,34 @@
         if (r.ok && r.data && typeof r.data.leadToken === 'string' && r.data.leadToken) {
           leadToken = r.data.leadToken;
           tokenDead = false;
+          /* A brand new record holds nothing yet, whatever an earlier one had
+             acknowledged before it expired. */
+          resetServerAck();
           track('funnel_start', { variant: VARIANT }, 'Lead', { content_name: 'CurateVIP Membership' });
-          /* If they backed up, corrected the email and started again, this is a
-             new record — replay everything already answered so the new lead is
-             not born empty. On a first run `answers` is {} and this is {step:1}. */
+          /* The city was answered before this token existed, so it goes out in
+             the first PATCH. If a dead session sent them back here to start
+             over, this is a brand new record — replay everything already
+             answered, name and email included, so it is not born empty. */
+          answers.city = city;
           var replay = { step: 1 };
           Object.keys(answers).forEach(function (k) { replay[k] = answers[k]; });
           enqueue(replay);
+          track('funnel_step', { step: 1, variant: VARIANT });
           goTo(2);
           return;
         }
         if (r.status === 400) {
-          showError('We couldn’t accept those details — please check your name and email address and try again.', function () {
+          showError('We couldn’t start your application just now — please try again.', function () {
             clearError();
-            document.getElementById('fFirst').focus();
+            document.getElementById('fCity').focus();
           });
           return;
         }
-        showError('We couldn’t reach our servers just now. Your details haven’t been sent — please try again.', submitStart);
+        showError('We couldn’t reach our servers just now. Your answer hasn’t been sent — please try again.', submitStart);
       }).catch(function () {
         startBtn.disabled = false;
         startBtn.textContent = 'Begin';
-        showError('We couldn’t reach our servers just now. Your details haven’t been sent — please try again.', submitStart);
+        showError('We couldn’t reach our servers just now. Your answer hasn’t been sent — please try again.', submitStart);
       });
     }
 
@@ -1932,19 +2025,8 @@
       if (nextStep) goTo(nextStep);
     }
 
-    /* ── Step 2: home city ────────────────────────────────────────────── */
-    document.getElementById('step-2').addEventListener('submit', function (e) {
-      e.preventDefault();
-      var input = document.getElementById('fCity');
-      var val = input.value.trim();
-      var ok = val.length > 1;
-      setFieldError('fCity', 'errCity', !ok);
-      if (!ok) { input.focus(); return; }
-      record('city', val, 2, 3);
-    });
-
-    /* ── Steps 3-6: auto-advancing choice questions ───────────────────── */
-    var AUTO_NEXT = { '3': 4, '4': 5, '5': 6, '6': 7 };
+    /* ── Steps 2-5: auto-advancing choice questions ───────────────────── */
+    var AUTO_NEXT = { '2': 3, '3': 4, '4': 5, '5': 6 };
 
     Array.prototype.forEach.call(document.querySelectorAll('.choices'), function (group) {
       var field = group.getAttribute('data-field');
@@ -1965,7 +2047,7 @@
       });
     });
 
-    /* ── Step 7: private club ─────────────────────────────────────────── */
+    /* ── Step 6: private club ─────────────────────────────────────────── */
     var clubNameGroup = document.getElementById('clubNameGroup');
     var clubNameInput = document.getElementById('fClubName');
     var clubContinue = document.getElementById('clubContinue');
@@ -1984,8 +2066,8 @@
            the rule here is that no answer is ever lost. The club name follows
            in the Continue patch. */
         if (changed) {
-          enqueue({ privateClubMember: 'Yes', step: 7 });
-          track('funnel_step', { step: 7, variant: VARIANT });
+          enqueue({ privateClubMember: 'Yes', step: 6 });
+          track('funnel_step', { step: 6, variant: VARIANT });
         }
       } else {
         clubNameGroup.hidden = true;
@@ -1995,26 +2077,73 @@
         /* One payload, not two: a trailing single-key patch could sit in the
            queue unsent if the applicant stops here. */
         if (changed) {
-          enqueue({ privateClubMember: 'No', privateClubName: null, step: 7 });
-          track('funnel_step', { step: 7, variant: VARIANT });
+          enqueue({ privateClubMember: 'No', privateClubName: null, step: 6 });
+          track('funnel_step', { step: 6, variant: VARIANT });
         }
-        goTo(8);
+        goTo(7);
       }
     }
 
-    document.getElementById('step-7').addEventListener('submit', function (e) {
+    document.getElementById('step-6').addEventListener('submit', function (e) {
       e.preventDefault();
       /* This form only ever completes the Yes branch; No is dispatched and
          advanced the moment it is picked. */
       if (answers.privateClubMember !== 'Yes') return;
       var name = clubNameInput.value.trim();
       answers.privateClubName = name || null;
-      enqueue({ privateClubMember: 'Yes', privateClubName: name || null, step: 7 });
+      enqueue({ privateClubMember: 'Yes', privateClubName: name || null, step: 6 });
+      track('funnel_step', { step: 6, variant: VARIANT });
+      goTo(7);
+    });
+
+    /* ── Step 7: first and last name ──────────────────────────────────────
+       The first thing asked about the person rather than the travel. The lead
+       row already exists; this simply names it. */
+    document.getElementById('step-7').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var firstEl = document.getElementById('fFirst');
+      var lastEl  = document.getElementById('fLast');
+      var first = firstEl.value.trim();
+      var last  = lastEl.value.trim();
+
+      var okFirst = first.length > 0;
+      var okLast  = last.length > 0;
+      setFieldError('fFirst', 'errFirst', !okFirst);
+      setFieldError('fLast', 'errLast', !okLast);
+      if (!okFirst) { firstEl.focus(); return; }
+      if (!okLast)  { lastEl.focus(); return; }
+
+      identity.firstName = first;
+      identity.lastName = last;
+      /* Held in `answers` as well as `identity` so a restart after an expired
+         token replays them onto the new record. */
+      answers.firstName = first;
+      answers.lastName = last;
+      enqueue({ firstName: first, lastName: last, step: 7 });
       track('funnel_step', { step: 7, variant: VARIANT });
       goTo(8);
     });
 
-    /* ── Step 8: phone + SMS consent, then complete ───────────────────── */
+    /* ── Step 8: email, alone ─────────────────────────────────────────────
+       The one field the application cannot be completed without — the server
+       refuses a completion with no email on the record. Validated here first
+       so that refusal is the exception rather than the route. */
+    document.getElementById('step-8').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var emailEl = document.getElementById('fEmail');
+      var email = emailEl.value.trim();
+      var okEmail = EMAIL_RE.test(email);
+      setFieldError('fEmail', 'errEmail', !okEmail);
+      if (!okEmail) { emailEl.focus(); return; }
+
+      identity.email = email;
+      answers.email = email;
+      enqueue({ email: email, step: 8 });
+      track('funnel_step', { step: 8, variant: VARIANT });
+      goTo(9);
+    });
+
+    /* ── Step 9: phone + SMS consent, then complete ───────────────────── */
     var phoneInput = document.getElementById('fPhone');
     var consentBox = document.getElementById('fSmsConsent');
     var finishBtn = document.getElementById('finishBtn');
@@ -2031,21 +2160,80 @@
        dead token, which is a different problem with a different remedy. */
     var completeFailures = 0;
 
+    /* True from a submit we could not confirm until the server acknowledges
+       the email. While it is true the completion screen is off the table and
+       the queue keeps draining behind an honest notice. */
+    var awaitingSave = false;
+    var completedShown = false;
+
+    /* Deliberately plain. Their answers are not lost, they are not at fault,
+       and nothing here is urgent — the only thing being corrected is the
+       impression that we already have what they typed. */
+    var NOT_SAVED_MSG = 'Your answers haven’t reached us yet. We’re still sending them, and this page will confirm the moment they land — you can leave it open, or try again now.';
+
+    /* The only door to the completion screen. Every caller goes through here,
+       so the success event cannot be double-counted and, more importantly,
+       nothing can show "your application is in" by a route that skipped the
+       identity check above it. */
+    function finishAndShowDone() {
+      if (completedShown) return;
+      completedShown = true;
+      awaitingSave = false;
+      completeFailures = 0;
+      track('funnel_complete', { variant: VARIANT }, 'CompleteRegistration', { content_name: 'CurateVIP Membership', value: 299, currency: 'USD' });
+      showDone();
+    }
+
+    /* Called from the queue whenever a batch lands. Releases an applicant who
+       is sitting on the notice the moment the server has both their email and
+       the completion. */
+    function releaseIfSaved() {
+      if (!awaitingSave) return false;
+      if (!identityAcknowledged() || !completionAcked) return false;
+      clearError();
+      finishAndShowDone();
+      return true;
+    }
+
+    /* Keep the background ladder alive and restart it from the top: this is
+       now the difference between having a lead and having nothing, so it is
+       given far more than the two attempts a confirmed record gets. Bounded
+       all the same — the ladder still runs out, and only a submit or a retry
+       starts a fresh one. */
+    function keepTrying() {
+      awaitingSave = true;
+      retryAttempt = 0;
+      scheduleRetry();
+    }
+
     function completeApplication(payload) {
       clearError();
+      lastPatchError = null;
       finishBtn.disabled = true;
       finishBtn.textContent = 'Sending…';
-      payload.step = 8;
+      payload.step = 9;
       payload.complete = true;
       enqueue(payload);
 
       flushAll().then(function (ok) {
         finishBtn.disabled = false;
         finishBtn.textContent = 'Submit Application';
+        if (ok && identityAcknowledged()) {
+          finishAndShowDone();
+          return;
+        }
+
+        /* The queue drained but the server never took an email — the only way
+           here is an earlier 400 that dropped the email from the batch. There
+           is nothing left to retry, so send them back to the field that fixes
+           it rather than confirming an application we cannot reply to. */
         if (ok) {
           completeFailures = 0;
-          track('funnel_complete', { variant: VARIANT }, 'CompleteRegistration', { content_name: 'CurateVIP Membership', value: 299, currency: 'USD' });
-          showDone();
+          awaitingSave = false;
+          showError('We still don’t have an email address for you — without one there is no way to send a decision. Please add it and we’ll finish this.', function () {
+            clearError();
+            goTo(8);
+          });
           return;
         }
 
@@ -2054,28 +2242,66 @@
            said out loud. */
         if (tokenDead) {
           completeFailures = 0;
+          awaitingSave = false;
           showError('Your session expired before we could save that. Please start again from the top — it only takes a moment.', function () {
             clearError();
             leadToken = null;
             tokenDead = false;
             queue.length = 0;
             completeFailures = 0;
+            resetServerAck();
             goTo(1);
           });
           return;
         }
 
+        /* A 400 is the server refusing the body, not the network dropping it —
+           an unusable phone number, or a completion it will not accept because
+           it holds no email for this record. Retrying changes nothing, so the
+           reason is shown as given and the applicant is put back on the field
+           that can fix it. */
+        if (lastPatchError !== null || (!identity.email)) {
+          completeFailures = 0;
+          awaitingSave = false;
+          var msg = lastPatchError || 'We couldn’t finish your application without an email address.';
+          lastPatchError = null;
+          /* The server's own wording, verbatim, either way. What changes is
+             where they are put to fix it: a 400 while the record still has no
+             acknowledged email is the email being refused, so that is the step
+             to return to. A 400 with the email already on file is about the
+             body of this last request — the phone number — so they stay here. */
+          if (!identity.email || !identityAcknowledged()) {
+            showError(msg, function () { clearError(); goTo(8); });
+          } else {
+            showError(msg, function () { clearError(); phoneInput.focus(); });
+          }
+          return;
+        }
+
         completeFailures++;
 
-        /* Second consecutive network failure. The lead itself was created back
-           at step 1, so we already hold a name and an email and can reach this
-           person; the outstanding answers stay queued and keep draining in the
-           background (backoff, plus every time the tab is brought forward).
-           Holding someone hostage on a form they have finished is the worse
-           outcome, so let them out. */
-        if (completeFailures >= 2) {
-          track('funnel_complete', { variant: VARIANT }, 'CompleteRegistration', { content_name: 'CurateVIP Membership', value: 299, currency: 'USD' });
-          showDone();
+        /* Second consecutive network failure, and the server has confirmed it
+           holds their email. The lead row was created back at step 1, the
+           answers are in the queue, and it keeps draining in the background
+           (backoff, plus every time the tab is brought forward). Holding
+           someone hostage on a form they have finished is the worse outcome,
+           so let them out. */
+        if (identityAcknowledged() && completeFailures >= 2) {
+          finishAndShowDone();
+          return;
+        }
+
+        /* No acknowledged email. Everything they typed is still only on this
+           device, and "your application is in" would be a promise of a reply
+           to an address we do not have — the one outcome worse than an error.
+           So: no completion screen, the queue keeps going, and they are told
+           plainly where things stand. */
+        if (!identityAcknowledged()) {
+          keepTrying();
+          showError(NOT_SAVED_MSG, function () {
+            clearError();
+            completeApplication({});
+          }, true);
           return;
         }
 
@@ -2095,7 +2321,7 @@
       goTo('done');
     }
 
-    document.getElementById('step-8').addEventListener('submit', function (e) {
+    document.getElementById('step-9').addEventListener('submit', function (e) {
       e.preventDefault();
       var phone = phoneInput.value.trim();
       var payload = {};
