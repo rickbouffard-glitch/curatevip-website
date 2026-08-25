@@ -1639,9 +1639,10 @@
       <p class="section-sub">We give a high-taste traveler back the hours they currently spend researching, with the same or better outcome. Whether you're a potential member, venue partner, or investor, we'd love to connect.</p>
     </div>
 
-    <form class="contact-form fade-in delay-1" id="contactForm"
-          action="https://formsubmit.co/ajax/rick@curatevip.app"
-          method="POST">
+    <!-- Submitted by fetch to our own API (see the handler below), not by the
+         browser. No action/method: there is no non-JS fallback to degrade to,
+         and leaving them would let a stray Enter key navigate away mid-edit. -->
+    <form class="contact-form fade-in delay-1" id="contactForm">
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">First Name</label>
@@ -1673,7 +1674,11 @@
       <div class="form-group" id="smsConsentGroup">
         <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;line-height:1.6;">
           <input type="checkbox" name="sms_consent" id="fieldSmsConsent" value="Yes, consented to SMS" style="margin-top:3px;flex-shrink:0;" />
-          <span style="font-size:13px;opacity:0.75;">
+          <!-- id is load-bearing: the handler reads this element's text at
+               submit time and stores it as smsConsentText, so the consent
+               record is always the exact wording that was on screen. Edit the
+               copy freely; do not remove the id. -->
+          <span style="font-size:13px;opacity:0.75;" id="smsConsentText">
             I agree to receive my invitation and account notifications from CURATEvip by text message
             at the number above. Message and data rates may apply. Message frequency varies.
             Reply STOP to opt out or HELP for help. See our
@@ -1702,11 +1707,14 @@
         <textarea name="message" id="fieldMessage" class="form-textarea" placeholder="Tell us a bit about yourself or what you're looking for…"></textarea>
         <span class="field-error" id="errMessage">Please include a brief message.</span>
       </div>
-      <input type="hidden" name="_subject" value="New CURATEvip Inquiry" />
-      <input type="text" name="_gotcha" style="display:none" />
+      <!-- Honeypot. Hidden from people, irresistible to bots. Checked in the
+           submit handler now that nothing else is checking it for us. -->
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <button type="submit" class="form-submit" id="formSubmitBtn">Send Message →</button>
       <p class="form-note" id="formNote">We respond to every inquiry within 24 hours.</p>
-      <p class="form-note" id="formError" style="display:none; color:#c0392b;">Something went wrong. Please try again or email us at <a href="mailto:rick@curatevip.app" style="color:#c0392b;">rick@curatevip.app</a>.</p>
+      <!-- Split so a server-supplied message can be written into the first span
+           with textContent while the mailto fallback stays static markup. -->
+      <p class="form-note" id="formError" style="display:none; color:#c0392b;"><span id="formErrorText">Something went wrong. Please try again</span><span id="formErrorContact"> or email us at <a href="mailto:rick@curatevip.app" style="color:#c0392b;">rick@curatevip.app</a>.</span></p>
     </form>
 
     <div class="form-success" id="formSuccess">
@@ -1750,9 +1758,98 @@
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // ── Form Validation + Formspree Submit ──────────────────
+    // ── Form Validation + CURATEvip API Submit ──────────────
     ;(function() {
+      const API_ENDPOINT = 'https://api.curatevip.ai/api/contact'
       const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+      /* ── Attribution ────────────────────────────────────────────────
+         Same shape and rules as join.html, so a homepage inquiry and a
+         funnel application land in the database looking alike. Captured on
+         load and held in sessionStorage, because someone can arrive on a
+         campaign link, read the whole page, and only then scroll down to the
+         form — by which point the query string may be long gone.
+
+         Deliberately NOT gated on cookie consent: this is our own record of
+         where an inquiry came from, not a third-party tracker.
+
+         Separate storage key from join.html on purpose. join's record carries
+         a campaign variant; the homepage has none, and sharing one key would
+         let a variant leak onto inquiries that were never part of a test. */
+      const ATTR_KEY = 'cvip_attr_home_v1'
+
+      function captureAttribution() {
+        let stored = null
+        try {
+          const raw = window.sessionStorage.getItem(ATTR_KEY)
+          if (raw) stored = JSON.parse(raw)
+        } catch (e) { stored = null }
+        // 'landingPath' is present on every record we write, so it doubles as
+        // the "this is one of ours, fully formed" marker.
+        if (stored && typeof stored === 'object' && 'landingPath' in stored) return stored
+
+        const p = new URLSearchParams(window.location.search)
+        /* Absent, blank and the literal strings "null"/"undefined" all collapse
+           to a real null. Ad platforms and tag managers emit those strings when
+           a macro fails to expand, and storing them as text poisons reporting. */
+        function get(key) {
+          let v = p.get(key)
+          if (v === null) return null
+          v = v.trim()
+          if (v === '' || v === 'null' || v === 'undefined') return null
+          return v.slice(0, 300)
+        }
+        const attr = {
+          utmSource:   get('utm_source'),
+          utmMedium:   get('utm_medium'),
+          utmCampaign: get('utm_campaign'),
+          utmContent:  get('utm_content'),
+          utmTerm:     get('utm_term'),
+          gclid:       get('gclid'),
+          fbclid:      get('fbclid'),
+          referrer:    document.referrer ? String(document.referrer).slice(0, 500) : null,
+          landingPath: window.location.pathname || null,
+          variant:     null
+        }
+        try { window.sessionStorage.setItem(ATTR_KEY, JSON.stringify(attr)) } catch (e) { /* private mode */ }
+        return attr
+      }
+
+      const ATTRIBUTION = captureAttribution()
+
+      /* Read the disclosure out of the DOM so the stored consent record is
+         exactly the string the visitor saw, whitespace-normalised. Never a
+         hardcoded copy — that would drift the moment the wording changes. */
+      function consentTextShown() {
+        const el = document.getElementById('smsConsentText')
+        if (!el) return ''
+        return el.textContent.replace(/\s+/g, ' ').trim()
+      }
+
+      const GENERIC_ERROR = 'Something went wrong. Please try again'
+      const errBox     = document.getElementById('formError')
+      const errText    = document.getElementById('formErrorText')
+      const errContact = document.getElementById('formErrorContact')
+
+      /* msg = a message from our API (400s carry useful ones, e.g. about phone
+         format); null = the generic line plus the mailto fallback. textContent
+         throughout: this string is server-supplied and never markup. */
+      function showError(msg) {
+        if (msg) {
+          errText.textContent = msg
+          errContact.style.display = 'none'
+        } else {
+          errText.textContent = GENERIC_ERROR
+          errContact.style.display = ''
+        }
+        errBox.style.display = 'block'
+      }
+      function hideError() { errBox.style.display = 'none' }
+
+      function showSuccess(form) {
+        form.style.display = 'none'
+        document.getElementById('formSuccess').classList.add('show')
+      }
 
       function validate(id, errId, testFn) {
         const el = document.getElementById(id)
@@ -1786,9 +1883,35 @@
         })
       })
 
+      /* One POST, and at most one retry — and only when fetch itself rejected,
+         i.e. the request never reached us. A 4xx or 5xx is an answer and gets
+         no second attempt: the endpoint allows 10 requests per 10 minutes per
+         IP, so a retry loop would lock a real visitor out of their own form. */
+      async function postContact(payload) {
+        const init = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        }
+        try {
+          return await fetch(API_ENDPOINT, init)
+        } catch (netErr) {
+          return await fetch(API_ENDPOINT, init)
+        }
+      }
+
       // Submit
       document.getElementById('contactForm').addEventListener('submit', async function(e) {
         e.preventDefault()
+
+        /* Honeypot. A person cannot fill a display:none field, so anything in
+           it is automation. Show the success panel and stop — a bot that is
+           told it failed just tries again with the field left blank. */
+        const gotcha = this.querySelector('input[name="_gotcha"]')
+        if (gotcha && gotcha.value.trim() !== '') {
+          showSuccess(this)
+          return
+        }
 
         // Run all validations
         let allValid = fields.every(f => validate(f.id, f.errId, f.test))
@@ -1811,27 +1934,58 @@
         }
 
         const btn = document.getElementById('formSubmitBtn')
-        const errMsg = document.getElementById('formError')
         btn.textContent = 'Sending…'
         btn.disabled = true
-        errMsg.style.display = 'none'
+        hideError()
+
+        const phone = phoneEl.value.trim()
+        const payload = {
+          firstName: document.getElementById('fieldFirstName').value.trim(),
+          lastName:  document.getElementById('fieldLastName').value.trim(),
+          email:     document.getElementById('fieldEmail').value.trim(),
+          // No number means no phone and no consent to text one, whatever the
+          // box says — a consent record with nothing to send to is not a record.
+          phone:          phone === '' ? null : phone,
+          smsConsent:     phone !== '' && consentEl.checked,
+          smsConsentText: consentTextShown(),
+          // Verbatim. The backend routes on this string, so trimming, mapping
+          // or prettifying it here would silently misfile the inquiry.
+          inquiryType: document.getElementById('fieldType').value,
+          message:     document.getElementById('fieldMessage').value.trim(),
+          source:      'homepage_contact',
+          // Sent so the server can enforce the honeypot too. Checking it only
+          // in the page would leave the protection looking present while a bot
+          // posting straight to the API skipped it entirely.
+          _gotcha:     gotcha ? gotcha.value : '',
+          attribution: ATTRIBUTION
+        }
 
         try {
-          const res = await fetch(this.action, {
-            method: 'POST',
-            body: new FormData(this),
-            headers: { 'Accept': 'application/json' }
-          })
+          const res = await postContact(payload)
+
           if (res.ok) {
-            this.style.display = 'none'
-            document.getElementById('formSuccess').classList.add('show')
-          } else {
-            throw new Error('Server error')
+            showSuccess(this)
+            return
           }
-        } catch {
+
+          // 4xx carries a message worth reading — bad phone format, a rejected
+          // email. 5xx does not; that is ours to fix, not theirs.
+          let data = null
+          try { data = await res.json() } catch (parseErr) { data = null }
+          const serverMsg = data && typeof data.error === 'string' ? data.error.trim() : ''
+          if (res.status >= 400 && res.status < 500 && serverMsg !== '') {
+            showError(serverMsg)
+          } else {
+            showError(null)
+          }
+        } catch (err) {
+          // Both attempts failed to reach the network at all.
+          showError(null)
+        } finally {
+          // Always. A stuck disabled button is a dead form, even on success
+          // where it is hidden anyway.
           btn.textContent = 'Send Message →'
           btn.disabled = false
-          errMsg.style.display = 'block'
         }
       })
     })();
