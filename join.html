@@ -567,16 +567,18 @@
        pinning the step pins the card. min-height, not height: if copy is ever
        lengthened the step still grows rather than clipping.
 
-       Step 1 and the completion screen are deliberately EXEMPT:
-         • Step 1 sits in the hero and has to clear the fold on a 390x844 phone,
-           where there were only ~106px to spare. Padding it to the tallest step
-           would push the reassurance line into the consent bar. It is also seen
-           exactly once, before any bouncing can happen.
-         • The completion screen is the end of the flow — a size change there
-           reads as arrival, not as instability.
+       EVERY step is included, step 1 and the completion screen too, so the card
+       is one size from first question to last. Step 1 was initially exempt on
+       the theory that padding it would push the hero's reassurance line off a
+       phone — measuring showed that reasoning was wrong in the part that
+       matters. Step content is top-anchored, so the Begin button does not move
+       when the card grows; only the card's empty lower half and the line
+       beneath it shift down. The call to action still clears the fold, which is
+       the thing worth protecting. Desktop has 402px of slack against 160px of
+       growth, so it is free there.
 
-       Values are the measured tallest of steps 2–9 at each breakpoint. */
-    .step:not(#step-1):not(#step-done) { min-height: 395px; }
+       Values are the measured tallest step at each breakpoint. */
+    .step { min-height: 395px; }
 
     .prog-wrap { margin-bottom: 20px; }
 
@@ -930,8 +932,8 @@
       .hero-photo { object-position: 50% 42%; }
 
       /* Taller at phone width: the four-choice questions and the consent
-         paragraph both wrap more, measured max 455px across steps 2-9. */
-      .step:not(#step-1):not(#step-done) { min-height: 455px; }
+         paragraph both wrap more. Measured max across all steps was 455px. */
+      .step { min-height: 455px; }
       .funnel { padding: 16px 16px 18px; border-radius: 16px; }
       .prog-wrap { margin-bottom: 12px; }
       .prog-label { margin-top: 8px; }
