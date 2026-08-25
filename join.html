@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CURATEvip — Request an Invitation</title>
+  <meta name="description" content="CurateVIP is an invite-only luxury travel membership. A short quiz assigns Your Speed; we return the hotels, tables and rooms that match it. $299 a year." />
+
+  <!-- Paid-traffic destination. It must never compete with the main site in
+       organic search, but links shared out of it still have to unfurl. -->
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://curatevip.app/join" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="CURATEvip" />
+  <meta property="og:url" content="https://curatevip.app/join" />
+  <meta property="og:title" content="CURATEvip — Request an Invitation" />
+  <meta property="og:description" content="An invitation-only luxury travel membership. A short quiz learns how you like a hotel, a table and a room to feel — then every search returns three to five places that match. $299 a year." />
+  <meta property="og:image" content="https://curatevip.app/logo-full.png" />
+  <meta property="og:image:width" content="1152" />
+  <meta property="og:image:height" content="737" />
+  <meta property="og:image:alt" content="CURATEvip" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CURATEvip — Request an Invitation" />
+  <meta name="twitter:description" content="An invitation-only luxury travel membership. A short quiz learns how you like a hotel, a table and a room to feel — then every search returns three to five places that match. $299 a year." />
+  <meta name="twitter:image" content="https://curatevip.app/logo-full.png" />
+
+  <link rel="icon" type="image/png" href="C-IconNoBg.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Weight list is identical to index.html on purpose: loading a real 700
+       face here would make these buttons heavier than the same buttons on the
+       main site. -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Tokens lifted verbatim from index.html so this campaign page and the
+       main site share one palette. Do not fork these. */
+    :root {
+      --gold:        #ba9f75;
+      --gold-light:  #d4bc96;
+      --gold-dim:    rgba(186,159,117,0.15);
+      --gold-border: rgba(186,159,117,0.3);
+      --bg:          #0a0a0a;
+      --bg2:         #111111;
+      --bg3:         #141414;
+      --border:      #222222;
+      --border-l:    #2a2a2a;
+      --text:        #ffffff;
+      --text-60:     rgba(255,255,255,0.6);
+      --text-40:     rgba(255,255,255,0.4);
+      --text-20:     rgba(255,255,255,0.2);
+      --text-10:     rgba(255,255,255,0.1);
+      --serif:       Georgia, 'Times New Roman', serif;
+      --sans:        'Inter', -apple-system, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* One visible focus treatment for every interactive element on the page.
+       The funnel is keyboard-driven by design, so this is load-bearing, not
+       decoration. */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ─── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 max(24px, calc((100% - 1120px) / 2 + 72px));
+      height: 88px;
+      background: #000;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 52px; width: auto; opacity: 0.92; margin: 10px 0; }
+
+    .nav-member {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+      color: var(--text-40);
+      text-transform: uppercase;
+      text-decoration: none;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 4px;
+      transition: color 0.2s;
+    }
+    .nav-member:hover { color: var(--gold); }
+
+    section { scroll-margin-top: 88px; }
+
+    /* ─── HERO ────────────────────────────────────────── */
+    #home {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px max(24px, calc((100% - 1120px) / 2 + 72px)) 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 70% at 75% 50%, rgba(186,159,117,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 20% 30%, rgba(186,159,117,0.04) 0%, transparent 55%),
+        radial-gradient(ellipse 35% 35% at 85% 85%, rgba(186,159,117,0.03) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .hero-inner { max-width: 1120px; width: 100%; margin: 0 auto; position: relative; }
+    .hero-left { max-width: 760px; }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(32px, 3.2vw, 48px);
+      font-weight: 400;
+      line-height: 1.08;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .hero-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-60);
+      line-height: 1.8;
+      margin-bottom: 40px;
+      max-width: 62ch;
+    }
+    .hero-sub em { color: var(--gold-light); font-style: italic; }
+
+    .hero-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+    .hero-meta {
+      margin-top: 22px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-20);
+    }
+
+    /* ─── BUTTONS (index.html) ────────────────────────── */
+    .btn-primary {
+      padding: 16px 44px;
+      background: var(--gold);
+      border: none;
+      border-radius: 40px;
+      color: #000;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-ghost {
+      padding: 16px 44px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 40px;
+      color: rgba(255,255,255,0.82);
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--gold-border); color: var(--gold); }
+
+    /* ─── STATS BAR ───────────────────────────────────── */
+    .stats-bar {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 44px 72px;
+      display: flex;
+      justify-content: center;
+      gap: 88px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-lbl {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-40);
+      max-width: 22ch;
+    }
+
+    /* ─── SECTIONS ────────────────────────────────────── */
+    .band { padding: 58px 72px; max-width: 1120px; margin: 0 auto; }
+
+    .band-alt {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      max-width: none;
+      padding: 58px max(24px, calc((100% - 1120px) / 2 + 72px));
+    }
+    .band-alt > * { max-width: 1120px; margin-left: auto; margin-right: auto; }
+
+    .section-header { text-align: left; margin-bottom: 30px; }
+
+    .section-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.75;
+      margin-bottom: 20px;
+    }
+
+    .section-h2 {
+      font-family: var(--serif);
+      font-size: clamp(25px, 2.2vw, 35px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .section-h2 em { font-style: italic; color: var(--gold); }
+
+    .section-sub { font-size: 15px; color: var(--text-40); margin: 0; line-height: 1.75; }
+    .section-sub em { color: var(--gold-light); font-style: italic; }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .about-card {
+      background: var(--bg2);
+      border: 1px solid var(--border-l);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      height: 100%;
+      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(186,159,117,0.04) 0%, transparent 55%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .about-card:hover {
+      border-color: var(--gold-border);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+      transform: translateY(-3px);
+    }
+    .about-card:hover::after { opacity: 1; }
+
+    .band-alt .about-card { background: var(--bg3); }
+
+    .card-body { flex: 1; }
+
+    .card-title {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .card-desc { font-size: 14px; color: var(--text-60); line-height: 1.75; }
+    .card-desc strong { color: #fff; font-weight: 500; }
+    .speed-card .card-desc { line-height: 1.9; }
+
+    .included-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .included-list li {
+      position: relative;
+      padding-left: 22px;
+      font-size: 14px;
+      color: var(--text-60);
+      line-height: 1.7;
+    }
+    .included-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 8px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.7;
+    }
+
+    .solution-callout {
+      margin-top: 40px;
+      padding: 36px 40px;
+      background: rgba(186,159,117,0.05);
+      border: 1px solid var(--gold-border);
+      border-radius: 20px;
+      text-align: center;
+    }
+    .solution-quote {
+      font-family: var(--serif);
+      font-size: 21px;
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.5;
+      color: var(--gold-light);
+    }
+    .solution-sub { margin-top: 12px; font-size: 13px; color: var(--text-40); }
+
+    /* ─── FUNNEL ──────────────────────────────────────── */
+    #apply {
+      padding: 58px max(24px, calc((100% - 1120px) / 2 + 72px)) 80px;
+      border-top: 1px solid var(--border);
+    }
+
+    .funnel-head { max-width: 640px; margin: 0 auto 28px; text-align: center; }
+    .funnel-head .section-sub { margin-left: auto; margin-right: auto; }
+
+    .funnel {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--bg2);
+      border: 1px solid var(--border-l);
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    .prog-wrap { margin-bottom: 28px; }
+
+    .prog-track {
+      height: 2px;
+      width: 100%;
+      background: var(--text-10);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      width: 12.5%;
+      background: var(--gold);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+    .prog-label {
+      margin-top: 12px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-40);
+    }
+
+    .step-q {
+      font-family: var(--serif);
+      font-size: clamp(23px, 2vw, 28px);
+      font-weight: 400;
+      line-height: 1.25;
+      color: #fff;
+      margin-bottom: 10px;
+      outline: none;
+    }
+    .step-help { font-size: 13.5px; color: var(--text-40); line-height: 1.7; margin-bottom: 24px; }
+
+    .field-stack { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(186,159,117,0.85);
+    }
+    .form-label .opt { opacity: 0.55; text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.88);
+      font-family: var(--sans);
+      font-size: 16px; /* 16px keeps iOS Safari from zooming the viewport on focus */
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-input:focus { border-color: var(--gold-border); }
+    .form-input::placeholder { color: var(--text-20); }
+    .form-input.invalid { border-color: rgba(192, 57, 43, 0.75); }
+
+    .field-error {
+      font-size: 10.5px;
+      color: #c0392b;
+      letter-spacing: 0.03em;
+      margin-top: -4px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* Choice questions. Real buttons, full width, generous target height —
+       a 390px phone is the primary surface for this page. */
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+
+    .choice {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 17px 20px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.88);
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 300;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
+    }
+    .choice:hover { border-color: var(--gold-border); color: var(--gold-light); transform: translateY(-1px); }
+    .choice[aria-pressed="true"] {
+      border-color: var(--gold);
+      background: rgba(186,159,117,0.10);
+      color: var(--gold-light);
+    }
+
+    .choices-inline { display: flex; gap: 10px; }
+    .choices-inline .choice { text-align: center; }
+
+    .consent-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      line-height: 1.6;
+    }
+    .consent-label input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--gold); }
+    .consent-text { font-size: 13px; opacity: 0.75; }
+    .consent-text a { color: inherit; text-decoration: underline; }
+
+    .step-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 26px;
+      flex-wrap: wrap;
+    }
+    .step-actions .btn-primary { flex: 1; min-width: 180px; text-align: center; padding: 16px 28px; }
+
+    /* Every low-emphasis control still has to clear a 44px touch target. */
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--text-40);
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 12px 14px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .btn-back:hover { color: var(--gold); }
+
+    .btn-skip {
+      background: none;
+      border: none;
+      color: var(--text-20);
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 12px 8px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .btn-skip:hover { color: var(--gold); }
+
+    .step-foot { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+    .form-note { font-size: 11px; color: var(--text-20); line-height: 1.6; }
+
+    .funnel-error {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(192,57,43,0.55);
+      background: rgba(192,57,43,0.08);
+      border-radius: 10px;
+      font-size: 13px;
+      color: #e6a49b;
+      line-height: 1.6;
+    }
+    .funnel-error button {
+      margin-top: 8px;
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 12px 10px 12px 0;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Completion */
+    .done { text-align: center; padding: 8px 0 4px; }
+    .done-mark {
+      width: 46px; height: 46px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      border: 1px solid var(--gold-border);
+      background: rgba(186,159,117,0.08);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .done-mark svg { width: 20px; height: 20px; }
+    .done-title {
+      font-family: var(--serif);
+      font-size: 27px;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .done-text { font-size: 14px; color: var(--text-60); line-height: 1.85; max-width: 46ch; margin: 0 auto 14px; }
+    .done-text.quiet { color: var(--text-40); font-size: 13px; }
+
+    /* ─── CONSENT BANNER ──────────────────────────────── */
+    .cookie {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 200;
+      max-width: 380px;
+      background: rgba(17,17,17,0.97);
+      border: 1px solid var(--border-l);
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    }
+    .cookie p { font-size: 12.5px; color: var(--text-60); line-height: 1.7; }
+    .cookie p a { color: var(--gold); text-decoration: underline; }
+    .cookie-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .cookie-btn {
+      flex: 1;
+      padding: 12px 14px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 40px;
+      font-family: var(--sans);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .cookie-accept { background: var(--gold); border: 1px solid var(--gold); color: #000; }
+    .cookie-accept:hover { background: var(--gold-light); }
+    .cookie-decline { background: transparent; border: 1px solid rgba(255,255,255,0.22); color: var(--text-60); font-weight: 500; }
+    .cookie-decline:hover { border-color: var(--gold-border); color: var(--gold); }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 8px; }
+    .footer-logo img { height: 22px; width: auto; opacity: 0.7; }
+    .footer-copy { font-size: 11px; color: var(--text-20); letter-spacing: 0.04em; }
+    .footer-links { display: flex; gap: 28px; list-style: none; flex-wrap: wrap; }
+    .footer-links a {
+      font-size: 10px;
+      color: var(--text-20);
+      text-decoration: none;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ─── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { height: 68px; padding: 0 20px; }
+      .nav-logo img { height: 38px; margin: 6px 0; }
+      section { scroll-margin-top: 68px; }
+
+      #home { padding: 92px 24px 48px; min-height: 100svh; }
+      .hero-title { font-size: clamp(30px, 8vw, 44px); }
+      .hero-sub { font-size: 14px; margin-bottom: 30px; }
+      .hero-actions { gap: 12px; }
+      .btn-primary, .btn-ghost { padding: 15px 26px; font-size: 9.5px; letter-spacing: 0.16em; }
+
+      .stats-bar { padding: 34px 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px 12px; }
+      .stat-num { font-size: 28px; }
+      .stat-lbl { font-size: 9px; letter-spacing: 0.12em; }
+
+      .band { padding: 52px 24px; }
+      .band-alt { padding: 52px 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .section-h2 { font-size: clamp(26px, 7vw, 36px); }
+      .solution-callout { padding: 28px 22px; margin-top: 32px; }
+      .solution-quote { font-size: 18px; }
+
+      #apply { padding: 52px 16px 64px; }
+      .funnel { padding: 24px 18px; border-radius: 16px; }
+      .form-row { grid-template-columns: 1fr; }
+      .step-actions .btn-primary { width: 100%; flex: 1 1 100%; min-width: 0; }
+      .step-actions { flex-direction: column-reverse; align-items: stretch; gap: 6px; }
+      .btn-back { text-align: center; }
+      .choices-inline .choice { padding: 17px 12px; }
+
+      .cookie { left: 12px; right: 12px; bottom: 12px; max-width: none; }
+
+      footer { padding: 30px 24px; flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; gap: 18px; }
+      /* Desktop keeps index.html's footer exactly; on touch these still have to
+         clear a 44px target. */
+      .footer-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; }
+    }
+
+    @media (max-width: 380px) {
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ─── FADE IN ─────────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1 { transition-delay: 0.1s; }
+    .fade-in.delay-2 { transition-delay: 0.2s; }
+    .fade-in.delay-3 { transition-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV — deliberately minimal. This is an ad destination; the only two
+       jobs are "prove it's really CurateVIP" and "let an existing member out". ── -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="Logo-Horizontal-Website.png" alt="CURATEvip" />
+    </a>
+    <a href="https://curatevip.ai" target="_blank" rel="noopener" class="nav-member">Member Login</a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section id="home">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <div class="hero-left fade-in visible">
+        <h1 class="hero-title" id="heroTitle">
+          Five stars mean nothing unless they&rsquo;re <em>your</em> five stars.
+        </h1>
+        <p class="hero-sub" id="heroSub">
+          CurateVIP is an invitation-only membership. A short quiz learns how you like a hotel,
+          a table and a room to feel &mdash; we call it <em>Your Speed</em> &mdash; and every
+          search after that returns three to five places that match it. Not 150 results. Not the
+          average opinion of strangers.
+        </p>
+        <div class="hero-actions">
+          <a href="#apply" class="btn-primary" id="heroCta">Request an Invitation</a>
+          <a href="#what-it-is" class="btn-ghost">What It Is</a>
+        </div>
+        <p class="hero-meta">$299 a year &nbsp;·&nbsp; By invitation &nbsp;·&nbsp; Under two minutes</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROOF STRIP ── -->
+  <div class="stats-bar">
+    <div class="stat fade-in">
+      <div class="stat-num">3&ndash;5</div>
+      <div class="stat-lbl">Matches per search, not 300</div>
+    </div>
+    <div class="stat fade-in delay-1">
+      <div class="stat-num">0</div>
+      <div class="stat-lbl">Hours of research required</div>
+    </div>
+    <div class="stat fade-in delay-2">
+      <div class="stat-num">$299</div>
+      <div class="stat-lbl">A year, by invitation</div>
+    </div>
+  </div>
+
+  <!-- ── WHAT IT IS ── -->
+  <section id="what-it-is" class="band">
+    <div class="section-header fade-in">
+      <p class="section-eyebrow">The Membership</p>
+      <h2 class="section-h2">A standing answer to one question.</h2>
+      <p class="section-sub">
+        Where should I stay, eat, or go tonight &mdash; in a city I don&rsquo;t know, on a night
+        that matters? Membership is that answer, ready before you ask for it.
+      </p>
+    </div>
+    <div class="cards-grid fade-in delay-1">
+      <div class="about-card">
+        <div class="card-body">
+          <div class="card-title">Curated, not crowdsourced</div>
+          <div class="card-desc">No paid placements and no star ratings from strangers. Every property is corroborated against independent sources &mdash; Michelin, Forbes, Lartisien and dozens of award bodies &mdash; before it can reach a member.</div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="card-body">
+          <div class="card-title">A short list, with reasons</div>
+          <div class="card-desc">Three to five places, each with a plain explanation of why it is yours. You are choosing between good options rather than filtering out bad ones.</div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="card-body">
+          <div class="card-title">Booked in the same place</div>
+          <div class="card-desc">Reserve the room or the table without leaving the app, with member rates on stays where we hold them &mdash; typically 5% to 10% a night.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── YOUR SPEED ── -->
+  <section id="your-speed" class="band band-alt">
+    <div class="section-header fade-in">
+      <p class="section-eyebrow">Your Speed</p>
+      <h2 class="section-h2">Taste, written down as <em>a taxonomy</em>.</h2>
+      <p class="section-sub">
+        The quiz places you in one Speed per category. It takes a few minutes once, and it is
+        what every curation you receive afterwards is built on.
+      </p>
+    </div>
+    <div class="cards-grid fade-in delay-1">
+      <div class="about-card speed-card">
+        <div class="card-body">
+          <div class="card-title" style="color:var(--gold);">STAY</div>
+          <div class="card-desc">
+            <strong>The Atelier:</strong> architecture is the reason you booked it.<br /><br />
+            <strong>The Sanctuary:</strong> quiet, restorative, unhurried.<br /><br />
+            <strong>The Estate:</strong> space, grounds, and a sense of arrival.<br /><br />
+            <strong>The Vanguard:</strong> the new one, before it is the known one.
+          </div>
+        </div>
+      </div>
+      <div class="about-card speed-card">
+        <div class="card-body">
+          <div class="card-title" style="color:var(--gold);">TABLE</div>
+          <div class="card-desc">
+            <strong>The Provision:</strong> the food, the chef and the wine are the point.<br /><br />
+            <strong>The Couture:</strong> the room is the reservation.<br /><br />
+            <strong>The Pulse:</strong> energy at the table, not just on the plate.<br /><br />
+            <strong>The Verandah:</strong> open air, long lunches, no hurry.
+          </div>
+        </div>
+      </div>
+      <div class="about-card speed-card">
+        <div class="card-body">
+          <div class="card-title" style="color:var(--gold);">SOCIAL</div>
+          <div class="card-desc">
+            <strong>The Electric:</strong> scene-driven; the right room changes the night.<br /><br />
+            <strong>The Shadow:</strong> mood is the amenity. You had to know it was there.<br /><br />
+            <strong>The Verandah:</strong> a terrace, a view, and time to use them.<br /><br />
+            <strong>The Gallery:</strong> design you feel before you see it.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHAT YOU GET / PRICE ── -->
+  <section id="included" class="band">
+    <div class="section-header fade-in">
+      <p class="section-eyebrow">Membership</p>
+      <h2 class="section-h2">$299 a year. <em>By invitation.</em></h2>
+      <p class="section-sub">
+        One membership covers 7 select US cities today, expanding every month, and every
+        curation you ask for within them. Less than the cost of one wrong night away.
+      </p>
+    </div>
+    <div class="fade-in delay-1">
+      <div class="about-card" style="border-color:var(--gold-border);">
+        <div class="card-body">
+          <ul class="included-list">
+            <li>3 to 5 curated hotels, restaurants and bars matched to Your Speed, every time you search</li>
+            <li>7 select US cities today, expanding to new markets every month</li>
+            <li>Member savings on stays where we hold them &mdash; 5% to 10% a night on average</li>
+            <li>Booking, saved trips and forward planning in one place</li>
+            <li>No paid placements, ever</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="solution-callout fade-in delay-2">
+      <p class="solution-quote">Why invitation only? Because a curated product stops being one the moment it&rsquo;s built for everybody.</p>
+      <p class="solution-sub">We read every application personally and respond within 24 hours.</p>
+    </div>
+  </section>
+
+  <!-- ══ THE FUNNEL ════════════════════════════════════════════════════════
+       Step 1 is name + email and nothing else. It POSTs on submit and stores
+       the returned token, so an applicant who quits at question four is still
+       a lead we can reach. Every later answer PATCHes against that token and
+       is queued for retry rather than blocking the applicant. ══ -->
+  <section id="apply">
+    <div class="funnel-head fade-in">
+      <p class="section-eyebrow" style="text-align:center;">Request an Invitation</p>
+      <h2 class="section-h2" style="text-align:center;">Tell us how you travel.</h2>
+      <p class="section-sub">Eight short questions. No payment, and nothing is charged unless you accept an invitation.</p>
+    </div>
+
+    <div class="funnel fade-in delay-1" id="funnel">
+
+      <!-- Progress -->
+      <div class="prog-wrap" id="progWrap">
+        <div class="prog-track" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" aria-label="Application progress" id="progBar">
+          <div class="prog-fill" id="progFill"></div>
+        </div>
+        <p class="prog-label" id="progLabel">Question 1 of 8</p>
+      </div>
+
+      <!-- Live region for step changes and async status -->
+      <p aria-live="polite" class="visually-hidden" id="liveStatus" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;"></p>
+
+      <!-- ── STEP 1 — identity. The only step that must succeed. ── -->
+      <form class="step" id="step-1" data-step="1" novalidate>
+        <h3 class="step-q" tabindex="-1">First, who should we write back to?</h3>
+        <p class="step-help">Name and email only. We&rsquo;ll save your place as you go.</p>
+        <div class="field-stack">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fFirst">First Name</label>
+              <input class="form-input" type="text" id="fFirst" name="firstName" autocomplete="given-name" placeholder="First name" required />
+              <span class="field-error" id="errFirst">Please enter your first name.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fLast">Last Name</label>
+              <input class="form-input" type="text" id="fLast" name="lastName" autocomplete="family-name" placeholder="Last name" required />
+              <span class="field-error" id="errLast">Please enter your last name.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fEmail">Email Address</label>
+            <input class="form-input" type="email" id="fEmail" name="email" autocomplete="email" placeholder="you@example.com" required />
+            <span class="field-error" id="errEmail">Please enter a valid email address.</span>
+          </div>
+        </div>
+        <div class="step-actions">
+          <button type="submit" class="btn-primary" id="startBtn">Begin</button>
+        </div>
+        <div class="step-foot">
+          <p class="form-note">We never sell your details. See our <a href="/privacy" style="color:var(--text-40);">Privacy Policy</a>.</p>
+        </div>
+      </form>
+
+      <!-- ── STEP 2 — home city ── -->
+      <form class="step" id="step-2" data-step="2" novalidate hidden>
+        <h3 class="step-q" tabindex="-1">Where do you call home?</h3>
+        <p class="step-help">It tells us which markets matter to you first.</p>
+        <div class="form-group">
+          <label class="form-label" for="fCity">Home City</label>
+          <input class="form-input" type="text" id="fCity" name="city" autocomplete="address-level2" placeholder="Seattle, WA" required />
+          <span class="field-error" id="errCity">Please enter your home city.</span>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn-back" data-back>&larr; Back</button>
+          <button type="submit" class="btn-primary">Continue</button>
+        </div>
+      </form>
+
+      <!-- ── STEP 3 — occasion spend ── -->
+      <div class="step" id="step-3" data-step="3" hidden>
+        <h3 class="step-q" tabindex="-1" id="q3">On a night that matters, what does dinner usually come to?</h3>
+        <p class="step-help">Per person, before wine gets ambitious.</p>
+        <div class="choices" role="group" aria-labelledby="q3" data-field="netWorth" data-step-index="3">
+          <button type="button" class="choice" data-value="Under $200">Under $200</button>
+          <button type="button" class="choice" data-value="$200 &ndash; $500">$200 &ndash; $500</button>
+          <button type="button" class="choice" data-value="$500 &ndash; $1,000">$500 &ndash; $1,000</button>
+          <button type="button" class="choice" data-value="$1,000+">$1,000+</button>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn-back" data-back>&larr; Back</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 4 — hotel nights ── -->
+      <div class="step" id="step-4" data-step="4" hidden>
+        <h3 class="step-q" tabindex="-1" id="q4">How many hotel nights do you book in a year?</h3>
+        <p class="step-help">A rough count is fine.</p>
+        <div class="choices" role="group" aria-labelledby="q4" data-field="travelFrequency" data-step-index="4">
+          <button type="button" class="choice" data-value="1 &ndash; 5 nights">1 &ndash; 5 nights</button>
+          <button type="button" class="choice" data-value="6 &ndash; 15 nights">6 &ndash; 15 nights</button>
+          <button type="button" class="choice" data-value="16 &ndash; 30 nights">16 &ndash; 30 nights</button>
+          <button type="button" class="choice" data-value="30+ nights">30+ nights</button>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn-back" data-back>&larr; Back</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 5 — nightly rate ── -->
+      <div class="step" id="step-5" data-step="5" hidden>
+        <h3 class="step-q" tabindex="-1" id="q5">And what do you typically pay a night?</h3>
+        <p class="step-help">This sets the shelf we curate from.</p>
+        <div class="choices" role="group" aria-labelledby="q5" data-field="nightlyRate" data-step-index="5">
+          <button type="button" class="choice" data-value="Under $500">Under $500</button>
+          <button type="button" class="choice" data-value="$500 &ndash; $749">$500 &ndash; $749</button>
+          <button type="button" class="choice" data-value="$750 &ndash; $999">$750 &ndash; $999</button>
+          <button type="button" class="choice" data-value="$1,000+">$1,000+</button>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn-back" data-back>&larr; Back</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 6 — trips per year ── -->
+      <div class="step" id="step-6" data-step="6" hidden>
+        <h3 class="step-q" tabindex="-1" id="q6">How many trips do you take in a year?</h3>
+        <p class="step-help">Business and personal together.</p>
+        <div class="choices" role="group" aria-labelledby="q6" data-field="tripsPerYear" data-step-index="6">
+          <button type="button" class="choice" data-value="1 &ndash; 2 trips">1 &ndash; 2 trips</button>
+          <button type="button" class="choice" data-value="3 &ndash; 5 trips">3 &ndash; 5 trips</button>
+          <button type="button" class="choice" data-value="6 &ndash; 10 trips">6 &ndash; 10 trips</button>
+          <button type="button" class="choice" data-value="10+ trips">10+ trips</button>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn-back" data-back>&larr; Back</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 7 — private club ── -->
+      <form class="step" id="step-7" data-step="7" novalidate hidden>
+        <h3 class="step-q" tabindex="-1" id="q7">Are you a member of a private club?</h3>
+        <p class="step-help">Golf, city, social, or a members&rsquo; house. It helps us read the room.</p>
+        <div class="choices choices-inline" role="group" aria-labelledby="q7" data-field="privateClubMember" data-step-index="7" data-manual="true">
+          <button type="button" class="choice" data-value="Yes" aria-pressed="false">Yes</button>
+          <button type="button" class="choice" data-value="No" aria-pressed="false">No</button>
+        </div>
+        <div class="form-group" id="clubNameGroup" style="margin-top:16px;" hidden>
+          <label class="form-label" for="fClubName">Which club?</label>
+          <input class="form-input" type="text" id="fClubName" name="privateClubName" placeholder="Club name" />
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn-back" data-back>&larr; Back</button>
+          <button type="submit" class="btn-primary" id="clubContinue" hidden>Continue</button>
+        </div>
+      </form>
+
+      <!-- ── STEP 8 — mobile + SMS consent.
+           The disclosure below is the same wording the main site uses. It is
+           read out of the DOM at submit time and sent as smsConsentText, so
+           the stored consent record is literally the string displayed here.
+           The box is unchecked by default and must stay that way. ── -->
+      <form class="step" id="step-8" data-step="8" novalidate hidden>
+        <h3 class="step-q" tabindex="-1">Last one, and it&rsquo;s optional.</h3>
+        <p class="step-help">If you&rsquo;d rather receive your invitation by text, leave a mobile number. Otherwise skip &mdash; it changes nothing about your application.</p>
+        <div class="field-stack">
+          <div class="form-group">
+            <label class="form-label" for="fPhone">Mobile Number <span class="opt">(optional)</span></label>
+            <input class="form-input" type="tel" id="fPhone" name="phone" autocomplete="tel" placeholder="(206) 555-0123" />
+            <span class="field-error" id="errPhone">Please enter a valid mobile number, or leave this blank.</span>
+          </div>
+          <div class="form-group">
+            <label class="consent-label" for="fSmsConsent">
+              <input type="checkbox" id="fSmsConsent" name="smsConsent" />
+              <span class="consent-text" id="smsConsentText">
+                I agree to receive my invitation and account notifications from CURATEvip by text message
+                at the number above. Message and data rates may apply. Message frequency varies.
+                Reply STOP to opt out or HELP for help. See our
+                <a href="/privacy">Privacy Policy</a> and
+                <a href="/terms">Terms</a>.
+              </span>
+            </label>
+            <span class="field-error" id="errSmsConsent">Please agree to receive texts, or clear the mobile number.</span>
+          </div>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn-back" data-back>&larr; Back</button>
+          <button type="submit" class="btn-primary" id="finishBtn">Submit Application</button>
+        </div>
+        <div class="step-foot">
+          <button type="button" class="btn-skip" id="skipPhone">Skip and submit without a number</button>
+        </div>
+      </form>
+
+      <!-- ── COMPLETION ── -->
+      <div class="step" id="step-done" data-step="done" hidden>
+        <div class="done">
+          <div class="done-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ba9f75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7" /></svg>
+          </div>
+          <h3 class="done-title" tabindex="-1" id="doneTitle">Your application is in.</h3>
+          <p class="done-text" id="doneGreeting">Thank you.</p>
+          <p class="done-text">
+            We read every application ourselves &mdash; there is no queue and no algorithm deciding
+            this. You&rsquo;ll hear back by email within 24 hours, and always within two business days.
+          </p>
+          <p class="done-text">
+            If it&rsquo;s a fit, that email carries your invitation and a link to take the Speed quiz.
+            Your first curations are waiting on the other side of it. Nothing is charged unless you accept.
+          </p>
+          <p class="done-text quiet">In the meantime, watch for a note from <strong style="color:var(--gold-light);font-weight:500;">invitations@curatevip.ai</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Error surface, shared by every step -->
+      <div class="funnel-error" id="funnelError" hidden>
+        <span id="funnelErrorText"></span>
+        <br />
+        <button type="button" id="funnelRetry">Try again</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-logo">
+      <img src="logo-wordmark.png" alt="CURATEvip" />
+    </div>
+    <p class="footer-copy">&copy; 2026 CurateVIP LLC. All rights reserved.</p>
+    <ul class="footer-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/privacy">Privacy Policy</a></li>
+      <li><a href="/terms">Terms</a></li>
+    </ul>
+  </footer>
+
+  <!-- ── COOKIE / ANALYTICS CONSENT ── -->
+  <aside class="cookie" id="cookieBanner" role="region" aria-label="Cookie preferences" hidden>
+    <p>
+      We use a small amount of analytics to understand which campaigns bring the right members.
+      Nothing loads until you say so. See our <a href="/privacy">Privacy Policy</a>.
+    </p>
+    <div class="cookie-actions">
+      <button type="button" class="cookie-btn cookie-decline" id="cookieDecline">Decline</button>
+      <button type="button" class="cookie-btn cookie-accept" id="cookieAccept">Accept</button>
+    </div>
+  </aside>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ══════════════════════════════════════════════════════════════════
+       ANALYTICS IDS — Rick fills these in.
+       Leave them as empty strings and nothing loads, nothing throws, and
+       the consent banner still behaves correctly.
+         GA4:  'G-XXXXXXXXXX'
+         Meta: '123456789012345'
+       ══════════════════════════════════════════════════════════════════ */
+    var GA4_MEASUREMENT_ID = '';
+    var META_PIXEL_ID      = '';
+
+    var API_BASE = 'https://api.curatevip.ai';
+
+    /* ── Campaign variants ────────────────────────────────────────────
+       ?v=<name> swaps the hero copy only. The name is attacker-controlled,
+       so it is matched against this object's own keys and never rendered
+       from the URL; an unknown value silently falls back to 'default'.
+       Headlines are segment arrays so the gold italic can be built with
+       createElement instead of innerHTML. */
+    var VARIANTS = {
+      'default': {
+        title: [
+          { t: 'Five stars mean nothing unless they’re ' },
+          { t: 'your', em: true },
+          { t: ' five stars.' }
+        ],
+        sub: 'CurateVIP is an invitation-only membership. A short quiz learns how you like a hotel, a table and a room to feel — we call it Your Speed — and every search after that returns three to five places that match it. Not 150 results. Not the average opinion of strangers.'
+      },
+      'golf': {
+        title: [
+          { t: 'The course was the easy part. ' },
+          { t: 'The rest of the trip', em: true },
+          { t: ' wasn’t.' }
+        ],
+        sub: 'An invitation-only membership for people who plan a trip around a tee time. Tell us how you like a hotel, a table and a room to feel, and we return the three to five worth the drive from the club — not the hundred the internet thinks you want.'
+      },
+      'dining': {
+        title: [
+          { t: 'The best table in the city is ' },
+          { t: 'not', em: true },
+          { t: ' the same table for everyone.' }
+        ],
+        sub: 'An invitation-only membership for people who travel to eat. A short quiz, then three to five restaurants, bars and hotels chosen against your taste rather than the crowd’s average — each with a plain reason it is yours.'
+      }
+    };
+
+    /* The one and only allow-list. ?v= is compared against this array; a value
+       that is not an exact member is discarded entirely — never rendered, never
+       stored, never sent. Prototype keys ('__proto__', 'constructor', …) are not
+       members, so they fall through to 'default' like any other junk. */
+    var VARIANT_NAMES = ['default', 'golf', 'dining'];
+
+    function readVariant() {
+      var raw = new URLSearchParams(window.location.search).get('v');
+      if (typeof raw === 'string' && VARIANT_NAMES.indexOf(raw) !== -1) return raw;
+      return 'default';
+    }
+
+    var VARIANT = readVariant();
+
+    function applyVariant() {
+      var cfg = VARIANTS[VARIANT];
+      if (!cfg || VARIANT === 'default') return; // markup already carries the default
+      var titleEl = document.getElementById('heroTitle');
+      var subEl = document.getElementById('heroSub');
+      if (titleEl) {
+        while (titleEl.firstChild) titleEl.removeChild(titleEl.firstChild);
+        cfg.title.forEach(function (seg) {
+          if (seg.em) {
+            var em = document.createElement('em');
+            em.textContent = seg.t;
+            titleEl.appendChild(em);
+          } else {
+            titleEl.appendChild(document.createTextNode(seg.t));
+          }
+        });
+      }
+      if (subEl) subEl.textContent = cfg.sub;
+    }
+
+    /* ── Attribution ──────────────────────────────────────────────────
+       First-party, captured on load, held in sessionStorage so it survives
+       every funnel step and a refresh. Deliberately NOT gated on cookie
+       consent: this is our own record of where an applicant came from, not
+       a third-party tracker. Absent values are sent as null, never guessed. */
+    var ATTR_KEY = 'cvip_attr_v1';
+
+    function captureAttribution() {
+      var stored = null;
+      try { stored = JSON.parse(window.sessionStorage.getItem(ATTR_KEY) || 'null'); } catch (e) { stored = null; }
+      if (stored && typeof stored === 'object' && stored.variant) return stored;
+
+      var p = new URLSearchParams(window.location.search);
+      /* Absent, blank and the literal strings "null"/"undefined" all collapse to
+         a real null. Ad platforms and tag managers emit those strings when a
+         macro fails to expand, and storing them as text poisons reporting. */
+      function get(key) {
+        var v = p.get(key);
+        if (v === null) return null;
+        v = v.trim();
+        if (v === '' || v === 'null' || v === 'undefined') return null;
+        return v.slice(0, 300);
+      }
+      var attr = {
+        utmSource:   get('utm_source'),
+        utmMedium:   get('utm_medium'),
+        utmCampaign: get('utm_campaign'),
+        utmContent:  get('utm_content'),
+        utmTerm:     get('utm_term'),
+        gclid:       get('gclid'),
+        fbclid:      get('fbclid'),
+        referrer:    document.referrer ? String(document.referrer).slice(0, 500) : null,
+        landingPath: window.location.pathname || null,
+        variant:     VARIANT
+      };
+      try { window.sessionStorage.setItem(ATTR_KEY, JSON.stringify(attr)); } catch (e) { /* private mode */ }
+      return attr;
+    }
+
+    var ATTRIBUTION = captureAttribution();
+
+    /* ── Consent + analytics ──────────────────────────────────────────
+       'granted' or 'denied' persists in localStorage. Decline is honoured
+       for the whole session and every session after it; nothing is loaded
+       and queued events are dropped. */
+    var CONSENT_KEY = 'cvip_analytics_consent';
+    var consentState = null;
+    try { consentState = window.localStorage.getItem(CONSENT_KEY); } catch (e) { consentState = null; }
+    if (consentState !== 'granted' && consentState !== 'denied') consentState = null;
+
+    var analyticsLoaded = false;
+    var pendingEvents = [];
+
+    function loadGA4() {
+      if (!GA4_MEASUREMENT_ID) return;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', GA4_MEASUREMENT_ID, { send_page_view: false });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA4_MEASUREMENT_ID);
+      document.head.appendChild(s);
+    }
+
+    function loadMetaPixel() {
+      if (!META_PIXEL_ID) return;
+      /* Standard Meta bootstrap, trimmed. Guarded on a non-empty ID. */
+      if (!window.fbq) {
+        var n = window.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!window._fbq) window._fbq = n;
+        n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+        document.head.appendChild(s);
+      }
+      window.fbq('init', META_PIXEL_ID);
+    }
+
+    function loadAnalytics() {
+      if (analyticsLoaded) return;
+      analyticsLoaded = true;
+      try { loadGA4(); } catch (e) { /* never let analytics break the funnel */ }
+      try { loadMetaPixel(); } catch (e) { /* ditto */ }
+    }
+
+    function emit(ev) {
+      try {
+        if (ev.ga && typeof window.gtag === 'function' && GA4_MEASUREMENT_ID) {
+          window.gtag('event', ev.ga, ev.params || {});
+        }
+        if (ev.fb && typeof window.fbq === 'function' && META_PIXEL_ID) {
+          window.fbq('track', ev.fb, ev.fbParams || {});
+        }
+      } catch (e) { /* analytics is never allowed to throw into the funnel */ }
+    }
+
+    /* track(gaName, params, fbName, fbParams)
+       Before a decision: buffered (capped). Granted: sent. Denied: dropped. */
+    function track(gaName, params, fbName, fbParams) {
+      var ev = { ga: gaName, params: params || {}, fb: fbName || null, fbParams: fbParams || {} };
+      if (consentState === 'granted') { emit(ev); return; }
+      if (consentState === 'denied') return;
+      if (pendingEvents.length < 25) pendingEvents.push(ev);
+    }
+
+    function grantConsent() {
+      consentState = 'granted';
+      try { window.localStorage.setItem(CONSENT_KEY, 'granted'); } catch (e) {}
+      loadAnalytics();
+      var queued = pendingEvents.slice();
+      pendingEvents.length = 0;
+      queued.forEach(emit);
+    }
+
+    function denyConsent() {
+      consentState = 'denied';
+      try { window.localStorage.setItem(CONSENT_KEY, 'denied'); } catch (e) {}
+      pendingEvents.length = 0;
+    }
+
+    function initConsentUI() {
+      var banner = document.getElementById('cookieBanner');
+      if (consentState === 'granted') { loadAnalytics(); return; }
+      if (consentState === 'denied') return;
+      if (!banner) return;
+      banner.hidden = false;
+      document.getElementById('cookieAccept').addEventListener('click', function () {
+        grantConsent();
+        banner.hidden = true;
+      });
+      document.getElementById('cookieDecline').addEventListener('click', function () {
+        denyConsent();
+        banner.hidden = true;
+      });
+    }
+
+    /* ── Funnel state ─────────────────────────────────────────────────── */
+    var TOTAL_STEPS = 8;
+    var current = 1;
+    var leadToken = null;
+    var tokenDead = false;
+    var answers = {};      // API field -> value, so Back can repaint selections
+    var identity = { firstName: '', lastName: '', email: '' };
+
+    var els = {
+      funnel:      document.getElementById('funnel'),
+      progWrap:    document.getElementById('progWrap'),
+      progBar:     document.getElementById('progBar'),
+      progFill:    document.getElementById('progFill'),
+      progLabel:   document.getElementById('progLabel'),
+      live:        document.getElementById('liveStatus'),
+      error:       document.getElementById('funnelError'),
+      errorText:   document.getElementById('funnelErrorText'),
+      retry:       document.getElementById('funnelRetry')
+    };
+
+    function stepEl(n) { return document.getElementById('step-' + n); }
+
+    function say(msg) { if (els.live) els.live.textContent = msg; }
+
+    function showError(msg, retryFn) {
+      els.errorText.textContent = msg;
+      els.error.hidden = false;
+      els.retry.hidden = !retryFn;
+      els.retry.onclick = retryFn || null;
+      say(msg);
+    }
+    function clearError() {
+      els.error.hidden = true;
+      els.errorText.textContent = '';
+      els.retry.onclick = null;
+    }
+
+    function goTo(n, opts) {
+      var from = stepEl(current);
+      var to = stepEl(n);
+      if (!to) return;
+      if (from) from.hidden = true;
+      to.hidden = false;
+      current = n;
+      clearError();
+
+      if (n === 'done') {
+        els.progWrap.hidden = true;
+      } else {
+        els.progWrap.hidden = false;
+        var pct = (Number(n) / TOTAL_STEPS) * 100;
+        els.progFill.style.width = pct + '%';
+        els.progBar.setAttribute('aria-valuenow', String(n));
+        els.progLabel.textContent = 'Question ' + n + ' of ' + TOTAL_STEPS;
+        say('Question ' + n + ' of ' + TOTAL_STEPS);
+      }
+
+      /* Keep the funnel card in view when stepping, but don't yank the page
+         on first paint. */
+      if (!opts || !opts.noScroll) {
+        var rect = els.funnel.getBoundingClientRect();
+        if (rect.top < 0 || rect.top > window.innerHeight * 0.5) {
+          els.funnel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      /* Going back must show what they already chose. Cheap enough to run on
+         every transition rather than tracking direction. */
+      repaintSelections();
+      /* Symmetric on purpose: coming Back to step 7 has to re-show the club
+         fields for a Yes and re-hide them for a No. */
+      if (n === 7) {
+        var isYes = answers.privateClubMember === 'Yes';
+        clubNameGroup.hidden = !isYes;
+        clubContinue.hidden = !isYes;
+      }
+
+      /* First paint must not grab focus: on a phone that pops the keyboard and
+         scrolls the hero away the instant the ad click lands. */
+      if (opts && opts.noFocus) return;
+
+      var focusTarget = to.querySelector('.step-q, .done-title');
+      var firstField = to.querySelector('input:not([type="checkbox"]), .choice');
+      if (n === 'done' && focusTarget) { focusTarget.focus({ preventScroll: true }); return; }
+      if (firstField && firstField.tagName === 'INPUT') { firstField.focus({ preventScroll: true }); }
+      else if (focusTarget) { focusTarget.focus({ preventScroll: true }); }
+    }
+
+    function repaintSelections() {
+      Array.prototype.forEach.call(document.querySelectorAll('.choices'), function (group) {
+        var field = group.getAttribute('data-field');
+        var val = answers[field];
+        Array.prototype.forEach.call(group.querySelectorAll('.choice'), function (b) {
+          b.setAttribute('aria-pressed', val && b.getAttribute('data-value') === val ? 'true' : 'false');
+        });
+      });
+    }
+
+    /* ── PATCH queue ──────────────────────────────────────────────────
+       Answers are queued and flushed in the background. A failure never
+       blocks the applicant: pending patches are coalesced into a single
+       body and retried with backoff, and any later answer re-triggers a
+       flush. Bounded attempts, so this never becomes a poll against a
+       rate-limited endpoint. */
+    var queue = [];
+    var inFlight = null;
+    var retryTimer = null;
+    var retryAttempt = 0;
+    var BACKOFF = [2000, 6000, 15000, 40000];
+
+    function coalesce(items) {
+      var merged = {};
+      items.forEach(function (obj) {
+        Object.keys(obj).forEach(function (k) { merged[k] = obj[k]; });
+      });
+      return merged;
+    }
+
+    function enqueue(payload) {
+      queue.push(payload);
+      retryAttempt = 0;
+      flushQueue();
+    }
+
+    /* Resolves true when the batch it sent landed, false on failure or a dead
+       token. A caller that queued work while a request was already in flight
+       gets that request's promise, so use flushAll() when you need to know
+       that *your* payload specifically made it. */
+    function flushQueue() {
+      if (inFlight) return inFlight;
+      if (tokenDead || !leadToken) return Promise.resolve(false);
+      if (queue.length === 0) return Promise.resolve(true);
+      if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
+
+      var batch = queue.slice();
+      queue.length = 0;
+      var body = coalesce(batch);
+
+      inFlight = fetch(API_BASE + '/api/funnel/' + encodeURIComponent(leadToken), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).then(function (res) {
+        inFlight = null;
+        if (res.status === 404) {
+          /* Token gone or expired. Stop retrying; the final step surfaces it. */
+          tokenDead = true;
+          return false;
+        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        retryAttempt = 0;
+        /* Answers recorded while this request was in the air are still sitting
+           in the queue. Drain them now rather than waiting for the applicant's
+           next action, which might never come.
+           The nested result is returned as-is and deliberately NOT coerced to
+           true: if that drain 404s or fails, the caller waiting on this promise
+           (the final submit) must hear about it rather than being told the
+           whole queue landed. */
+        if (queue.length) return flushQueue();
+        return true;
+      }).catch(function () {
+        /* Put the work back at the front so no answer is ever dropped. */
+        inFlight = null;
+        queue.unshift(body);
+        scheduleRetry();
+        return false;
+      });
+
+      return inFlight;
+    }
+
+    /* Drains the queue completely, following on from anything already in
+       flight. Used by the final submit, where "did it land" is the question. */
+    function flushAll() {
+      return flushQueue().then(function (ok) {
+        if (!ok) return false;
+        if (queue.length) return flushAll();
+        return true;
+      });
+    }
+
+    function scheduleRetry() {
+      if (retryTimer || tokenDead || queue.length === 0) return;
+      var delay = BACKOFF[Math.min(retryAttempt, BACKOFF.length - 1)];
+      retryAttempt++;
+      if (retryAttempt > BACKOFF.length) return; // stop; next user action retries
+      retryTimer = window.setTimeout(function () {
+        retryTimer = null;
+        flushQueue();
+      }, delay);
+    }
+
+    /* A returning-to-foreground tab is a free chance to drain anything that
+       failed while the connection was down. Event-driven, never a poll. */
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible' && queue.length) {
+        retryAttempt = 0;
+        flushQueue();
+      }
+    });
+
+    /* ── Validation ───────────────────────────────────────────────────── */
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    function setFieldError(inputId, errId, show) {
+      var input = document.getElementById(inputId);
+      var err = document.getElementById(errId);
+      if (input) input.classList.toggle('invalid', !!show);
+      if (err) err.classList.toggle('show', !!show);
+    }
+
+    function digits(s) { return String(s).replace(/\D/g, ''); }
+
+    /* ── Step 1: identity + POST /api/funnel/start ────────────────────── */
+    var startBtn = document.getElementById('startBtn');
+
+    function submitStart() {
+      var first = document.getElementById('fFirst').value.trim();
+      var last  = document.getElementById('fLast').value.trim();
+      var email = document.getElementById('fEmail').value.trim();
+
+      var okFirst = first.length > 0;
+      var okLast  = last.length > 0;
+      var okEmail = EMAIL_RE.test(email);
+      setFieldError('fFirst', 'errFirst', !okFirst);
+      setFieldError('fLast', 'errLast', !okLast);
+      setFieldError('fEmail', 'errEmail', !okEmail);
+      if (!okFirst) { document.getElementById('fFirst').focus(); return; }
+      if (!okLast)  { document.getElementById('fLast').focus(); return; }
+      if (!okEmail) { document.getElementById('fEmail').focus(); return; }
+
+      /* Coming Back to this step and pressing Begin again must NOT open a
+         second lead. Same three fields plus a live token means the record
+         already exists — just walk forward. */
+      if (leadToken && !tokenDead &&
+          identity.firstName === first && identity.lastName === last && identity.email === email) {
+        clearError();
+        goTo(2);
+        return;
+      }
+
+      identity = { firstName: first, lastName: last, email: email };
+      clearError();
+      startBtn.disabled = true;
+      startBtn.textContent = 'One moment…';
+
+      fetch(API_BASE + '/api/funnel/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: first,
+          lastName: last,
+          email: email,
+          attribution: ATTRIBUTION
+        })
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          return { status: res.status, ok: res.ok, data: data };
+        });
+      }).then(function (r) {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Begin';
+        if (r.ok && r.data && typeof r.data.leadToken === 'string' && r.data.leadToken) {
+          leadToken = r.data.leadToken;
+          tokenDead = false;
+          track('funnel_start', { variant: VARIANT }, 'Lead', { content_name: 'CurateVIP Membership' });
+          /* If they backed up, corrected the email and started again, this is a
+             new record — replay everything already answered so the new lead is
+             not born empty. On a first run `answers` is {} and this is {step:1}. */
+          var replay = { step: 1 };
+          Object.keys(answers).forEach(function (k) { replay[k] = answers[k]; });
+          enqueue(replay);
+          goTo(2);
+          return;
+        }
+        if (r.status === 400) {
+          showError('We couldn’t accept those details — please check your name and email address and try again.', function () {
+            clearError();
+            document.getElementById('fFirst').focus();
+          });
+          return;
+        }
+        showError('We couldn’t reach our servers just now. Your details haven’t been sent — please try again.', submitStart);
+      }).catch(function () {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Begin';
+        showError('We couldn’t reach our servers just now. Your details haven’t been sent — please try again.', submitStart);
+      });
+    }
+
+    document.getElementById('step-1').addEventListener('submit', function (e) {
+      e.preventDefault();
+      submitStart();
+    });
+
+    /* ── Recording an answer ──────────────────────────────────────────── */
+    function record(field, value, stepIndex, nextStep) {
+      answers[field] = value;
+      var payload = {};
+      payload[field] = value;
+      payload.step = stepIndex;
+      enqueue(payload);
+      track('funnel_step', { step: stepIndex, variant: VARIANT });
+      if (nextStep) goTo(nextStep);
+    }
+
+    /* ── Step 2: home city ────────────────────────────────────────────── */
+    document.getElementById('step-2').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = document.getElementById('fCity');
+      var val = input.value.trim();
+      var ok = val.length > 1;
+      setFieldError('fCity', 'errCity', !ok);
+      if (!ok) { input.focus(); return; }
+      record('city', val, 2, 3);
+    });
+
+    /* ── Steps 3-6: auto-advancing choice questions ───────────────────── */
+    var AUTO_NEXT = { '3': 4, '4': 5, '5': 6, '6': 7 };
+
+    Array.prototype.forEach.call(document.querySelectorAll('.choices'), function (group) {
+      var field = group.getAttribute('data-field');
+      var stepIndex = Number(group.getAttribute('data-step-index'));
+      var manual = group.getAttribute('data-manual') === 'true';
+
+      Array.prototype.forEach.call(group.querySelectorAll('.choice'), function (btn) {
+        btn.setAttribute('aria-pressed', 'false');
+        btn.addEventListener('click', function () {
+          var value = btn.getAttribute('data-value');
+          Array.prototype.forEach.call(group.querySelectorAll('.choice'), function (b) {
+            b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+          });
+          if (manual) { onClubChoice(value); return; }
+          answers[field] = value;
+          record(field, value, stepIndex, AUTO_NEXT[String(stepIndex)]);
+        });
+      });
+    });
+
+    /* ── Step 7: private club ─────────────────────────────────────────── */
+    var clubNameGroup = document.getElementById('clubNameGroup');
+    var clubNameInput = document.getElementById('fClubName');
+    var clubContinue = document.getElementById('clubContinue');
+
+    function onClubChoice(value) {
+      /* Only a genuine change is transmitted, so toggling Yes/No a dozen times
+         cannot turn into a dozen requests against a rate-limited endpoint. */
+      var changed = answers.privateClubMember !== value;
+      answers.privateClubMember = value;
+      if (value === 'Yes') {
+        clubNameGroup.hidden = false;
+        clubContinue.hidden = false;
+        clubNameInput.focus();
+        /* Send the selection now rather than waiting for Continue. An applicant
+           who picks Yes and then abandons has still answered the question, and
+           the rule here is that no answer is ever lost. The club name follows
+           in the Continue patch. */
+        if (changed) {
+          enqueue({ privateClubMember: 'Yes', step: 7 });
+          track('funnel_step', { step: 7, variant: VARIANT });
+        }
+      } else {
+        clubNameGroup.hidden = true;
+        clubContinue.hidden = true;
+        clubNameInput.value = '';
+        answers.privateClubName = null;
+        /* One payload, not two: a trailing single-key patch could sit in the
+           queue unsent if the applicant stops here. */
+        if (changed) {
+          enqueue({ privateClubMember: 'No', privateClubName: null, step: 7 });
+          track('funnel_step', { step: 7, variant: VARIANT });
+        }
+        goTo(8);
+      }
+    }
+
+    document.getElementById('step-7').addEventListener('submit', function (e) {
+      e.preventDefault();
+      /* This form only ever completes the Yes branch; No is dispatched and
+         advanced the moment it is picked. */
+      if (answers.privateClubMember !== 'Yes') return;
+      var name = clubNameInput.value.trim();
+      answers.privateClubName = name || null;
+      enqueue({ privateClubMember: 'Yes', privateClubName: name || null, step: 7 });
+      track('funnel_step', { step: 7, variant: VARIANT });
+      goTo(8);
+    });
+
+    /* ── Step 8: phone + SMS consent, then complete ───────────────────── */
+    var phoneInput = document.getElementById('fPhone');
+    var consentBox = document.getElementById('fSmsConsent');
+    var finishBtn = document.getElementById('finishBtn');
+
+    /* Read the disclosure out of the DOM so the stored consent record is
+       exactly the string the applicant saw, whitespace-normalised. */
+    function consentTextShown() {
+      var el = document.getElementById('smsConsentText');
+      if (!el) return '';
+      return el.textContent.replace(/\s+/g, ' ').trim();
+    }
+
+    /* Consecutive failures of the completing PATCH, network-only. Reset on a
+       dead token, which is a different problem with a different remedy. */
+    var completeFailures = 0;
+
+    function completeApplication(payload) {
+      clearError();
+      finishBtn.disabled = true;
+      finishBtn.textContent = 'Sending…';
+      payload.step = 8;
+      payload.complete = true;
+      enqueue(payload);
+
+      flushAll().then(function (ok) {
+        finishBtn.disabled = false;
+        finishBtn.textContent = 'Submit Application';
+        if (ok) {
+          completeFailures = 0;
+          track('funnel_complete', { variant: VARIANT }, 'CompleteRegistration', { content_name: 'CurateVIP Membership', value: 299, currency: 'USD' });
+          showDone();
+          return;
+        }
+
+        /* A dead token is genuinely unrecoverable from here — the record the
+           answers belong to no longer exists — so this one does have to be
+           said out loud. */
+        if (tokenDead) {
+          completeFailures = 0;
+          showError('Your session expired before we could save that. Please start again from the top — it only takes a moment.', function () {
+            clearError();
+            leadToken = null;
+            tokenDead = false;
+            queue.length = 0;
+            completeFailures = 0;
+            goTo(1);
+          });
+          return;
+        }
+
+        completeFailures++;
+
+        /* Second consecutive network failure. The lead itself was created back
+           at step 1, so we already hold a name and an email and can reach this
+           person; the outstanding answers stay queued and keep draining in the
+           background (backoff, plus every time the tab is brought forward).
+           Holding someone hostage on a form they have finished is the worse
+           outcome, so let them out. */
+        if (completeFailures >= 2) {
+          track('funnel_complete', { variant: VARIANT }, 'CompleteRegistration', { content_name: 'CurateVIP Membership', value: 299, currency: 'USD' });
+          showDone();
+          return;
+        }
+
+        showError('We couldn’t send that just now — your answers are saved on this device and we’re still trying. You can retry now.', function () {
+          clearError();
+          completeApplication({});
+        });
+      });
+    }
+
+    function showDone() {
+      var greet = document.getElementById('doneGreeting');
+      /* textContent, not innerHTML — this is applicant-supplied. */
+      greet.textContent = identity.firstName
+        ? 'Thank you, ' + identity.firstName + '.'
+        : 'Thank you.';
+      goTo('done');
+    }
+
+    document.getElementById('step-8').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var phone = phoneInput.value.trim();
+      var payload = {};
+
+      if (phone !== '') {
+        var d = digits(phone);
+        var phoneOk = d.length >= 10 && d.length <= 15;
+        setFieldError('fPhone', 'errPhone', !phoneOk);
+        if (!phoneOk) { phoneInput.focus(); return; }
+
+        /* A number without a tick is not consent. Same rule the main site
+           enforces: give the number and opt in, or clear the number. */
+        var needsConsent = !consentBox.checked;
+        document.getElementById('errSmsConsent').classList.toggle('show', needsConsent);
+        if (needsConsent) { consentBox.focus({ preventScroll: true }); return; }
+
+        payload.phone = phone;
+        payload.smsConsent = true;
+        payload.smsConsentText = consentTextShown();
+      } else {
+        setFieldError('fPhone', 'errPhone', false);
+        document.getElementById('errSmsConsent').classList.remove('show');
+        payload.phone = null;
+        payload.smsConsent = false;
+      }
+
+      completeApplication(payload);
+    });
+
+    document.getElementById('skipPhone').addEventListener('click', function () {
+      phoneInput.value = '';
+      consentBox.checked = false;
+      setFieldError('fPhone', 'errPhone', false);
+      document.getElementById('errSmsConsent').classList.remove('show');
+      completeApplication({ phone: null, smsConsent: false });
+    });
+
+    /* ── Back buttons. Answers persist; selections are repainted. ─────── */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var host = btn.closest('.step');
+        var n = Number(host.getAttribute('data-step'));
+        if (n > 1) goTo(n - 1);
+      });
+    });
+
+    /* ── Hero CTA ─────────────────────────────────────────────────────── */
+    var heroCta = document.getElementById('heroCta');
+    if (heroCta) {
+      heroCta.addEventListener('click', function () {
+        window.setTimeout(function () {
+          var target = stepEl(current) || stepEl(1);
+          var input = target ? target.querySelector('input:not([type="checkbox"])') : null;
+          if (input) input.focus({ preventScroll: true });
+        }, 550);
+      });
+    }
+
+    /* ── Scroll fade-in, same observer as index.html ──────────────────────
+       .fade-in starts at opacity 0, and the funnel card itself carries the
+       class — so if this ever throws, the page is blank rather than merely
+       un-animated. Both failure paths reveal everything immediately. */
+    function revealAll() {
+      Array.prototype.forEach.call(document.querySelectorAll('.fade-in'), function (el) {
+        el.classList.add('visible');
+      });
+    }
+    try {
+      if (typeof IntersectionObserver === 'function') {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              observer.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        Array.prototype.forEach.call(document.querySelectorAll('.fade-in'), function (el) {
+          observer.observe(el);
+        });
+      } else {
+        revealAll();
+      }
+    } catch (e) {
+      revealAll();
+    }
+
+    /* ── Boot ─────────────────────────────────────────────────────────── */
+    applyVariant();
+    initConsentUI();
+    /* page_path is sent explicitly. vercel.json sets cleanUrls, so the canonical
+       path for this page is /join with no extension, and reporting has to agree
+       with the canonical tag rather than with whatever the file is called. */
+    track('page_view', {
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: window.location.pathname || '/join',
+      variant: VARIANT
+    });
+    goTo(1, { noScroll: true, noFocus: true });
+  })();
+  </script>
+
+</body>
+</html>
