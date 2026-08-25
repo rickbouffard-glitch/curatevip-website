@@ -185,7 +185,23 @@
        white plate roughly where the third line of the subhead lands, and the
        crop moves with the viewport, so the copy carries its own shadow rather
        than relying on the gradient alone. */
-    .hero-copy { text-shadow: 0 1px 14px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.5); }
+    /* The moss wall is busy and mid-tone, which is the hardest kind of backdrop
+       for light text. The page gradient alone is not enough because the crop
+       moves with the viewport, so the copy column carries its own soft scrim
+       AND a shadow — belt and braces, and it costs nothing. */
+    .hero-copy {
+      position: relative;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.7);
+    }
+    .hero-copy::before {
+      content: '';
+      position: absolute;
+      inset: -28px -44px -28px -40px;
+      background: radial-gradient(120% 100% at 22% 45%, rgba(5,5,6,0.72) 0%, rgba(5,5,6,0.46) 52%, rgba(5,5,6,0) 100%);
+      z-index: -1;
+      pointer-events: none;
+      border-radius: 24px;
+    }
 
     .hero-kicker {
       font-size: 10.5px;
@@ -208,11 +224,11 @@
     .hero-title em { font-style: italic; color: var(--gold); }
 
     .hero-sub {
-      font-size: 15.5px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.7;
-      max-width: 46ch;
+      font-size: 16.5px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.65;
+      max-width: 44ch;
     }
     .hero-sub em { color: var(--gold-light); font-style: italic; }
 
@@ -221,7 +237,7 @@
       position: relative;
       padding-left: 20px;
       font-size: 13.5px;
-      color: rgba(255,255,255,0.62);
+      color: rgba(255,255,255,0.84);
       line-height: 1.6;
     }
     .hero-points li::before {
@@ -233,6 +249,20 @@
     }
 
     #apply { scroll-margin-top: 92px; }
+
+    /* The card is the only thing on this page we want anyone to touch, so it
+       gets the warmest edge and a faint gold lift. Everything else in the hero
+       is deliberately quieter than this. */
+    .apply-cue {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin: 0 0 12px 2px;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+    }
+    .apply-cue span { color: var(--gold); }
 
     .hero-reassure {
       margin-top: 14px;
@@ -518,13 +548,35 @@
     /* ─── FUNNEL ──────────────────────────────────────── */
     .funnel {
       background: rgba(13,13,13,0.96);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(213,152,75,0.28);
       border-radius: 18px;
       padding: 26px 26px 24px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(213,152,75,0.06), 0 0 46px rgba(213,152,75,0.10);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
     }
+
+    /* ── Stop the card resizing between questions ─────────────────────────
+       Measured on the live page: steps ranged from 190px (two choices) to
+       395px (four choices) on desktop, and 235px to 455px on a phone. That is
+       a 200px+ jump on every transition, so the card visibly snaps up and down
+       as you answer — and the buttons move under the cursor mid-quiz.
+
+       Fixed with min-height on the steps rather than on the card, because only
+       one step is ever visible and it is the card's only variable content, so
+       pinning the step pins the card. min-height, not height: if copy is ever
+       lengthened the step still grows rather than clipping.
+
+       Step 1 and the completion screen are deliberately EXEMPT:
+         • Step 1 sits in the hero and has to clear the fold on a 390x844 phone,
+           where there were only ~106px to spare. Padding it to the tallest step
+           would push the reassurance line into the consent bar. It is also seen
+           exactly once, before any bouncing can happen.
+         • The completion screen is the end of the flow — a size change there
+           reads as arrival, not as instability.
+
+       Values are the measured tallest of steps 2–9 at each breakpoint. */
+    .step:not(#step-1):not(#step-done) { min-height: 395px; }
 
     .prog-wrap { margin-bottom: 20px; }
 
@@ -877,6 +929,9 @@
       }
       .hero-photo { object-position: 50% 42%; }
 
+      /* Taller at phone width: the four-choice questions and the consent
+         paragraph both wrap more, measured max 455px across steps 2-9. */
+      .step:not(#step-1):not(#step-done) { min-height: 455px; }
       .funnel { padding: 16px 16px 18px; border-radius: 16px; }
       .prog-wrap { margin-bottom: 12px; }
       .prog-label { margin-top: 8px; }
@@ -981,13 +1036,15 @@
           Five stars mean nothing unless they&rsquo;re <em>your</em> five stars.
         </h1>
         <p class="hero-sub" id="heroSub">
-          A short quiz learns how you like a hotel, a table and a room to feel.
-          Every search after that returns three to five places that match &mdash; and why.
+          You already know what you like. You just keep having to prove it to a
+          search box. <em>Nine questions, about two minutes</em> &mdash; then every
+          search returns three to five places chosen for how you like a room to
+          feel, each with the reason it is yours.
         </p>
         <ul class="hero-points">
-          <li>Three to five matches per search, each with a written reason. Not 150 results.</li>
+          <li>Three to five places, not 150 blue links you still have to sort through.</li>
           <li>Every venue corroborated against Michelin, Forbes, Relais &amp; Ch&acirc;teaux and a dozen more.</li>
-          <li>No paid placements, ever.</li>
+          <li>No paid placements, ever. Nobody buys their way onto your list.</li>
         </ul>
       </div>
 
@@ -1000,6 +1057,7 @@
            after step 1 PATCHes against the token and is queued for retry
            rather than blocking the applicant. ══ -->
       <div id="apply">
+        <p class="apply-cue"><span>Start here</span> &mdash; 9 questions, about 2 minutes</p>
         <div class="funnel" id="funnel">
 
           <!-- Progress -->
