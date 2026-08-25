@@ -26,6 +26,13 @@
   <meta name="twitter:image" content="https://curatevip.app/logo-full.png" />
 
   <link rel="icon" type="image/png" href="C-IconNoBg.png" />
+
+  <!-- The hero photograph is the LCP element. Preload it ahead of the font
+       request so it starts downloading in the first round trip. -->
+  <link rel="preload" as="image" href="hero-dining-1600.webp"
+        imagesrcset="hero-dining-900.webp 900w, hero-dining-1600.webp 1600w"
+        imagesizes="100vw" fetchpriority="high" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Weight list is identical to index.html on purpose: loading a real 700
@@ -94,14 +101,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 max(24px, calc((100% - 1120px) / 2 + 72px));
-      height: 88px;
-      background: #000;
-      border-bottom: 1px solid var(--border);
+      padding: 0 max(20px, calc((100% - 1160px) / 2));
+      height: 76px;
+      background: rgba(0,0,0,0.86);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
     }
 
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo img { height: 52px; width: auto; opacity: 0.92; margin: 10px 0; }
+    .nav-logo { display: flex; align-items: center; min-height: 44px; text-decoration: none; }
+    .nav-logo img { height: 40px; width: auto; opacity: 0.94; }
 
     .nav-member {
       font-size: 11px;
@@ -119,65 +128,126 @@
     }
     .nav-member:hover { color: var(--gold); }
 
-    section { scroll-margin-top: 88px; }
+    section { scroll-margin-top: 92px; }
 
-    /* ─── HERO ────────────────────────────────────────── */
+    /* ─── HERO ────────────────────────────────────────────────────────────
+       The application form lives here, above the fold, on every viewport.
+       Everything below this section is supporting material for people who
+       need more before they commit — not a corridor to the form. */
     #home {
+      position: relative;
+      isolation: isolate;
       min-height: 100svh;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 120px max(24px, calc((100% - 1120px) / 2 + 72px)) 72px;
-      position: relative;
+      align-items: center;
+      padding: 112px max(20px, calc((100% - 1160px) / 2)) 56px;
       overflow: hidden;
     }
 
-    .hero-glow {
+    .hero-photo {
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse 60% 70% at 75% 50%, rgba(186,159,117,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 20% 30%, rgba(186,159,117,0.04) 0%, transparent 55%),
-        radial-gradient(ellipse 35% 35% at 85% 85%, rgba(186,159,117,0.03) 0%, transparent 55%);
-      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+      z-index: -2;
     }
 
-    .hero-inner { max-width: 1120px; width: 100%; margin: 0 auto; position: relative; }
-    .hero-left { max-width: 760px; }
+    /* Heaviest under the copy on the left, lightest on the right where the
+       form card is opaque anyway — so the photograph actually reads instead
+       of being crushed to black.
+       Contrast floor: against the worst case in this image (a blown-out white
+       plate, 255), the copy column sits at roughly 0.67–0.75 combined alpha,
+       compositing to ~#44–58. White on that is over 4.5:1 for the 13.5px and
+       15.5px copy, and far over 3:1 for the headline. */
+    .hero-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(6,6,6,0.95) 0%, rgba(6,6,6,0.90) 30%, rgba(7,7,7,0.72) 48%, rgba(8,8,8,0.44) 68%, rgba(8,8,8,0.30) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.10) 28%, rgba(0,0,0,0.10) 60%, rgba(0,0,0,0.40) 100%);
+    }
+
+    .hero-inner {
+      width: 100%;
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 468px;
+      gap: 56px;
+      align-items: center;
+    }
+
+    /* Belt and braces on top of the scrim. The photograph has a blown-out
+       white plate roughly where the third line of the subhead lands, and the
+       crop moves with the viewport, so the copy carries its own shadow rather
+       than relying on the gradient alone. */
+    .hero-copy { text-shadow: 0 1px 14px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.5); }
+
+    .hero-kicker {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
 
     .hero-title {
       font-family: var(--serif);
-      font-size: clamp(32px, 3.2vw, 48px);
+      font-size: clamp(30px, 3.4vw, 46px);
       font-weight: 400;
-      line-height: 1.08;
+      line-height: 1.1;
       color: #fff;
-      margin-bottom: 28px;
+      margin-bottom: 18px;
+      text-wrap: balance;
     }
     .hero-title em { font-style: italic; color: var(--gold); }
 
     .hero-sub {
-      font-size: 15px;
+      font-size: 15.5px;
       font-weight: 300;
-      color: var(--text-60);
-      line-height: 1.8;
-      margin-bottom: 40px;
-      max-width: 62ch;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.7;
+      max-width: 46ch;
     }
     .hero-sub em { color: var(--gold-light); font-style: italic; }
 
-    .hero-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-
-    .hero-meta {
-      margin-top: 22px;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-20);
+    .hero-points { list-style: none; margin-top: 26px; display: flex; flex-direction: column; gap: 10px; }
+    .hero-points li {
+      position: relative;
+      padding-left: 20px;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.6;
     }
+    .hero-points li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 10px;
+      width: 9px; height: 1px;
+      background: var(--gold);
+    }
+
+    #apply { scroll-margin-top: 92px; }
+
+    .hero-reassure {
+      margin-top: 14px;
+      font-size: 12px;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+    .hero-reassure strong { color: rgba(255,255,255,0.78); font-weight: 500; }
+    .hero-reassure a { color: rgba(255,255,255,0.5); text-decoration: underline; }
 
     /* ─── BUTTONS (index.html) ────────────────────────── */
     .btn-primary {
       padding: 16px 44px;
+      min-height: 48px;
       background: var(--gold);
       border: none;
       border-radius: 40px;
@@ -190,13 +260,16 @@
       text-decoration: none;
       cursor: pointer;
       transition: background 0.2s, transform 0.15s;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
     .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
     .btn-ghost {
-      padding: 16px 44px;
+      padding: 16px 40px;
+      min-height: 48px;
       background: transparent;
       border: 1px solid rgba(255,255,255,0.28);
       border-radius: 40px;
@@ -209,128 +282,199 @@
       text-decoration: none;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn-ghost:hover { border-color: var(--gold-border); color: var(--gold); }
 
-    /* ─── STATS BAR ───────────────────────────────────── */
-    .stats-bar {
-      background: var(--bg2);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 44px 72px;
-      display: flex;
-      justify-content: center;
-      gap: 88px;
-      flex-wrap: wrap;
+    /* ─── BANDS ───────────────────────────────────────── */
+    .band {
+      padding: 56px max(20px, calc((100% - 1160px) / 2));
     }
-    .stat { text-align: center; }
-    .stat-num {
-      font-family: var(--serif);
-      font-size: 38px;
-      font-weight: 600;
-      color: var(--gold);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .stat-lbl {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-40);
-      max-width: 22ch;
-    }
-
-    /* ─── SECTIONS ────────────────────────────────────── */
-    .band { padding: 58px 72px; max-width: 1120px; margin: 0 auto; }
-
     .band-alt {
       background: var(--bg2);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      max-width: none;
-      padding: 58px max(24px, calc((100% - 1120px) / 2 + 72px));
     }
-    .band-alt > * { max-width: 1120px; margin-left: auto; margin-right: auto; }
-
-    .section-header { text-align: left; margin-bottom: 30px; }
+    .band-inner { max-width: 1160px; margin: 0 auto; }
 
     .section-eyebrow {
       font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--gold);
-      opacity: 0.75;
-      margin-bottom: 20px;
+      opacity: 0.8;
+      margin-bottom: 14px;
     }
 
     .section-h2 {
       font-family: var(--serif);
-      font-size: clamp(25px, 2.2vw, 35px);
+      font-size: clamp(24px, 2.2vw, 33px);
       font-weight: 300;
-      line-height: 1.1;
-      margin-bottom: 24px;
+      line-height: 1.15;
+      margin-bottom: 14px;
     }
     .section-h2 em { font-style: italic; color: var(--gold); }
 
-    .section-sub { font-size: 15px; color: var(--text-40); margin: 0; line-height: 1.75; }
+    .section-sub { font-size: 15px; color: var(--text-60); line-height: 1.7; max-width: 62ch; }
     .section-sub em { color: var(--gold-light); font-style: italic; }
 
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 12px;
-      align-items: stretch;
+    /* ─── TRUST STRIP ─────────────────────────────────────────────────────
+       Restrained on purpose. These are the guides and award bodies the
+       scoring engine actually reads; the row is a credential, not a logo
+       wall, so it stays as text. */
+    .trust {
+      background: #060606;
+      border-bottom: 1px solid var(--border);
+      padding: 26px max(20px, calc((100% - 1160px) / 2));
+    }
+    .trust-inner { max-width: 1160px; margin: 0 auto; text-align: center; }
+    .trust-lead {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-40);
+      margin-bottom: 14px;
+    }
+    .trust-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 0;
+      margin-bottom: 14px;
+    }
+    .trust-list li {
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      padding: 0 14px;
+      border-right: 1px solid rgba(255,255,255,0.14);
+      line-height: 1.2;
+    }
+    .trust-list li:last-child { border-right: none; }
+    .trust-note {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--gold);
     }
 
-    .about-card {
+    /* ─── PRODUCT PROOF ───────────────────────────────── */
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 56px;
+      align-items: center;
+    }
+    .proof-shot {
+      justify-self: center;
+      border-radius: 20px;
+      border: 1px solid var(--border-l);
+      background: #000;
+      padding: 8px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+    .proof-shot img {
+      display: block;
+      width: 100%;
+      max-width: 258px;
+      height: auto;
+      border-radius: 13px;
+    }
+    .proof-cap {
+      margin-top: 12px;
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-20);
+      text-align: center;
+    }
+
+    .point-list { list-style: none; display: flex; flex-direction: column; gap: 22px; margin-top: 26px; }
+    .point-list li { border-left: 1px solid var(--gold-border); padding-left: 20px; }
+    .point-t {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+    .point-d { font-size: 14px; color: var(--text-60); line-height: 1.7; }
+
+    /* ─── SPEEDS ──────────────────────────────────────── */
+    .speed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin-top: 26px;
+    }
+    .speed-card {
+      background: var(--bg3);
+      border: 1px solid var(--border-l);
+      border-radius: 14px;
+      padding: 20px 22px;
+    }
+    .speed-head {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.26em;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .speed-card dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; }
+    .speed-card dt { font-size: 13.5px; font-weight: 500; color: #fff; white-space: nowrap; }
+    .speed-card dd { font-size: 13.5px; color: var(--text-60); line-height: 1.5; }
+
+    /* ─── CITIES ──────────────────────────────────────── */
+    .city-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .city {
       background: var(--bg2);
       border: 1px solid var(--border-l);
       border-radius: 12px;
-      padding: 18px;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-      height: 100%;
-      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      gap: 6px;
+      min-height: 76px;
+      justify-content: center;
     }
-    .about-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(186,159,117,0.04) 0%, transparent 55%);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.35s ease;
+    .city-name { font-family: var(--serif); font-size: 17px; color: #fff; line-height: 1.2; }
+    .city-tag {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.9;
     }
-    .about-card:hover {
-      border-color: var(--gold-border);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.5);
-      transform: translateY(-3px);
+    .city.new { border-color: var(--gold-border); }
+
+    /* ─── PRICE ───────────────────────────────────────── */
+    .price-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
     }
-    .about-card:hover::after { opacity: 1; }
-
-    .band-alt .about-card { background: var(--bg3); }
-
-    .card-body { flex: 1; }
-
-    .card-title {
+    .price-tag {
       font-family: var(--serif);
-      font-size: 17px;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.3;
-      margin-bottom: 8px;
+      font-size: clamp(42px, 5vw, 62px);
+      line-height: 1;
+      color: var(--gold);
+      font-weight: 400;
     }
-
-    .card-desc { font-size: 14px; color: var(--text-60); line-height: 1.75; }
-    .card-desc strong { color: #fff; font-weight: 500; }
-    .speed-card .card-desc { line-height: 1.9; }
+    .price-tag span { font-family: var(--sans); font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-40); display: block; margin-top: 12px; font-weight: 500; }
 
     .included-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
     .included-list li {
@@ -338,56 +482,51 @@
       padding-left: 22px;
       font-size: 14px;
       color: var(--text-60);
-      line-height: 1.7;
+      line-height: 1.65;
     }
     .included-list li::before {
       content: '';
       position: absolute;
-      left: 0;
-      top: 10px;
-      width: 8px;
-      height: 1px;
+      left: 0; top: 10px;
+      width: 9px; height: 1px;
       background: var(--gold);
-      opacity: 0.7;
+      opacity: 0.8;
     }
+    .included-list strong { color: #fff; font-weight: 500; }
 
-    .solution-callout {
-      margin-top: 40px;
-      padding: 36px 40px;
-      background: rgba(186,159,117,0.05);
+    .price-note {
+      margin-top: 24px;
+      padding: 16px 18px;
+      background: rgba(186,159,117,0.06);
       border: 1px solid var(--gold-border);
-      border-radius: 20px;
-      text-align: center;
-    }
-    .solution-quote {
-      font-family: var(--serif);
-      font-size: 21px;
-      font-style: italic;
-      font-weight: 300;
-      line-height: 1.5;
+      border-radius: 12px;
+      font-size: 13.5px;
       color: var(--gold-light);
+      line-height: 1.65;
     }
-    .solution-sub { margin-top: 12px; font-size: 13px; color: var(--text-40); }
 
-    /* ─── FUNNEL ──────────────────────────────────────── */
-    #apply {
-      padding: 58px max(24px, calc((100% - 1120px) / 2 + 72px)) 80px;
+    /* ─── SECOND CTA ──────────────────────────────────── */
+    .cta-band {
+      text-align: center;
+      padding: 62px max(20px, calc((100% - 1160px) / 2)) 68px;
       border-top: 1px solid var(--border);
     }
+    .cta-band .section-h2 { margin-left: auto; margin-right: auto; }
+    .cta-band .section-sub { margin: 0 auto 28px; }
+    .cta-sub-note { margin-top: 18px; font-size: 12px; color: var(--text-20); }
 
-    .funnel-head { max-width: 640px; margin: 0 auto 28px; text-align: center; }
-    .funnel-head .section-sub { margin-left: auto; margin-right: auto; }
-
+    /* ─── FUNNEL ──────────────────────────────────────── */
     .funnel {
-      max-width: 640px;
-      margin: 0 auto;
-      background: var(--bg2);
-      border: 1px solid var(--border-l);
-      border-radius: 20px;
-      padding: 32px;
+      background: rgba(13,13,13,0.96);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 26px 26px 24px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
     }
 
-    .prog-wrap { margin-bottom: 28px; }
+    .prog-wrap { margin-bottom: 20px; }
 
     .prog-track {
       height: 2px;
@@ -404,8 +543,8 @@
       transition: width 0.4s ease;
     }
     .prog-label {
-      margin-top: 12px;
-      font-size: 10px;
+      margin-top: 10px;
+      font-size: 9.5px;
       font-weight: 500;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -414,23 +553,23 @@
 
     .step-q {
       font-family: var(--serif);
-      font-size: clamp(23px, 2vw, 28px);
+      font-size: 23px;
       font-weight: 400;
       line-height: 1.25;
       color: #fff;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       outline: none;
     }
-    .step-help { font-size: 13.5px; color: var(--text-40); line-height: 1.7; margin-bottom: 24px; }
+    .step-help { font-size: 13px; color: var(--text-40); line-height: 1.6; margin-bottom: 18px; }
 
-    .field-stack { display: flex; flex-direction: column; gap: 16px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .field-stack { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
 
     .form-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: rgba(186,159,117,0.85);
     }
@@ -438,11 +577,12 @@
 
     .form-input {
       width: 100%;
-      padding: 14px 18px;
+      padding: 13px 15px;
+      min-height: 48px;
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: 10px;
-      color: rgba(255,255,255,0.88);
+      color: rgba(255,255,255,0.9);
       font-family: var(--sans);
       font-size: 16px; /* 16px keeps iOS Safari from zooming the viewport on focus */
       font-weight: 300;
@@ -457,40 +597,41 @@
 
     .field-error {
       font-size: 10.5px;
-      color: #c0392b;
+      color: #e06c5c;
       letter-spacing: 0.03em;
-      margin-top: -4px;
+      margin-top: -3px;
       display: none;
     }
     .field-error.show { display: block; }
 
     /* Choice questions. Real buttons, full width, generous target height —
        a 390px phone is the primary surface for this page. */
-    .choices { display: flex; flex-direction: column; gap: 10px; }
+    .choices { display: flex; flex-direction: column; gap: 9px; }
 
     .choice {
       display: block;
       width: 100%;
       text-align: left;
-      padding: 17px 20px;
+      padding: 15px 18px;
+      min-height: 50px;
       background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 11px;
       color: rgba(255,255,255,0.88);
       font-family: var(--sans);
       font-size: 15px;
       font-weight: 300;
       cursor: pointer;
-      transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
     }
-    .choice:hover { border-color: var(--gold-border); color: var(--gold-light); transform: translateY(-1px); }
+    .choice:hover { border-color: var(--gold-border); color: var(--gold-light); }
     .choice[aria-pressed="true"] {
       border-color: var(--gold);
       background: rgba(186,159,117,0.10);
       color: var(--gold-light);
     }
 
-    .choices-inline { display: flex; gap: 10px; }
+    .choices-inline { display: flex; flex-direction: row; gap: 10px; }
     .choices-inline .choice { text-align: center; }
 
     .consent-label {
@@ -501,17 +642,17 @@
       line-height: 1.6;
     }
     .consent-label input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--gold); }
-    .consent-text { font-size: 13px; opacity: 0.75; }
+    .consent-text { font-size: 12.5px; opacity: 0.72; }
     .consent-text a { color: inherit; text-decoration: underline; }
 
     .step-actions {
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin-top: 26px;
+      gap: 12px;
+      margin-top: 20px;
       flex-wrap: wrap;
     }
-    .step-actions .btn-primary { flex: 1; min-width: 180px; text-align: center; padding: 16px 28px; }
+    .step-actions .btn-primary { flex: 1; min-width: 160px; text-align: center; padding: 16px 24px; }
 
     /* Every low-emphasis control still has to clear a 44px touch target. */
     .btn-back {
@@ -550,12 +691,10 @@
     }
     .btn-skip:hover { color: var(--gold); }
 
-    .step-foot { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-
-    .form-note { font-size: 11px; color: var(--text-20); line-height: 1.6; }
+    .step-foot { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 
     .funnel-error {
-      margin-top: 18px;
+      margin-top: 16px;
       padding: 14px 16px;
       border: 1px solid rgba(192,57,43,0.55);
       background: rgba(192,57,43,0.08);
@@ -565,7 +704,7 @@
       line-height: 1.6;
     }
     .funnel-error button {
-      margin-top: 8px;
+      margin-top: 6px;
       background: none;
       border: none;
       color: var(--gold);
@@ -582,10 +721,10 @@
     }
 
     /* Completion */
-    .done { text-align: center; padding: 8px 0 4px; }
+    .done { text-align: center; padding: 6px 0 4px; }
     .done-mark {
-      width: 46px; height: 46px;
-      margin: 0 auto 18px;
+      width: 44px; height: 44px;
+      margin: 0 auto 16px;
       border-radius: 50%;
       border: 1px solid var(--gold-border);
       background: rgba(186,159,117,0.08);
@@ -594,33 +733,57 @@
     .done-mark svg { width: 20px; height: 20px; }
     .done-title {
       font-family: var(--serif);
-      font-size: 27px;
+      font-size: 25px;
       font-weight: 600;
       color: var(--gold);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+      outline: none;
     }
-    .done-text { font-size: 14px; color: var(--text-60); line-height: 1.85; max-width: 46ch; margin: 0 auto 14px; }
-    .done-text.quiet { color: var(--text-40); font-size: 13px; }
+    .done-text { font-size: 13.5px; color: var(--text-60); line-height: 1.8; max-width: 44ch; margin: 0 auto 12px; }
+    .done-text.quiet { color: var(--text-40); font-size: 12.5px; }
 
-    /* ─── CONSENT BANNER ──────────────────────────────── */
+    /* ─── STICKY MOBILE CTA ───────────────────────────────────────────────
+       Only appears once the hero form has scrolled out of view, and is
+       suppressed entirely while the consent bar is open so the two never
+       stack at the bottom of a phone. Hidden by default: if the script
+       never runs, no bar appears. */
+    .sticky-cta {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 150;
+      display: none;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+      background: rgba(6,6,6,0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border-l);
+    }
+    .sticky-cta a { width: 100%; min-height: 50px; }
+
+    /* ─── CONSENT BANNER ──────────────────────────────────────────────────
+       Centred at the very bottom rather than floating over the hero, and the
+       hero reserves room for it while it is open. */
     .cookie {
       position: fixed;
-      left: 24px;
-      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 18px;
       z-index: 200;
-      max-width: 380px;
-      background: rgba(17,17,17,0.97);
+      width: min(720px, calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: rgba(15,15,15,0.98);
       border: 1px solid var(--border-l);
       border-radius: 14px;
-      padding: 18px 20px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+      padding: 14px 18px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.7);
     }
-    .cookie p { font-size: 12.5px; color: var(--text-60); line-height: 1.7; }
+    .cookie p { font-size: 12px; color: var(--text-60); line-height: 1.6; }
     .cookie p a { color: var(--gold); text-decoration: underline; }
-    .cookie-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .cookie-actions { display: flex; gap: 10px; flex-shrink: 0; }
     .cookie-btn {
-      flex: 1;
-      padding: 12px 14px;
+      padding: 12px 18px;
       min-height: 44px;
       display: inline-flex;
       align-items: center;
@@ -632,6 +795,7 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
+      white-space: nowrap;
       transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
     .cookie-accept { background: var(--gold); border: 1px solid var(--gold); color: #000; }
@@ -639,20 +803,22 @@
     .cookie-decline { background: transparent; border: 1px solid rgba(255,255,255,0.22); color: var(--text-60); font-weight: 500; }
     .cookie-decline:hover { border-color: var(--gold-border); color: var(--gold); }
 
+    body.consent-open .sticky-cta { display: none !important; }
+    body.consent-open #home { padding-bottom: 140px; }
+
     /* ─── FOOTER ──────────────────────────────────────── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 36px 72px;
+      padding: 26px max(20px, calc((100% - 1160px) / 2));
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 18px;
       flex-wrap: wrap;
     }
-    .footer-logo { display: flex; align-items: center; gap: 8px; }
-    .footer-logo img { height: 22px; width: auto; opacity: 0.7; }
+    .footer-logo img { height: 22px; width: auto; opacity: 0.65; display: block; }
     .footer-copy { font-size: 11px; color: var(--text-20); letter-spacing: 0.04em; }
-    .footer-links { display: flex; gap: 28px; list-style: none; flex-wrap: wrap; }
+    .footer-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
     .footer-links a {
       font-size: 10px;
       color: var(--text-20);
@@ -660,63 +826,105 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
     }
     .footer-links a:hover { color: var(--gold); }
 
     /* ─── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 1080px) {
+      .hero-inner { grid-template-columns: minmax(0, 1fr) 420px; gap: 36px; }
+      .proof-grid { grid-template-columns: 250px minmax(0, 1fr); gap: 36px; }
+    }
+
     @media (max-width: 900px) {
-      nav { height: 68px; padding: 0 20px; }
-      .nav-logo img { height: 38px; margin: 6px 0; }
-      section { scroll-margin-top: 68px; }
+      nav { height: 64px; padding: 0 18px; }
+      .nav-logo img { height: 34px; }
+      section { scroll-margin-top: 72px; }
+      #apply { scroll-margin-top: 76px; }
 
-      #home { padding: 92px 24px 48px; min-height: 100svh; }
-      .hero-title { font-size: clamp(30px, 8vw, 44px); }
-      .hero-sub { font-size: 14px; margin-bottom: 30px; }
-      .hero-actions { gap: 12px; }
-      .btn-primary, .btn-ghost { padding: 15px 26px; font-size: 9.5px; letter-spacing: 0.16em; }
+      /* Every value below is tuned so that the headline, all three fields, the
+         Begin button and the reassurance line all clear 844px on a 390px
+         phone — with the consent bar open. Measured, not guessed. */
+      #home {
+        align-items: flex-start;
+        padding: 72px 18px 40px;
+      }
+      .hero-inner { grid-template-columns: 1fr; gap: 20px; }
+      .hero-kicker { font-size: 10px; letter-spacing: 0.2em; margin-bottom: 10px; }
+      .hero-title { font-size: clamp(23px, 6.8vw, 30px); margin-bottom: 10px; }
+      .hero-sub { font-size: 13px; line-height: 1.55; }
+      .hero-reassure { margin-top: 12px; font-size: 11.5px; line-height: 1.5; }
+      .hero-points { display: none; } /* desktop-only garnish; never above the fold on a phone */
 
-      .stats-bar { padding: 34px 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px 12px; }
-      .stat-num { font-size: 28px; }
-      .stat-lbl { font-size: 9px; letter-spacing: 0.12em; }
+      /* One axis only on a phone: the photo lives in the top strip behind the
+         headline, then hands over to near-solid behind the card. */
+      .hero-scrim {
+        background:
+          linear-gradient(180deg, rgba(6,6,6,0.55) 0%, rgba(6,6,6,0.72) 18%, rgba(6,6,6,0.92) 42%, rgba(6,6,6,0.97) 65%, rgba(6,6,6,0.99) 100%);
+      }
+      .hero-photo { object-position: 50% 42%; }
 
-      .band { padding: 52px 24px; }
-      .band-alt { padding: 52px 24px; }
-      .cards-grid { grid-template-columns: 1fr; }
-      .section-h2 { font-size: clamp(26px, 7vw, 36px); }
-      .solution-callout { padding: 28px 22px; margin-top: 32px; }
-      .solution-quote { font-size: 18px; }
-
-      #apply { padding: 52px 16px 64px; }
-      .funnel { padding: 24px 18px; border-radius: 16px; }
-      .form-row { grid-template-columns: 1fr; }
+      .funnel { padding: 16px 16px 18px; border-radius: 16px; }
+      .prog-wrap { margin-bottom: 12px; }
+      .prog-label { margin-top: 8px; }
+      .step-q { font-size: 20px; }
+      .step-help { font-size: 12.5px; margin-bottom: 12px; }
       .step-actions .btn-primary { width: 100%; flex: 1 1 100%; min-width: 0; }
-      .step-actions { flex-direction: column-reverse; align-items: stretch; gap: 6px; }
+      .step-actions { flex-direction: column-reverse; align-items: stretch; gap: 4px; margin-top: 16px; }
       .btn-back { text-align: center; }
-      .choices-inline .choice { padding: 17px 12px; }
+      .choices-inline .choice { padding: 15px 12px; }
 
-      .cookie { left: 12px; right: 12px; bottom: 12px; max-width: none; }
+      .band { padding: 44px 18px; }
+      .trust { padding: 22px 18px; }
+      .trust-list li { font-size: 10.5px; padding: 0 10px; letter-spacing: 0.08em; }
 
-      footer { padding: 30px 24px; flex-direction: column; text-align: center; }
-      .footer-links { justify-content: center; gap: 18px; }
-      /* Desktop keeps index.html's footer exactly; on touch these still have to
-         clear a 44px target. */
-      .footer-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; }
+      .proof-grid { grid-template-columns: 1fr; gap: 28px; }
+      .proof-shot img { max-width: 230px; }
+      .point-list { gap: 18px; margin-top: 20px; }
+
+      .price-grid { grid-template-columns: 1fr; gap: 24px; }
+      .cta-band { padding: 48px 18px 54px; }
+
+      .cookie {
+        left: 0; right: 0; bottom: 0;
+        transform: none;
+        width: 100%;
+        max-width: none;
+        border-radius: 0;
+        border-left: none; border-right: none; border-bottom: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+      }
+      .cookie p { font-size: 11.5px; line-height: 1.5; }
+      .cookie-actions .cookie-btn { flex: 1; }
+      body.consent-open #home { padding-bottom: 132px; }
+
+      .sticky-cta:not([hidden]) { display: block; }
+
+      footer { padding: 24px 18px; flex-direction: column; text-align: center; gap: 8px; }
+      .footer-links { justify-content: center; gap: 16px; }
     }
 
-    @media (max-width: 380px) {
-      .stats-bar { grid-template-columns: 1fr 1fr; }
+    /* Very narrow phones: the two-up name row stops being usable. */
+    @media (max-width: 359px) {
+      .form-row { grid-template-columns: 1fr; }
     }
 
-    /* ─── FADE IN ─────────────────────────────────────── */
+    /* ─── FADE IN ─────────────────────────────────────────────────────────
+       Deliberately minimal: two section headers, a 10px lift, and a fast
+       transition. Down from 22 elements. Nothing above the fold carries it,
+       no CTA carries it, and nothing it touches is large enough to leave a
+       screen reading as empty while it scrolls past. */
     .fade-in {
       opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.75s ease, transform 0.75s ease;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
-    .fade-in.delay-1 { transition-delay: 0.1s; }
-    .fade-in.delay-2 { transition-delay: 0.2s; }
-    .fade-in.delay-3 { transition-delay: 0.3s; }
+    .fade-in.visible { opacity: 1; transform: none; }
   </style>
 </head>
 <body>
@@ -725,378 +933,441 @@
        jobs are "prove it's really CurateVIP" and "let an existing member out". ── -->
   <nav>
     <a href="/" class="nav-logo">
-      <img src="Logo-Horizontal-Website.png" alt="CURATEvip" />
+      <img src="Logo-Horizontal-Website.png" alt="CURATEvip" width="1684" height="284" fetchpriority="high" />
     </a>
     <a href="https://curatevip.ai" target="_blank" rel="noopener" class="nav-member">Member Login</a>
   </nav>
 
-  <!-- ── HERO ── -->
+  <!-- ══ HERO — headline, subhead and step 1 of the application, complete
+       above the fold at 1440×800 and at 390×844. The funnel markup below is
+       unchanged apart from its position in the document; the script binds to
+       the same ids it always did. ══ -->
   <section id="home">
-    <div class="hero-glow"></div>
+    <picture>
+      <!-- 302 KB JPEG -> 41 KB (mobile) / 87 KB (desktop) WebP. The photo sits
+           behind a heavy scrim, so quality can drop well below normal with no
+           visible difference -- and page speed is a stated conversion lever
+           here (1s loads convert ~2.5x better than 5s). -->
+      <source type="image/webp"
+              srcset="hero-dining-900.webp 900w, hero-dining-1600.webp 1600w"
+              sizes="100vw" />
+      <img
+        class="hero-photo"
+        src="hero-dining-1600.jpg"
+        alt=""
+        width="1600"
+        height="1067"
+        decoding="async"
+        fetchpriority="high">
+    </picture>
+    <div class="hero-scrim" aria-hidden="true"></div>
+
     <div class="hero-inner">
-      <div class="hero-left fade-in visible">
+
+      <div class="hero-copy">
+        <p class="hero-kicker">By invitation &nbsp;·&nbsp; $299 a year</p>
         <h1 class="hero-title" id="heroTitle">
           Five stars mean nothing unless they&rsquo;re <em>your</em> five stars.
         </h1>
         <p class="hero-sub" id="heroSub">
-          CurateVIP is an invitation-only membership. A short quiz learns how you like a hotel,
-          a table and a room to feel &mdash; we call it <em>Your Speed</em> &mdash; and every
-          search after that returns three to five places that match it. Not 150 results. Not the
-          average opinion of strangers.
+          A short quiz learns how you like a hotel, a table and a room to feel.
+          Every search after that returns three to five places that match &mdash; and why.
         </p>
-        <div class="hero-actions">
-          <a href="#apply" class="btn-primary" id="heroCta">Request an Invitation</a>
-          <a href="#what-it-is" class="btn-ghost">What It Is</a>
-        </div>
-        <p class="hero-meta">$299 a year &nbsp;·&nbsp; By invitation &nbsp;·&nbsp; Under two minutes</p>
+        <ul class="hero-points">
+          <li>Three to five matches per search, each with a written reason. Not 150 results.</li>
+          <li>Every venue corroborated against Michelin, Forbes, Relais &amp; Ch&acirc;teaux and a dozen more.</li>
+          <li>No paid placements, ever.</li>
+        </ul>
       </div>
+
+      <!-- ══ THE FUNNEL ══════════════════════════════════════════════════
+           Step 1 is name + email and nothing else. It POSTs on submit and
+           stores the returned token, so an applicant who quits at question
+           four is still a lead we can reach. Every later answer PATCHes
+           against that token and is queued for retry rather than blocking
+           the applicant. ══ -->
+      <div id="apply">
+        <div class="funnel" id="funnel">
+
+          <!-- Progress -->
+          <div class="prog-wrap" id="progWrap">
+            <div class="prog-track" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" aria-label="Application progress" id="progBar">
+              <div class="prog-fill" id="progFill"></div>
+            </div>
+            <p class="prog-label" id="progLabel">Question 1 of 8</p>
+          </div>
+
+          <!-- Live region for step changes and async status -->
+          <p aria-live="polite" class="visually-hidden" id="liveStatus" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;"></p>
+
+          <!-- ── STEP 1 — identity. The only step that must succeed. ── -->
+          <form class="step" id="step-1" data-step="1" novalidate>
+            <h3 class="step-q" tabindex="-1">Request an invitation.</h3>
+            <p class="step-help">Name and email to begin. Two minutes.</p>
+            <div class="field-stack">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="fFirst">First Name</label>
+                  <input class="form-input" type="text" id="fFirst" name="firstName" autocomplete="given-name" placeholder="First name" required />
+                  <span class="field-error" id="errFirst">Please enter your first name.</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="fLast">Last Name</label>
+                  <input class="form-input" type="text" id="fLast" name="lastName" autocomplete="family-name" placeholder="Last name" required />
+                  <span class="field-error" id="errLast">Please enter your last name.</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="fEmail">Email Address</label>
+                <input class="form-input" type="email" id="fEmail" name="email" autocomplete="email" placeholder="you@example.com" required />
+                <span class="field-error" id="errEmail">Please enter a valid email address.</span>
+              </div>
+            </div>
+            <div class="step-actions">
+              <button type="submit" class="btn-primary" id="startBtn">Begin</button>
+            </div>
+          </form>
+
+          <!-- ── STEP 2 — home city ── -->
+          <form class="step" id="step-2" data-step="2" novalidate hidden>
+            <h3 class="step-q" tabindex="-1">Where do you call home?</h3>
+            <p class="step-help">It tells us which markets matter to you first.</p>
+            <div class="form-group">
+              <label class="form-label" for="fCity">Home City</label>
+              <input class="form-input" type="text" id="fCity" name="city" autocomplete="address-level2" placeholder="Seattle, WA" required />
+              <span class="field-error" id="errCity">Please enter your home city.</span>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+              <button type="submit" class="btn-primary">Continue</button>
+            </div>
+          </form>
+
+          <!-- ── STEP 3 — occasion spend ── -->
+          <div class="step" id="step-3" data-step="3" hidden>
+            <h3 class="step-q" tabindex="-1" id="q3">On a night that matters, what does dinner usually come to?</h3>
+            <p class="step-help">Per person, before wine gets ambitious.</p>
+            <div class="choices" role="group" aria-labelledby="q3" data-field="netWorth" data-step-index="3">
+              <button type="button" class="choice" data-value="Under $200">Under $200</button>
+              <button type="button" class="choice" data-value="$200 &ndash; $500">$200 &ndash; $500</button>
+              <button type="button" class="choice" data-value="$500 &ndash; $1,000">$500 &ndash; $1,000</button>
+              <button type="button" class="choice" data-value="$1,000+">$1,000+</button>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+            </div>
+          </div>
+
+          <!-- ── STEP 4 — hotel nights ── -->
+          <div class="step" id="step-4" data-step="4" hidden>
+            <h3 class="step-q" tabindex="-1" id="q4">How many hotel nights do you book in a year?</h3>
+            <p class="step-help">A rough count is fine.</p>
+            <div class="choices" role="group" aria-labelledby="q4" data-field="travelFrequency" data-step-index="4">
+              <button type="button" class="choice" data-value="1 &ndash; 5 nights">1 &ndash; 5 nights</button>
+              <button type="button" class="choice" data-value="6 &ndash; 15 nights">6 &ndash; 15 nights</button>
+              <button type="button" class="choice" data-value="16 &ndash; 30 nights">16 &ndash; 30 nights</button>
+              <button type="button" class="choice" data-value="30+ nights">30+ nights</button>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+            </div>
+          </div>
+
+          <!-- ── STEP 5 — nightly rate ── -->
+          <div class="step" id="step-5" data-step="5" hidden>
+            <h3 class="step-q" tabindex="-1" id="q5">And what do you typically pay a night?</h3>
+            <p class="step-help">This sets the shelf we curate from.</p>
+            <div class="choices" role="group" aria-labelledby="q5" data-field="nightlyRate" data-step-index="5">
+              <button type="button" class="choice" data-value="Under $500">Under $500</button>
+              <button type="button" class="choice" data-value="$500 &ndash; $749">$500 &ndash; $749</button>
+              <button type="button" class="choice" data-value="$750 &ndash; $999">$750 &ndash; $999</button>
+              <button type="button" class="choice" data-value="$1,000+">$1,000+</button>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+            </div>
+          </div>
+
+          <!-- ── STEP 6 — trips per year ── -->
+          <div class="step" id="step-6" data-step="6" hidden>
+            <h3 class="step-q" tabindex="-1" id="q6">How many trips do you take in a year?</h3>
+            <p class="step-help">Business and personal together.</p>
+            <div class="choices" role="group" aria-labelledby="q6" data-field="tripsPerYear" data-step-index="6">
+              <button type="button" class="choice" data-value="1 &ndash; 2 trips">1 &ndash; 2 trips</button>
+              <button type="button" class="choice" data-value="3 &ndash; 5 trips">3 &ndash; 5 trips</button>
+              <button type="button" class="choice" data-value="6 &ndash; 10 trips">6 &ndash; 10 trips</button>
+              <button type="button" class="choice" data-value="10+ trips">10+ trips</button>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+            </div>
+          </div>
+
+          <!-- ── STEP 7 — private club ── -->
+          <form class="step" id="step-7" data-step="7" novalidate hidden>
+            <h3 class="step-q" tabindex="-1" id="q7">Are you a member of a private club?</h3>
+            <p class="step-help">Golf, city, social, or a members&rsquo; house. It helps us read the room.</p>
+            <div class="choices choices-inline" role="group" aria-labelledby="q7" data-field="privateClubMember" data-step-index="7" data-manual="true">
+              <button type="button" class="choice" data-value="Yes" aria-pressed="false">Yes</button>
+              <button type="button" class="choice" data-value="No" aria-pressed="false">No</button>
+            </div>
+            <div class="form-group" id="clubNameGroup" style="margin-top:16px;" hidden>
+              <label class="form-label" for="fClubName">Which club?</label>
+              <input class="form-input" type="text" id="fClubName" name="privateClubName" placeholder="Club name" />
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+              <button type="submit" class="btn-primary" id="clubContinue" hidden>Continue</button>
+            </div>
+          </form>
+
+          <!-- ── STEP 8 — mobile + SMS consent.
+               The disclosure below is the same wording the main site uses. It is
+               read out of the DOM at submit time and sent as smsConsentText, so
+               the stored consent record is literally the string displayed here.
+               The box is unchecked by default and must stay that way. ── -->
+          <form class="step" id="step-8" data-step="8" novalidate hidden>
+            <h3 class="step-q" tabindex="-1">Last one, and it&rsquo;s optional.</h3>
+            <p class="step-help">If you&rsquo;d rather receive your invitation by text, leave a mobile number. Otherwise skip &mdash; it changes nothing about your application.</p>
+            <div class="field-stack">
+              <div class="form-group">
+                <label class="form-label" for="fPhone">Mobile Number <span class="opt">(optional)</span></label>
+                <input class="form-input" type="tel" id="fPhone" name="phone" autocomplete="tel" placeholder="(206) 555-0123" />
+                <span class="field-error" id="errPhone">Please enter a valid mobile number, or leave this blank.</span>
+              </div>
+              <div class="form-group">
+                <label class="consent-label" for="fSmsConsent">
+                  <input type="checkbox" id="fSmsConsent" name="smsConsent" />
+                  <span class="consent-text" id="smsConsentText">
+                    I agree to receive my invitation and account notifications from CURATEvip by text message
+                    at the number above. Message and data rates may apply. Message frequency varies.
+                    Reply STOP to opt out or HELP for help. See our
+                    <a href="/privacy">Privacy Policy</a> and
+                    <a href="/terms">Terms</a>.
+                  </span>
+                </label>
+                <span class="field-error" id="errSmsConsent">Please agree to receive texts, or clear the mobile number.</span>
+              </div>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-back" data-back>&larr; Back</button>
+              <button type="submit" class="btn-primary" id="finishBtn">Submit Application</button>
+            </div>
+            <div class="step-foot">
+              <button type="button" class="btn-skip" id="skipPhone">Skip and submit without a number</button>
+            </div>
+          </form>
+
+          <!-- ── COMPLETION ── -->
+          <div class="step" id="step-done" data-step="done" hidden>
+            <div class="done">
+              <div class="done-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ba9f75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7" /></svg>
+              </div>
+              <h3 class="done-title" tabindex="-1" id="doneTitle">Your application is in.</h3>
+              <p class="done-text" id="doneGreeting">Thank you.</p>
+              <p class="done-text">
+                We read every application ourselves &mdash; there is no queue and no algorithm deciding
+                this. You&rsquo;ll hear back by email within 24 hours, and always within two business days.
+              </p>
+              <p class="done-text">
+                If it&rsquo;s a fit, that email carries your invitation and a link to take the Speed quiz.
+                Nothing is charged unless you accept.
+              </p>
+              <p class="done-text quiet">In the meantime, watch for a note from <strong style="color:var(--gold-light);font-weight:500;">invitations@curatevip.ai</strong>.</p>
+            </div>
+          </div>
+
+          <!-- Error surface, shared by every step -->
+          <div class="funnel-error" id="funnelError" hidden>
+            <span id="funnelErrorText"></span>
+            <br />
+            <button type="button" id="funnelRetry">Try again</button>
+          </div>
+
+        </div>
+
+        <p class="hero-reassure">
+          <strong>No payment. Nothing is charged unless you accept an invitation.</strong><br />
+          We never sell your details. <a href="/privacy">Privacy Policy</a>.
+        </p>
+      </div>
+
     </div>
   </section>
 
-  <!-- ── PROOF STRIP ── -->
-  <div class="stats-bar">
-    <div class="stat fade-in">
-      <div class="stat-num">3&ndash;5</div>
-      <div class="stat-lbl">Matches per search, not 300</div>
-    </div>
-    <div class="stat fade-in delay-1">
-      <div class="stat-num">0</div>
-      <div class="stat-lbl">Hours of research required</div>
-    </div>
-    <div class="stat fade-in delay-2">
-      <div class="stat-num">$299</div>
-      <div class="stat-lbl">A year, by invitation</div>
+  <!-- ══ TRUST STRIP — the guides and award bodies the scoring engine reads
+       before anything can reach a member. Text, not logos: these are sources,
+       and we are not claiming an endorsement from any of them. ══ -->
+  <div class="trust">
+    <div class="trust-inner">
+      <p class="trust-lead">Every venue corroborated against independent guides and award bodies</p>
+      <ul class="trust-list">
+        <li>Michelin</li>
+        <li>Forbes Travel Guide</li>
+        <li>Relais &amp; Ch&acirc;teaux</li>
+        <li>AAA Five Diamond</li>
+        <li>Travel+Leisure World&rsquo;s Best</li>
+        <li>Leading Hotels of the World</li>
+        <li>Small Luxury Hotels</li>
+        <li>Cond&eacute; Nast</li>
+        <li>Robb Report</li>
+        <li>Wine Spectator</li>
+        <li>James Beard</li>
+        <li>Eater</li>
+        <li>The Infatuation</li>
+        <li>Lartisien</li>
+      </ul>
+      <p class="trust-note">No paid placements, ever.</p>
     </div>
   </div>
 
-  <!-- ── WHAT IT IS ── -->
-  <section id="what-it-is" class="band">
-    <div class="section-header fade-in">
-      <p class="section-eyebrow">The Membership</p>
-      <h2 class="section-h2">A standing answer to one question.</h2>
-      <p class="section-sub">
-        Where should I stay, eat, or go tonight &mdash; in a city I don&rsquo;t know, on a night
-        that matters? Membership is that answer, ready before you ask for it.
-      </p>
-    </div>
-    <div class="cards-grid fade-in delay-1">
-      <div class="about-card">
-        <div class="card-body">
-          <div class="card-title">Curated, not crowdsourced</div>
-          <div class="card-desc">No paid placements and no star ratings from strangers. Every property is corroborated against independent sources &mdash; Michelin, Forbes, Lartisien and dozens of award bodies &mdash; before it can reach a member.</div>
-        </div>
-      </div>
-      <div class="about-card">
-        <div class="card-body">
-          <div class="card-title">A short list, with reasons</div>
-          <div class="card-desc">Three to five places, each with a plain explanation of why it is yours. You are choosing between good options rather than filtering out bad ones.</div>
-        </div>
-      </div>
-      <div class="about-card">
-        <div class="card-body">
-          <div class="card-title">Booked in the same place</div>
-          <div class="card-desc">Reserve the room or the table without leaving the app, with member rates on stays where we hold them &mdash; typically 5% to 10% a night.</div>
-        </div>
+  <!-- ══ WHAT YOU ACTUALLY GET — the real product output, not a description
+       of it. This is an unretouched screenshot from the member app. ══ -->
+  <section id="what-you-get" class="band">
+    <div class="band-inner proof-grid">
+      <figure class="proof-shot">
+        <img
+          src="product-stay-560.webp"
+          alt="A CurateVIP stay result in the member app, showing a matched hotel with a FEEL summary and a WHY explaining the match."
+          width="274"
+          height="864"
+          loading="lazy"
+          decoding="async" />
+        <figcaption class="proof-cap">An actual result from the member app</figcaption>
+      </figure>
+      <div>
+        <p class="section-eyebrow">What you actually get</p>
+        <h2 class="section-h2">Three to five places, and <em>the reason</em> each one is yours.</h2>
+        <p class="section-sub">
+          Not a ranked list of everything in the city. A short answer you can act on, written for
+          how you travel.
+        </p>
+        <ul class="point-list">
+          <li>
+            <div class="point-t">A shortlist, not a search result</div>
+            <div class="point-d">Every search returns three to five matched places &mdash; so you are choosing between good options rather than filtering out bad ones.</div>
+          </li>
+          <li>
+            <div class="point-t">A written reason, every time</div>
+            <div class="point-d">Each result carries a <strong>Feel</strong> and a <strong>Why</strong> in plain language, so you can tell in a glance whether it is the right room for the night you are planning.</div>
+          </li>
+          <li>
+            <div class="point-t">Book it in the same place</div>
+            <div class="point-d">Reserve the room or the table without leaving the app, with member rates on stays where they are held &mdash; typically 5&ndash;10% a night.</div>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- ── YOUR SPEED ── -->
+  <!-- ══ YOUR SPEED — the differentiator, kept to one screen. ══ -->
   <section id="your-speed" class="band band-alt">
-    <div class="section-header fade-in">
-      <p class="section-eyebrow">Your Speed</p>
-      <h2 class="section-h2">Taste, written down as <em>a taxonomy</em>.</h2>
-      <p class="section-sub">
-        The quiz places you in one Speed per category. It takes a few minutes once, and it is
-        what every curation you receive afterwards is built on.
-      </p>
-    </div>
-    <div class="cards-grid fade-in delay-1">
-      <div class="about-card speed-card">
-        <div class="card-body">
-          <div class="card-title" style="color:var(--gold);">STAY</div>
-          <div class="card-desc">
-            <strong>The Atelier:</strong> architecture is the reason you booked it.<br /><br />
-            <strong>The Sanctuary:</strong> quiet, restorative, unhurried.<br /><br />
-            <strong>The Estate:</strong> space, grounds, and a sense of arrival.<br /><br />
-            <strong>The Vanguard:</strong> the new one, before it is the known one.
-          </div>
-        </div>
+    <div class="band-inner">
+      <div class="fade-in">
+        <p class="section-eyebrow">Your Speed</p>
+        <h2 class="section-h2">Taste, written down as <em>a taxonomy</em>.</h2>
+        <p class="section-sub">
+          The quiz places you in one Speed per category. It is what every curation you receive
+          afterwards is built on.
+        </p>
       </div>
-      <div class="about-card speed-card">
-        <div class="card-body">
-          <div class="card-title" style="color:var(--gold);">TABLE</div>
-          <div class="card-desc">
-            <strong>The Provision:</strong> the food, the chef and the wine are the point.<br /><br />
-            <strong>The Couture:</strong> the room is the reservation.<br /><br />
-            <strong>The Pulse:</strong> energy at the table, not just on the plate.<br /><br />
-            <strong>The Verandah:</strong> open air, long lunches, no hurry.
-          </div>
+      <div class="speed-grid">
+        <div class="speed-card">
+          <div class="speed-head">STAY</div>
+          <dl>
+            <dt>Atelier</dt><dd>architecture is the reason you booked it</dd>
+            <dt>Sanctuary</dt><dd>quiet, restorative, unhurried</dd>
+            <dt>Estate</dt><dd>space, grounds, a sense of arrival</dd>
+            <dt>Vanguard</dt><dd>the new one, before it is the known one</dd>
+          </dl>
         </div>
-      </div>
-      <div class="about-card speed-card">
-        <div class="card-body">
-          <div class="card-title" style="color:var(--gold);">SOCIAL</div>
-          <div class="card-desc">
-            <strong>The Electric:</strong> scene-driven; the right room changes the night.<br /><br />
-            <strong>The Shadow:</strong> mood is the amenity. You had to know it was there.<br /><br />
-            <strong>The Verandah:</strong> a terrace, a view, and time to use them.<br /><br />
-            <strong>The Gallery:</strong> design you feel before you see it.
-          </div>
+        <div class="speed-card">
+          <div class="speed-head">TABLE</div>
+          <dl>
+            <dt>Provision</dt><dd>the food, the chef and the wine are the point</dd>
+            <dt>Couture</dt><dd>the room is the reservation</dd>
+            <dt>Pulse</dt><dd>energy at the table, not just on the plate</dd>
+            <dt>Verandah</dt><dd>open air, long lunches, no hurry</dd>
+          </dl>
+        </div>
+        <div class="speed-card">
+          <div class="speed-head">SOCIAL</div>
+          <dl>
+            <dt>Electric</dt><dd>the right room changes the night</dd>
+            <dt>Shadow</dt><dd>mood is the amenity; you had to know it was there</dd>
+            <dt>Verandah</dt><dd>a terrace, a view, and time to use them</dd>
+            <dt>Gallery</dt><dd>design you feel before you see it</dd>
+          </dl>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── WHAT YOU GET / PRICE ── -->
-  <section id="included" class="band">
-    <div class="section-header fade-in">
-      <p class="section-eyebrow">Membership</p>
-      <h2 class="section-h2">$299 a year. <em>By invitation.</em></h2>
-      <p class="section-sub">
-        One membership covers 7 select US cities today, expanding every month, and every
-        curation you ask for within them. Less than the cost of one wrong night away.
-      </p>
-    </div>
-    <div class="fade-in delay-1">
-      <div class="about-card" style="border-color:var(--gold-border);">
-        <div class="card-body">
-          <ul class="included-list">
-            <li>3 to 5 curated hotels, restaurants and bars matched to Your Speed, every time you search</li>
-            <li>7 select US cities today, expanding to new markets every month</li>
-            <li>Member savings on stays where we hold them &mdash; 5% to 10% a night on average</li>
-            <li>Booking, saved trips and forward planning in one place</li>
-            <li>No paid placements, ever</li>
-          </ul>
-        </div>
+  <!-- ══ CITIES — named rather than counted, so a visitor can self-qualify in
+       one glance. Nashville and Charleston are new and thinner than the rest;
+       saying so is the honest version. ══ -->
+  <section id="cities" class="band">
+    <div class="band-inner">
+      <div class="fade-in">
+        <p class="section-eyebrow">Where it works today</p>
+        <h2 class="section-h2">Live now, city by city.</h2>
+        <p class="section-sub">
+          We open a city only once there is enough corroborated depth in it to be worth a
+          membership. Depth varies &mdash; the two newest are marked.
+        </p>
       </div>
-    </div>
-    <div class="solution-callout fade-in delay-2">
-      <p class="solution-quote">Why invitation only? Because a curated product stops being one the moment it&rsquo;s built for everybody.</p>
-      <p class="solution-sub">We read every application personally and respond within 24 hours.</p>
+      <div class="city-grid">
+        <div class="city"><span class="city-name">Seattle</span></div>
+        <div class="city"><span class="city-name">Scottsdale</span></div>
+        <div class="city"><span class="city-name">Los Angeles</span></div>
+        <div class="city"><span class="city-name">Miami</span></div>
+        <div class="city"><span class="city-name">Maui</span></div>
+        <div class="city"><span class="city-name">Santa Barbara</span></div>
+        <div class="city new"><span class="city-name">Nashville</span><span class="city-tag">Newly opened</span></div>
+        <div class="city new"><span class="city-name">Charleston</span><span class="city-tag">Newly opened</span></div>
+      </div>
     </div>
   </section>
 
-  <!-- ══ THE FUNNEL ════════════════════════════════════════════════════════
-       Step 1 is name + email and nothing else. It POSTs on submit and stores
-       the returned token, so an applicant who quits at question four is still
-       a lead we can reach. Every later answer PATCHes against that token and
-       is queued for retry rather than blocking the applicant. ══ -->
-  <section id="apply">
-    <div class="funnel-head fade-in">
-      <p class="section-eyebrow" style="text-align:center;">Request an Invitation</p>
-      <h2 class="section-h2" style="text-align:center;">Tell us how you travel.</h2>
-      <p class="section-sub">Eight short questions. No payment, and nothing is charged unless you accept an invitation.</p>
+  <!-- ══ WHAT IT COSTS ══ -->
+  <section id="cost" class="band band-alt">
+    <div class="band-inner price-grid">
+      <div>
+        <p class="section-eyebrow">What it costs</p>
+        <p class="price-tag">$299<span>A year &nbsp;·&nbsp; By invitation</span></p>
+        <div class="price-note">
+          Nothing is charged unless you accept an invitation. Applications are reviewed
+          personally, and we respond within 24 hours.
+        </div>
+      </div>
+      <ul class="included-list">
+        <li>Three to five matched hotels, restaurants and bars every time you search, each with the reason it is yours</li>
+        <li>Live in <strong>Seattle, Scottsdale, Los Angeles, Miami, Maui and Santa Barbara</strong>, with <strong>Nashville</strong> and <strong>Charleston</strong> newly opened</li>
+        <li>Member rates on stays where they are held &mdash; typically 5&ndash;10% a night</li>
+        <li>Booking, saved trips and forward planning in one place</li>
+        <li>Every venue corroborated against independent guides and award bodies</li>
+        <li><strong>No paid placements, ever</strong></li>
+      </ul>
     </div>
+  </section>
 
-    <div class="funnel fade-in delay-1" id="funnel">
-
-      <!-- Progress -->
-      <div class="prog-wrap" id="progWrap">
-        <div class="prog-track" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" aria-label="Application progress" id="progBar">
-          <div class="prog-fill" id="progFill"></div>
-        </div>
-        <p class="prog-label" id="progLabel">Question 1 of 8</p>
-      </div>
-
-      <!-- Live region for step changes and async status -->
-      <p aria-live="polite" class="visually-hidden" id="liveStatus" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;"></p>
-
-      <!-- ── STEP 1 — identity. The only step that must succeed. ── -->
-      <form class="step" id="step-1" data-step="1" novalidate>
-        <h3 class="step-q" tabindex="-1">First, who should we write back to?</h3>
-        <p class="step-help">Name and email only. We&rsquo;ll save your place as you go.</p>
-        <div class="field-stack">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="fFirst">First Name</label>
-              <input class="form-input" type="text" id="fFirst" name="firstName" autocomplete="given-name" placeholder="First name" required />
-              <span class="field-error" id="errFirst">Please enter your first name.</span>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="fLast">Last Name</label>
-              <input class="form-input" type="text" id="fLast" name="lastName" autocomplete="family-name" placeholder="Last name" required />
-              <span class="field-error" id="errLast">Please enter your last name.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="fEmail">Email Address</label>
-            <input class="form-input" type="email" id="fEmail" name="email" autocomplete="email" placeholder="you@example.com" required />
-            <span class="field-error" id="errEmail">Please enter a valid email address.</span>
-          </div>
-        </div>
-        <div class="step-actions">
-          <button type="submit" class="btn-primary" id="startBtn">Begin</button>
-        </div>
-        <div class="step-foot">
-          <p class="form-note">We never sell your details. See our <a href="/privacy" style="color:var(--text-40);">Privacy Policy</a>.</p>
-        </div>
-      </form>
-
-      <!-- ── STEP 2 — home city ── -->
-      <form class="step" id="step-2" data-step="2" novalidate hidden>
-        <h3 class="step-q" tabindex="-1">Where do you call home?</h3>
-        <p class="step-help">It tells us which markets matter to you first.</p>
-        <div class="form-group">
-          <label class="form-label" for="fCity">Home City</label>
-          <input class="form-input" type="text" id="fCity" name="city" autocomplete="address-level2" placeholder="Seattle, WA" required />
-          <span class="field-error" id="errCity">Please enter your home city.</span>
-        </div>
-        <div class="step-actions">
-          <button type="button" class="btn-back" data-back>&larr; Back</button>
-          <button type="submit" class="btn-primary">Continue</button>
-        </div>
-      </form>
-
-      <!-- ── STEP 3 — occasion spend ── -->
-      <div class="step" id="step-3" data-step="3" hidden>
-        <h3 class="step-q" tabindex="-1" id="q3">On a night that matters, what does dinner usually come to?</h3>
-        <p class="step-help">Per person, before wine gets ambitious.</p>
-        <div class="choices" role="group" aria-labelledby="q3" data-field="netWorth" data-step-index="3">
-          <button type="button" class="choice" data-value="Under $200">Under $200</button>
-          <button type="button" class="choice" data-value="$200 &ndash; $500">$200 &ndash; $500</button>
-          <button type="button" class="choice" data-value="$500 &ndash; $1,000">$500 &ndash; $1,000</button>
-          <button type="button" class="choice" data-value="$1,000+">$1,000+</button>
-        </div>
-        <div class="step-actions">
-          <button type="button" class="btn-back" data-back>&larr; Back</button>
-        </div>
-      </div>
-
-      <!-- ── STEP 4 — hotel nights ── -->
-      <div class="step" id="step-4" data-step="4" hidden>
-        <h3 class="step-q" tabindex="-1" id="q4">How many hotel nights do you book in a year?</h3>
-        <p class="step-help">A rough count is fine.</p>
-        <div class="choices" role="group" aria-labelledby="q4" data-field="travelFrequency" data-step-index="4">
-          <button type="button" class="choice" data-value="1 &ndash; 5 nights">1 &ndash; 5 nights</button>
-          <button type="button" class="choice" data-value="6 &ndash; 15 nights">6 &ndash; 15 nights</button>
-          <button type="button" class="choice" data-value="16 &ndash; 30 nights">16 &ndash; 30 nights</button>
-          <button type="button" class="choice" data-value="30+ nights">30+ nights</button>
-        </div>
-        <div class="step-actions">
-          <button type="button" class="btn-back" data-back>&larr; Back</button>
-        </div>
-      </div>
-
-      <!-- ── STEP 5 — nightly rate ── -->
-      <div class="step" id="step-5" data-step="5" hidden>
-        <h3 class="step-q" tabindex="-1" id="q5">And what do you typically pay a night?</h3>
-        <p class="step-help">This sets the shelf we curate from.</p>
-        <div class="choices" role="group" aria-labelledby="q5" data-field="nightlyRate" data-step-index="5">
-          <button type="button" class="choice" data-value="Under $500">Under $500</button>
-          <button type="button" class="choice" data-value="$500 &ndash; $749">$500 &ndash; $749</button>
-          <button type="button" class="choice" data-value="$750 &ndash; $999">$750 &ndash; $999</button>
-          <button type="button" class="choice" data-value="$1,000+">$1,000+</button>
-        </div>
-        <div class="step-actions">
-          <button type="button" class="btn-back" data-back>&larr; Back</button>
-        </div>
-      </div>
-
-      <!-- ── STEP 6 — trips per year ── -->
-      <div class="step" id="step-6" data-step="6" hidden>
-        <h3 class="step-q" tabindex="-1" id="q6">How many trips do you take in a year?</h3>
-        <p class="step-help">Business and personal together.</p>
-        <div class="choices" role="group" aria-labelledby="q6" data-field="tripsPerYear" data-step-index="6">
-          <button type="button" class="choice" data-value="1 &ndash; 2 trips">1 &ndash; 2 trips</button>
-          <button type="button" class="choice" data-value="3 &ndash; 5 trips">3 &ndash; 5 trips</button>
-          <button type="button" class="choice" data-value="6 &ndash; 10 trips">6 &ndash; 10 trips</button>
-          <button type="button" class="choice" data-value="10+ trips">10+ trips</button>
-        </div>
-        <div class="step-actions">
-          <button type="button" class="btn-back" data-back>&larr; Back</button>
-        </div>
-      </div>
-
-      <!-- ── STEP 7 — private club ── -->
-      <form class="step" id="step-7" data-step="7" novalidate hidden>
-        <h3 class="step-q" tabindex="-1" id="q7">Are you a member of a private club?</h3>
-        <p class="step-help">Golf, city, social, or a members&rsquo; house. It helps us read the room.</p>
-        <div class="choices choices-inline" role="group" aria-labelledby="q7" data-field="privateClubMember" data-step-index="7" data-manual="true">
-          <button type="button" class="choice" data-value="Yes" aria-pressed="false">Yes</button>
-          <button type="button" class="choice" data-value="No" aria-pressed="false">No</button>
-        </div>
-        <div class="form-group" id="clubNameGroup" style="margin-top:16px;" hidden>
-          <label class="form-label" for="fClubName">Which club?</label>
-          <input class="form-input" type="text" id="fClubName" name="privateClubName" placeholder="Club name" />
-        </div>
-        <div class="step-actions">
-          <button type="button" class="btn-back" data-back>&larr; Back</button>
-          <button type="submit" class="btn-primary" id="clubContinue" hidden>Continue</button>
-        </div>
-      </form>
-
-      <!-- ── STEP 8 — mobile + SMS consent.
-           The disclosure below is the same wording the main site uses. It is
-           read out of the DOM at submit time and sent as smsConsentText, so
-           the stored consent record is literally the string displayed here.
-           The box is unchecked by default and must stay that way. ── -->
-      <form class="step" id="step-8" data-step="8" novalidate hidden>
-        <h3 class="step-q" tabindex="-1">Last one, and it&rsquo;s optional.</h3>
-        <p class="step-help">If you&rsquo;d rather receive your invitation by text, leave a mobile number. Otherwise skip &mdash; it changes nothing about your application.</p>
-        <div class="field-stack">
-          <div class="form-group">
-            <label class="form-label" for="fPhone">Mobile Number <span class="opt">(optional)</span></label>
-            <input class="form-input" type="tel" id="fPhone" name="phone" autocomplete="tel" placeholder="(206) 555-0123" />
-            <span class="field-error" id="errPhone">Please enter a valid mobile number, or leave this blank.</span>
-          </div>
-          <div class="form-group">
-            <label class="consent-label" for="fSmsConsent">
-              <input type="checkbox" id="fSmsConsent" name="smsConsent" />
-              <span class="consent-text" id="smsConsentText">
-                I agree to receive my invitation and account notifications from CURATEvip by text message
-                at the number above. Message and data rates may apply. Message frequency varies.
-                Reply STOP to opt out or HELP for help. See our
-                <a href="/privacy">Privacy Policy</a> and
-                <a href="/terms">Terms</a>.
-              </span>
-            </label>
-            <span class="field-error" id="errSmsConsent">Please agree to receive texts, or clear the mobile number.</span>
-          </div>
-        </div>
-        <div class="step-actions">
-          <button type="button" class="btn-back" data-back>&larr; Back</button>
-          <button type="submit" class="btn-primary" id="finishBtn">Submit Application</button>
-        </div>
-        <div class="step-foot">
-          <button type="button" class="btn-skip" id="skipPhone">Skip and submit without a number</button>
-        </div>
-      </form>
-
-      <!-- ── COMPLETION ── -->
-      <div class="step" id="step-done" data-step="done" hidden>
-        <div class="done">
-          <div class="done-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#ba9f75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7" /></svg>
-          </div>
-          <h3 class="done-title" tabindex="-1" id="doneTitle">Your application is in.</h3>
-          <p class="done-text" id="doneGreeting">Thank you.</p>
-          <p class="done-text">
-            We read every application ourselves &mdash; there is no queue and no algorithm deciding
-            this. You&rsquo;ll hear back by email within 24 hours, and always within two business days.
-          </p>
-          <p class="done-text">
-            If it&rsquo;s a fit, that email carries your invitation and a link to take the Speed quiz.
-            Your first curations are waiting on the other side of it. Nothing is charged unless you accept.
-          </p>
-          <p class="done-text quiet">In the meantime, watch for a note from <strong style="color:var(--gold-light);font-weight:500;">invitations@curatevip.ai</strong>.</p>
-        </div>
-      </div>
-
-      <!-- Error surface, shared by every step -->
-      <div class="funnel-error" id="funnelError" hidden>
-        <span id="funnelErrorText"></span>
-        <br />
-        <button type="button" id="funnelRetry">Try again</button>
-      </div>
-
+  <!-- ══ SECOND CTA — anchors back to the form in the hero. ══ -->
+  <section class="cta-band">
+    <div class="band-inner">
+      <h2 class="section-h2">Ready when you are.</h2>
+      <p class="section-sub">
+        Name and email to begin, then eight short questions. About two minutes.
+      </p>
+      <a href="#apply" class="btn-primary" id="heroCta">Request an Invitation</a>
+      <p class="cta-sub-note">No payment. Nothing is charged unless you accept an invitation.</p>
     </div>
   </section>
 
   <!-- ── FOOTER ── -->
   <footer>
     <div class="footer-logo">
-      <img src="logo-wordmark.png" alt="CURATEvip" />
+      <img src="Logo-Horizontal-Website.png" alt="CURATEvip" width="1684" height="284" loading="lazy" decoding="async" />
     </div>
     <p class="footer-copy">&copy; 2026 CurateVIP LLC. All rights reserved.</p>
     <ul class="footer-links">
@@ -1105,6 +1376,11 @@
       <li><a href="/terms">Terms</a></li>
     </ul>
   </footer>
+
+  <!-- ── STICKY MOBILE CTA — revealed only once the hero form is off screen ── -->
+  <div class="sticky-cta" id="stickyCta" hidden>
+    <a href="#apply" class="btn-primary">Request an Invitation</a>
+  </div>
 
   <!-- ── COOKIE / ANALYTICS CONSENT ── -->
   <aside class="cookie" id="cookieBanner" role="region" aria-label="Cookie preferences" hidden>
@@ -1139,7 +1415,9 @@
        so it is matched against this object's own keys and never rendered
        from the URL; an unknown value silently falls back to 'default'.
        Headlines are segment arrays so the gold italic can be built with
-       createElement instead of innerHTML. */
+       createElement instead of innerHTML.
+       Subheads are deliberately one sentence: the form now sits beside this
+       copy above the fold, and a long paragraph pushes it down a phone. */
     var VARIANTS = {
       'default': {
         title: [
@@ -1147,7 +1425,7 @@
           { t: 'your', em: true },
           { t: ' five stars.' }
         ],
-        sub: 'CurateVIP is an invitation-only membership. A short quiz learns how you like a hotel, a table and a room to feel — we call it Your Speed — and every search after that returns three to five places that match it. Not 150 results. Not the average opinion of strangers.'
+        sub: 'A short quiz learns how you like a hotel, a table and a room to feel. Every search after that returns three to five places that match — and why.'
       },
       'golf': {
         title: [
@@ -1155,7 +1433,7 @@
           { t: 'The rest of the trip', em: true },
           { t: ' wasn’t.' }
         ],
-        sub: 'An invitation-only membership for people who plan a trip around a tee time. Tell us how you like a hotel, a table and a room to feel, and we return the three to five worth the drive from the club — not the hundred the internet thinks you want.'
+        sub: 'Tell us how you like a hotel, a table and a room to feel, and we return the three to five worth the drive from the club — not the hundred the internet thinks you want.'
       },
       'dining': {
         title: [
@@ -1163,7 +1441,7 @@
           { t: 'not', em: true },
           { t: ' the same table for everyone.' }
         ],
-        sub: 'An invitation-only membership for people who travel to eat. A short quiz, then three to five restaurants, bars and hotels chosen against your taste rather than the crowd’s average — each with a plain reason it is yours.'
+        sub: 'A short quiz, then three to five restaurants, bars and hotels chosen against your taste rather than the crowd’s average — each with a plain reason it is yours.'
       }
     };
 
@@ -1325,19 +1603,24 @@
       pendingEvents.length = 0;
     }
 
+    /* body.consent-open makes the hero reserve room for the bar and suppresses
+       the sticky mobile CTA, so neither one ever covers the form. */
     function initConsentUI() {
       var banner = document.getElementById('cookieBanner');
       if (consentState === 'granted') { loadAnalytics(); return; }
       if (consentState === 'denied') return;
       if (!banner) return;
       banner.hidden = false;
+      document.body.classList.add('consent-open');
       document.getElementById('cookieAccept').addEventListener('click', function () {
         grantConsent();
         banner.hidden = true;
+        document.body.classList.remove('consent-open');
       });
       document.getElementById('cookieDecline').addEventListener('click', function () {
         denyConsent();
         banner.hidden = true;
+        document.body.classList.remove('consent-open');
       });
     }
 
@@ -1372,6 +1655,7 @@
       els.retry.onclick = retryFn || null;
       say(msg);
     }
+
     function clearError() {
       els.error.hidden = true;
       els.errorText.textContent = '';
@@ -1399,7 +1683,8 @@
       }
 
       /* Keep the funnel card in view when stepping, but don't yank the page
-         on first paint. */
+         on first paint. The card now lives in the hero, so on a normal step
+         transition this condition is false and nothing scrolls at all. */
       if (!opts || !opts.noScroll) {
         var rect = els.funnel.getBoundingClientRect();
         if (rect.top < 0 || rect.top > window.innerHeight * 0.5) {
@@ -1857,7 +2142,10 @@
       });
     });
 
-    /* ── Hero CTA ─────────────────────────────────────────────────────── */
+    /* ── Secondary CTA ────────────────────────────────────────────────────
+       The form is in the hero now, so this anchors back up to it. Same
+       behaviour as before: let the smooth scroll land, then put the caret in
+       whichever step they are actually on. */
     var heroCta = document.getElementById('heroCta');
     if (heroCta) {
       heroCta.addEventListener('click', function () {
@@ -1869,10 +2157,25 @@
       });
     }
 
-    /* ── Scroll fade-in, same observer as index.html ──────────────────────
-       .fade-in starts at opacity 0, and the funnel card itself carries the
-       class — so if this ever throws, the page is blank rather than merely
-       un-animated. Both failure paths reveal everything immediately. */
+    /* ── Sticky mobile CTA ────────────────────────────────────────────────
+       Shown only while the hero form is off screen. Starts hidden, so if any
+       of this throws the bar simply never appears. */
+    (function () {
+      var bar = document.getElementById('stickyCta');
+      var applyBlock = document.getElementById('apply');
+      if (!bar || !applyBlock) return;
+      try {
+        if (typeof IntersectionObserver !== 'function') return;
+        var barObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { bar.hidden = e.isIntersecting; });
+        }, { threshold: 0 });
+        barObserver.observe(applyBlock);
+      } catch (e) { /* no bar, no harm */ }
+    })();
+
+    /* ── Scroll reveal ────────────────────────────────────────────────────
+       Two section headers only, and nothing above the fold. If this throws,
+       revealAll() paints everything immediately. */
     function revealAll() {
       Array.prototype.forEach.call(document.querySelectorAll('.fade-in'), function (el) {
         el.classList.add('visible');
@@ -1897,6 +2200,14 @@
     } catch (e) {
       revealAll();
     }
+
+    /* Safety net. The two failure paths above cover "no IntersectionObserver"
+       and "constructing one threw", but not "the observer exists and silently
+       never delivers a callback" — which does happen in some embedded and
+       in-app browser contexts. Nothing on a page taking paid traffic is
+       allowed to sit at opacity 0 indefinitely, so reveal unconditionally
+       shortly after load. If the observer did its job this is a no-op. */
+    window.setTimeout(revealAll, 1200);
 
     /* ── Boot ─────────────────────────────────────────────────────────── */
     applyVariant();
