@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CURATEvip — Request an Invitation</title>
-  <meta name="description" content="CurateVIP is an invite-only luxury travel membership. A short quiz assigns Your Speed; we return the hotels, tables and rooms that match it. $299 a year." />
+  <meta name="description" content="CurateVIP is an invite-only luxury travel membership. A short quiz assigns Your Speed; we return the hotels, tables and rooms that match it." />
 
   <!-- Paid-traffic destination. It must never compete with the main site in
        organic search, but links shared out of it still have to unfurl. -->
@@ -15,14 +15,14 @@
   <meta property="og:site_name" content="CURATEvip" />
   <meta property="og:url" content="https://curatevip.app/join" />
   <meta property="og:title" content="CURATEvip — Request an Invitation" />
-  <meta property="og:description" content="An invitation-only luxury travel membership. A short quiz learns how you like a hotel, a table and a room to feel — then every search returns three to five places that match. $299 a year." />
+  <meta property="og:description" content="An invitation-only luxury travel membership. A short quiz learns how you like a hotel, a table and a room to feel — then every search returns three to five places that match." />
   <meta property="og:image" content="https://curatevip.app/logo-full.png" />
   <meta property="og:image:width" content="1152" />
   <meta property="og:image:height" content="737" />
   <meta property="og:image:alt" content="CURATEvip" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="CURATEvip — Request an Invitation" />
-  <meta name="twitter:description" content="An invitation-only luxury travel membership. A short quiz learns how you like a hotel, a table and a room to feel — then every search returns three to five places that match. $299 a year." />
+  <meta name="twitter:description" content="An invitation-only luxury travel membership. A short quiz learns how you like a hotel, a table and a room to feel — then every search returns three to five places that match." />
   <meta name="twitter:image" content="https://curatevip.app/logo-full.png" />
 
   <link rel="icon" type="image/png" href="C-IconNoBg.png" />
@@ -232,7 +232,13 @@
     }
     .hero-sub em { color: var(--gold-light); font-style: italic; }
 
-    .hero-points { list-style: none; margin-top: 26px; display: flex; flex-direction: column; gap: 10px; }
+    .hero-lead {
+      margin-top: 24px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.5;
+    }
+    .hero-points { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
     .hero-points li {
       position: relative;
       padding-left: 20px;
@@ -967,13 +973,12 @@
       /* Taller at phone width: the four-choice questions and the consent
          paragraph both wrap more. Measured max across all steps was 455px.
 
-         Deliberately above the measured maximum. Step 1 carries the sell block,
-         and this copy is actively edited — the fourth bullet already grew once
-         and cut the margin to 9px. The headroom costs a sliver of empty space on
-         the other steps and keeps the wording safe to change; without it, a
-         single extra word makes step 1 the tallest step and the card starts
-         jumping again. If you rewrite the sell block, re-check step 1. */
-      .step { min-height: 485px; }
+         ~15px above the measured maximum, which at phone width is step 9 (455)
+         and its consent paragraph. Was briefly 485 while step 1 carried the long
+         sell copy; that copy now lives in the hero column, so the pin comes back
+         down rather than leaving 30px of dead space on every step. If you move
+         copy back into the card, re-measure before trusting this. */
+      .step { min-height: 470px; }
       .funnel { padding: 16px 16px 18px; border-radius: 16px; }
       .prog-wrap { margin-bottom: 12px; }
       .prog-label { margin-top: 8px; }
@@ -1073,7 +1078,7 @@
     <div class="hero-inner">
 
       <div class="hero-copy">
-        <p class="hero-kicker">By invitation &nbsp;·&nbsp; $299 a year</p>
+        <p class="hero-kicker">By invitation only</p>
         <h1 class="hero-title" id="heroTitle">
           Five stars mean nothing unless they&rsquo;re <em>your</em> five stars.
         </h1>
@@ -1083,10 +1088,12 @@
           search returns three to five places chosen for how you like a room to
           feel, each with the reason it is yours.
         </p>
+        <p class="hero-lead">Two minutes now, and you stop researching for good.</p>
         <ul class="hero-points">
-          <li>Three to five places, not 150 blue links you still have to sort through.</li>
-          <li>Every venue corroborated against Michelin, Forbes, Relais &amp; Ch&acirc;teaux and a dozen more.</li>
-          <li>No paid placements, ever. Nobody buys their way onto your list.</li>
+          <li>We read the guides, the awards and every &ldquo;best of&rdquo; list, so you don&rsquo;t.</li>
+          <li>The top, the best and the newest &mdash; cross-checked, in one place.</li>
+          <li>Then narrowed to the few that match how <em>you</em> like a room to feel.</li>
+          <li>No hours lost to reviews, to star ratings from people who aren&rsquo;t you, or to scanning photos to guess. Curate, book, and be confident.</li>
         </ul>
       </div>
 
@@ -1138,18 +1145,17 @@
                  min-height (410px desktop / 485px phone) or step 1 becomes the
                  tallest step and the card starts jumping again.
 
-                 Last measured: block 141px desktop / 211px phone, putting step 1
-                 at 391 and 461 — about 19px and 24px inside the pins. The fourth
-                 bullet nearly doubled in length once and ate the entire margin
-                 (down to 4px and 9px), which is why the pins were raised rather
-                 than the copy shipped on the edge. Re-measure if you edit. -->
+                 Last measured: block 93px desktop / 128px phone, putting step 1
+                 at 344 and 378. The binding constraint is no longer step 1 but
+                 step 2 (395 desktop) and step 9 (455 phone) — the pins sit ~15px
+                 above those. Step 1 has room to spare now that the long sell copy
+                 moved out to the hero column, but that can change again in one
+                 edit, so re-measure. -->
             <div class="step-sell">
-              <p class="sell-lead">Two minutes now, and you stop researching for good.</p>
               <ul class="sell-points">
-                <li>We read the guides, the awards and every &ldquo;best of&rdquo; list, so you don&rsquo;t.</li>
-                <li>The top, the best and the newest &mdash; cross-checked, in one place.</li>
-                <li>Then narrowed to the few that match how <em>you</em> like a room to feel.</li>
-                <li>No hours lost to reviews, to star ratings from people who aren&rsquo;t you, or to scanning photos to guess. Curate, book, and be confident.</li>
+                <li>Three to five places, not 150 blue links you still have to sort through.</li>
+                <li>Every venue corroborated against Michelin, Forbes, Relais &amp; Ch&acirc;teaux and a dozen more.</li>
+                <li>No paid placements, ever. Nobody buys their way onto your list.</li>
               </ul>
             </div>
           </form>
@@ -1326,7 +1332,7 @@
               </p>
               <p class="done-text">
                 If it&rsquo;s a fit, that email carries your invitation and a link to take the Speed quiz.
-                Nothing is charged unless you accept.
+                Membership is <strong>$299 a year</strong>, and nothing is charged unless you accept it.
               </p>
               <p class="done-text quiet">In the meantime, watch for a note from <strong style="color:var(--gold-light);font-weight:500;">invitations@curatevip.ai</strong>.</p>
             </div>
