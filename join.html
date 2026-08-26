@@ -965,8 +965,16 @@
       .hero-photo { object-position: 50% 42%; }
 
       /* Taller at phone width: the four-choice questions and the consent
-         paragraph both wrap more. Measured max across all steps was 455px. */
-      .step { min-height: 455px; }
+         paragraph both wrap more. Measured max across all steps was 455px.
+
+         Set to 470 rather than 455 on purpose. Step 1 carries the sell block,
+         which at phone width measured 444px — only 11px inside the pin. This
+         copy is still being edited, and one longer line would push step 1 past
+         every other step and bring the bounce back in reverse. The 15px buffer
+         costs a sliver of empty space on the other steps and makes the wording
+         safe to change. If you rewrite the sell block, re-check step 1 against
+         this number. */
+      .step { min-height: 470px; }
       .funnel { padding: 16px 16px 18px; border-radius: 16px; }
       .prog-wrap { margin-bottom: 12px; }
       .prog-label { margin-top: 8px; }
@@ -1127,12 +1135,18 @@
                  to start, it argues for the two minutes. Deliberately NOT
                  repeated on later steps: by then they have committed, and more
                  copy would just be noise in the way of the next question. -->
+            <!-- HEIGHT BUDGET: this block must keep step 1 inside the .step
+                 min-height (395px desktop / 470px phone) or step 1 becomes the
+                 tallest step and the card starts jumping again. Measured at
+                 124px desktop / 193px phone. Adding a line, or lengthening one
+                 enough to wrap, will eat the margin — re-measure if you edit. -->
             <div class="step-sell">
               <p class="sell-lead">Two minutes now, and you stop researching for good.</p>
               <ul class="sell-points">
-                <li>We read the guides and the award bodies, so you don&rsquo;t.</li>
-                <li>Three to five places per search. Never three hundred.</li>
-                <li>Matched to how <em>you</em> like a room to feel, not to an average.</li>
+                <li>We read the guides, the awards and every &ldquo;best of&rdquo; list, so you don&rsquo;t.</li>
+                <li>The top, the best and the newest &mdash; cross-checked, in one place.</li>
+                <li>Then narrowed to the few that match how <em>you</em> like a room to feel.</li>
+                <li>No more evenings lost to reviews and photographs. Book, and be sure.</li>
               </ul>
             </div>
           </form>
