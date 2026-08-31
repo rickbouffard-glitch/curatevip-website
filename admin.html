@@ -306,10 +306,11 @@
     <input id="login-pass" class="auth-input" type="password" autocomplete="current-password" placeholder="">
     <!-- Shown only when this page is not configured for Supabase sign-in.
          See the DOCS API CREDENTIAL block in the script below. -->
-    <div id="login-secret-row" style="display:none">
-      <label class="auth-label">Admin API Secret</label>
-      <input id="login-secret" class="auth-input" type="password" autocomplete="off" placeholder="">
-    </div>
+    <!-- The ADMIN API SECRET field lived here until 2026-08-27. Removed with the
+         fallback that needed it: reading documentation should never have
+         required handling ADMIN_SCRIPT_SECRET, which unlocks every admin
+         route. Sign-in now uses /api/docs/session and the username and
+         password already collected above. -->
     <button class="auth-btn" onclick="handleLogin()">Sign In</button>
   </div>
 </div>
@@ -392,7 +393,8 @@
   // one of them:
   //   (a) Authorization: Bearer <Supabase session token> for a member with
   //       is_admin = true (preferred), or
-  //   (b) x-admin-secret: <ADMIN_SCRIPT_SECRET>.
+  //   (b) x-docs-token: issued by POST /api/docs/session against the same
+  //       username and password as above. Scoped to /api/docs only.
   //
   // (a) is off by default because this site has no Supabase configuration of
   // its own — no client library, no project URL, no anon key. To turn it on,
@@ -483,9 +485,7 @@
     clearAuthError('login-error');
     const user = document.getElementById('login-user').value.trim();
     const pass = document.getElementById('login-pass').value;
-    const secret = USE_SUPABASE ? '' : document.getElementById('login-secret').value.trim();
     if (!user || !pass) { showAuthError('login-error', 'Username and password required.'); return; }
-    if (!USE_SUPABASE && !secret) { showAuthError('login-error', 'Admin API secret required.'); return; }
 
     const btn = document.querySelector('#screen-login .auth-btn');
     btn.textContent = 'Signing in…';
@@ -504,13 +504,36 @@
       if (!data.ok) { showAuthError('login-error', 'Invalid credentials.'); return; }
 
       // Step 2 — obtain a credential the docs API itself will accept.
+      //
+      // CHANGED 2026-08-27. This used to ask a human to paste
+      // ADMIN_SCRIPT_SECRET into the form whenever the Supabase constants were
+      // unset — which they were, so that was the live path. It was the wrong
+      // trade twice over: ADMIN_SCRIPT_SECRET unlocks every admin route, so
+      // reading documentation required handling the most privileged key in the
+      // system, and it made a person memorise a secret to do the least
+      // sensitive thing anyone does here.
+      //
+      // /api/docs/session exchanges the SAME username and password already
+      // verified above for a docs-only token: scoped to /api/docs, HMAC-signed
+      // server-side, 8-hour expiry, and not accepted by requireAdmin — so it
+      // cannot read a member row even if it leaks.
       let headers;
       if (USE_SUPABASE) {
         const token = await supabaseSignIn(user, pass);
         if (!token) { showAuthError('login-error', 'Could not establish an admin session.'); return; }
         headers = { 'Authorization': 'Bearer ' + token };
       } else {
-        headers = { 'x-admin-secret': secret };
+        const sres  = await fetch(API + '/api/docs/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, passwordHash: hash })
+        });
+        const sdata = await sres.json().catch(() => ({}));
+        if (!sres.ok || !sdata.ok || !sdata.token) {
+          showAuthError('login-error', sdata.error || 'Could not establish a documentation session.');
+          return;
+        }
+        headers = { 'x-docs-token': sdata.token };
       }
 
       // Step 3 — the API is the real gate. Only a 200 here reveals anything.
@@ -524,7 +547,6 @@
       sessionStorage.setItem('curate_admin_user', user);
       sessionStorage.setItem('curate_admin_hash', hash);
       document.getElementById('login-pass').value = '';
-      if (!USE_SUPABASE) document.getElementById('login-secret').value = '';
       showScreen('docs');
     } catch (err) {
       showAuthError('login-error', 'Could not reach server. Check your connection.');
@@ -545,8 +567,6 @@
     document.getElementById('screen-docs').innerHTML = '';
     document.getElementById('login-user').value = '';
     document.getElementById('login-pass').value = '';
-    const secretEl = document.getElementById('login-secret');
-    if (secretEl) secretEl.value = '';
     showScreen('login');
   }
 
@@ -606,14 +626,12 @@
   }
 
   // ── Keyboard shortcuts ──────────────────────────────────────────────────────
+  // Enter submits from the password field. There is no longer a second field to
+  // tab into — the admin API secret input was removed 2026-08-27 when docs
+  // sign-in moved to /api/docs/session.
   document.getElementById('login-pass').addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return;
-    const secretEl = document.getElementById('login-secret');
-    // In fallback mode there is one more field to fill before submitting.
-    if (!USE_SUPABASE && secretEl && !secretEl.value.trim()) { secretEl.focus(); return; }
-    handleLogin();
+    if (e.key === 'Enter') handleLogin();
   });
-  document.getElementById('login-secret').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
   document.getElementById('pw-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handlePwChange(); });
 
   // ── Close modal on backdrop click ───────────────────────────────────────────
@@ -641,7 +659,6 @@
     sessionStorage.removeItem('curate_admin_session');
     sessionStorage.removeItem('curate_admin_user');
     sessionStorage.removeItem('curate_admin_hash');
-    document.getElementById('login-secret-row').style.display = USE_SUPABASE ? 'none' : '';
     showScreen('login');
   })();
 
