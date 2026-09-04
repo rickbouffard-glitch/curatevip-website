@@ -1113,9 +1113,19 @@
         padding: 0 24px;
         height: 80px;
       }
-      .nav-logo img { height: 71px; margin: 8px 0; }
+      /* SIZE THE WORDMARK BY WIDTH, NOT HEIGHT.
+         This was `height: 71px; margin: 8px 0`. The logo is 1684x284 — a 5.93:1
+         horizontal wordmark — so 71px tall makes it 421px WIDE. On a 375px
+         phone the logo alone was wider than the screen, which pushed the
+         hamburger clean off the right edge: it wasn't hidden, it was outside
+         the viewport. 71 + 16px of margin also stood 87px tall inside an 80px
+         bar, so it overflowed vertically too and left no air above or below.
+         Constraining the width is what fixes both at once — height follows the
+         aspect ratio, and 62vw always leaves room for the button. */
+      .nav-logo img { width: min(300px, 62vw); height: auto; margin: 0; }
       .nav-links { display: none; }
-      .hamburger { display: flex; }
+      /* Never let the flex row absorb an overflow by shrinking the tap target. */
+      .hamburger { display: flex; flex-shrink: 0; }
       .mobile-menu { top: 80px; }
 
       /* HERO */
