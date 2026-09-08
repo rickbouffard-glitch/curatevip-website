@@ -20,6 +20,10 @@
       --sans: 'Inter', system-ui, sans-serif;
       --text: rgba(255,255,255,0.82);
       --text-muted: rgba(255,255,255,0.45);
+      /* Added so this page can use the SAME nav rules as index.html verbatim,
+         rather than a near-copy that drifts. */
+      --gold-border: rgba(186,159,117,0.3);
+      --text-40: rgba(255,255,255,0.4);
     }
 
     html { font-size: 16px; scroll-behavior: smooth; }
@@ -33,33 +37,159 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* NAV */
+    /* NAV — kept identical to index.html.
+       This page used to carry its own cut-down bar: 72px tall, a translucent
+       blurred background, a different logo file at a different size, and a
+       single "← Back to Home" link instead of the site nav. Landing here from
+       the homepage the header visibly changed, which reads as a different site
+       — exactly the wrong impression on the page where someone is deciding
+       whether to trust you. Every rule below is copied from index.html so the
+       two cannot drift. */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      height: 72px;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 72px;
-      background: rgba(10,10,10,0.92);
-      backdrop-filter: blur(12px);
+      /* Aligns the bar with the 1120px content column instead of the viewport
+         edge. 100% not 100vw: 100vw includes the scrollbar. */
+      padding: 0 max(24px, calc((100% - 1120px) / 2 + 72px));
+      height: 88px;
+      /* Opaque, matching the black plate baked into the logo PNG. Any
+         translucency makes the image read as a rectangle floating on the bar. */
+      background: #000;
       border-bottom: 1px solid var(--border);
-      z-index: 100;
     }
 
-    .nav-logo img { height: 43px; width: auto; opacity: 0.92; }
-    .nav-logo { text-decoration: none; }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
 
-    .nav-back {
-      font-size: 11px;
-      letter-spacing: 0.14em;
+    .nav-logo img {
+      height: 52px;
+      width: auto;
+      opacity: 0.92;
+      margin: 10px 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      white-space: nowrap;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--text-40);
       text-decoration: none;
       transition: color 0.2s;
     }
-    .nav-back:hover { color: var(--gold); }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      padding: 10px 26px;
+      border: 1px solid var(--gold-border) !important;
+      border-radius: 40px;
+      color: var(--gold) !important;
+      transition: background 0.2s, color 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold) !important;
+      color: #000 !important;
+    }
+
+    .nav-member {
+      font-size: 11px !important;
+      letter-spacing: 0.1em !important;
+      color: var(--text-40) !important;
+      text-transform: uppercase;
+      transition: color 0.2s !important;
+    }
+
+    .nav-member:hover { color: var(--gold) !important; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 8px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: rgba(255,255,255,0.55);
+      transition: all 0.28s ease;
+      transform-origin: center;
+    }
+
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 88px;
+      left: 0; right: 0;
+      background: #000;
+      border-bottom: 1px solid var(--border);
+      z-index: 98;
+      flex-direction: column;
+      padding: 8px 0 32px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--gold); }
+
+    .mobile-menu .mob-cta {
+      margin: 20px 32px 0;
+      padding: 16px 44px;
+      background: var(--gold);
+      border-radius: 40px;
+      color: #000 !important;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-align: center;
+      border-bottom: none;
+    }
+
+    .mobile-menu .mob-cta:hover { background: var(--gold-light); color: #000 !important; }
 
     /* PAGE */
     .page-wrap {
@@ -230,20 +360,49 @@
     .page-footer-links a:hover { color: var(--gold); }
 
     @media (max-width: 768px) {
-      nav { padding: 0 24px; }
-      .page-wrap { padding: 120px 24px 80px; }
+      nav { padding: 0 24px; height: 80px; }
+      /* Sized by WIDTH, not height — the wordmark is 1684x284 (5.93:1), so a
+         71px height makes it 421px wide and pushes the menu button off a phone
+         screen entirely. Same rule as index.html. */
+      .nav-logo img { width: min(300px, 62vw); height: auto; margin: 0; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; flex-shrink: 0; }
+      .mobile-menu { top: 80px; }
+      .page-wrap { padding: 128px 24px 80px; }
       .page-footer { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
 
+  <!-- ── NAV — same as index.html. Anchors are absolute (index.html#…) because
+          the sections they point at live on the homepage, not here. ── -->
   <nav>
     <a href="index.html" class="nav-logo">
-      <img src="Logo-fullHorizontal.png" alt="CURATEvip" />
+      <img src="Logo-Horizontal-Website.png" alt="CURATEvip" />
     </a>
-    <a href="index.html" class="nav-back">← Back to Home</a>
+    <ul class="nav-links">
+      <li><a href="index.html#what-you-get">What You Get</a></li>
+      <li><a href="index.html#how-it-works">How It Works</a></li>
+      <li><a href="index.html#membership">Membership</a></li>
+      <li><a href="https://curatevip.ai" target="_blank" class="nav-member">Member Login</a></li>
+      <li><a href="index.html#contact" class="nav-cta">Request Access</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </nav>
+
+  <!-- ── MOBILE MENU ── -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#what-you-get">What You Get</a>
+    <a href="index.html#how-it-works">How It Works</a>
+    <a href="index.html#membership">Membership</a>
+    <a href="https://curatevip.ai" target="_blank">Member Login</a>
+    <a href="index.html#contact" class="mob-cta">Request Access</a>
+  </div>
 
   <div class="page-wrap">
 
@@ -275,7 +434,7 @@
 
     <h2>1. Company Information</h2>
     <p>
-      CURATEvip is a product of <strong>CurateVIP LLC</strong>, a Wyoming limited liability company, doing business as <strong>CURATEvip</strong> ("CURATEvip," "we," "us," or "our"). These Terms govern your use of all services we operate, including the websites and applications at <strong>curatevip.app</strong>, <strong>curatevip.ai</strong>, and <strong>book.curatevip.ai</strong> (together, the "Service").
+      CURATEvip is a product of <strong>CurateVIP LLC</strong>, a Wyoming limited liability company and a wholly-owned subsidiary of RMK GROUP LLC, doing business as <strong>CURATEvip</strong> ("CURATEvip," "we," "us," or "our"). These Terms govern your use of all services we operate, including the websites and applications at <strong>curatevip.app</strong>, <strong>curatevip.ai</strong>, and <strong>book.curatevip.ai</strong> (together, the "Service").
     </p>
     <!-- ATTORNEY NOTE: Confirm the exact registered entity name, state of formation and
          registered agent before publication. Confirm CurateVIP LLC is qualified to do
@@ -579,7 +738,7 @@
     </p>
     <p>
       <strong>CurateVIP LLC</strong><br />
-      A Wyoming Limited Liability Company<br />
+      A Wyoming Limited Liability Company · A wholly-owned subsidiary of RMK GROUP LLC<br />
       Member support and cancellations: <a href="mailto:members@curatevip.ai">members@curatevip.ai</a><br />
       Mailing address: <strong>[ PHYSICAL MAILING ADDRESS — TO BE SUPPLIED ]</strong>
     </p>
@@ -606,6 +765,42 @@
     </div>
 
   </div>
+
+  <!-- Hamburger menu — same behaviour as index.html. Without this the button
+       renders on mobile and does nothing, which is worse than not having it. -->
+  <script>
+    ;(function() {
+      var hbtn  = document.getElementById('hamburger');
+      var hmenu = document.getElementById('mobileMenu');
+      if (!hbtn || !hmenu) return;
+
+      function openMenu() {
+        hmenu.style.display = 'flex';
+        hbtn.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeMenu() {
+        hmenu.style.display = 'none';
+        hbtn.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      hbtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hmenu.style.display === 'flex' ? closeMenu() : openMenu();
+      });
+
+      hmenu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('click', function(e) {
+        if (hmenu.style.display === 'flex' && !hmenu.contains(e.target) && !hbtn.contains(e.target)) {
+          closeMenu();
+        }
+      });
+    })();
+  </script>
 
 </body>
 </html>
