@@ -134,6 +134,66 @@
       line-height: 1.75;
     }
 
+    /* DRAFT BANNER — remove before publication */
+    .draft-banner {
+      background: rgba(220,68,50,0.10);
+      border: 2px solid rgba(220,68,50,0.55);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin: 0 0 40px;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.7;
+    }
+
+    .draft-banner-title {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #ff8a72;
+      margin-bottom: 10px;
+    }
+
+    .draft-banner p {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 0;
+    }
+
+    /* ATTORNEY CALLOUT — remove before publication */
+    .attorney-note {
+      background: rgba(120,160,220,0.07);
+      border: 1px dashed rgba(150,185,235,0.55);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 20px 0 28px;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .attorney-note-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9dc0ef;
+      margin-bottom: 8px;
+    }
+
+    .attorney-note p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 8px;
+    }
+
+    .attorney-note p:last-child { margin-bottom: 0; }
+
+    .attorney-note ul {
+      font-size: 13px;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 0;
+    }
+
     /* FOOTER */
     .page-footer {
       margin-top: 80px;
@@ -187,136 +247,402 @@
 
   <div class="page-wrap">
 
+    <!-- ============================================================
+         DRAFT — NOT LEGAL ADVICE — FOR ATTORNEY REVIEW ONLY.
+         Prepared for CurateVIP LLC's counsel. Do not publish until an
+         attorney has reviewed and approved it and the DRAFT banner
+         plus all ATTORNEY NOTE blocks are removed.
+         ============================================================ -->
+    <div class="draft-banner">
+      <p class="draft-banner-title">⚠ Draft for attorney review — do not publish</p>
+      <p>
+        This document is an <strong>unreviewed draft</strong> prepared for CurateVIP LLC's attorney. It is not legal advice and it is not in effect. It describes the data practices of the system as currently built; counsel should verify each statement against the live implementation and vendor agreements before this page goes live. Remove this banner and all attorney callouts before publication.
+      </p>
+    </div>
+
     <p class="page-eyebrow">Legal</p>
     <h1 class="page-title">Privacy Policy</h1>
-    <p class="page-meta">Effective Date: June 23, 2026 &nbsp;·&nbsp; CurateVIP LLC</p>
+    <!-- ATTORNEY NOTE: Effective date intentionally left blank for counsel to set. -->
+    <p class="page-meta">Effective Date: [ TO BE SET BY COUNSEL ] &nbsp;·&nbsp; CurateVIP LLC</p>
 
+    <h2>Notice at Collection</h2>
     <div class="highlight-box">
-      Your privacy is fundamental to how CURATEvip is designed. We collect only what we need to deliver a precise, personalized experience — and we do not sell your personal information to third parties. Ever.
+      <strong>What we collect and why, at a glance.</strong>
+      <br /><br />
+      <strong>Categories we collect:</strong> identifiers (name, email address, phone number, IP address); commercial information (your membership, your Stripe customer and subscription identifiers, trips you book); internet activity (pages viewed, app usage, approximate region); geolocation at the city/region level (your home city and up to two additional cities, plus approximate region from IP); inferences (your "Speed profile" — the taste profile we build from your quiz answers); your <strong>self-reported net worth band and travel frequency</strong>; and the <strong>content of text messages you send us</strong>, together with your SMS consent record.
+      <br /><br />
+      <strong>Why we collect it:</strong> to run your membership, bill you, build and improve your curation, place and support hotel reservations, send you the messages you asked for, keep records that prove you consented to texts, secure the Service, and meet legal obligations.
+      <br /><br />
+      <strong>How long we keep it:</strong> see Section 8. Note that <strong>SMS consent records are kept even after you delete your account</strong>, because they are our legal evidence of your consent.
+      <br /><br />
+      <strong>Do we sell or share it?</strong> We do not sell your personal information, and we do not share it for cross-context behavioral advertising. See Section 11.
+      <br /><br />
+      <strong>Sensitive personal information:</strong> we do not use or disclose sensitive personal information for purposes beyond those permitted under California law. See Section 10.
+    </div>
+    <!-- ATTORNEY NOTE: This Notice at Collection is placed at the top to satisfy CPRA
+         §1798.100(a) / CCPA regs §7012 (notice at or before collection). Counsel should
+         confirm a link to this notice also appears AT the actual points of collection —
+         the signup form, the quiz, and the SMS opt-in — not only on this page.
+         Also confirm the categories map cleanly onto Civ. Code §1798.140(v) buckets. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — notice at collection placement</p>
+      <p>This summary is placed at the top to serve as the CPRA notice at collection. Please confirm a link to it also appears at the actual points of collection (signup form, quiz, SMS opt-in), and that the categories map cleanly onto the statutory buckets in Civ. Code §1798.140(v).</p>
     </div>
 
     <h2>1. Who We Are</h2>
     <p>
-      This Privacy Policy applies to <strong>CurateVIP LLC</strong>, a Delaware limited liability company, doing business as <strong>CURATEvip</strong>. We operate the applications and websites accessible at <strong>curatevip.app</strong> and <strong>curatevip.ai</strong> (collectively, the "Service"). References to "we," "us," or "our" in this Policy refer to CurateVIP LLC.
+      This Privacy Policy applies to <strong>CurateVIP LLC</strong>, a Delaware limited liability company, doing business as <strong>CURATEvip</strong> ("we," "us," or "our"). We operate the websites and applications at <strong>curatevip.app</strong>, <strong>curatevip.ai</strong>, and <strong>book.curatevip.ai</strong> (together, the "Service").
     </p>
     <p>
-      For privacy-related questions or requests, contact us at: <a href="mailto:privacy@curatevip.app">privacy@curatevip.app</a>
+      For privacy questions or requests, contact us at <a href="mailto:members@curatevip.ai">members@curatevip.ai</a>, or write to us at <strong>[ PHYSICAL MAILING ADDRESS — TO BE SUPPLIED ]</strong>.
     </p>
+    <!-- ATTORNEY NOTE: Mailing address placeholder must be filled before publication.
+         CPRA requires at least two designated methods for submitting consumer requests
+         for businesses that interact with consumers online; a toll-free number is not
+         required for online-only businesses, but a second method (e.g. a web form) is
+         expected. Currently only an email address exists. Counsel to advise whether a
+         request web form or the in-app Profile page should be designated as the second
+         method, and confirm the physical address. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — mailing address and request methods</p>
+      <p>The physical address is a placeholder and must be supplied. Separately, CPRA expects businesses that interact with consumers online to designate at least two methods for submitting privacy requests. Right now only an email address exists. Counsel to advise whether an in-app request form or the Profile page should be designated as the second method.</p>
+    </div>
 
     <h2>2. Information We Collect</h2>
-    <p>We collect information in the following ways:</p>
-    <p><strong>Information you provide directly:</strong></p>
+    <p><strong>Information you give us directly:</strong></p>
     <ul>
-      <li>Name and email address when requesting early access or creating an account</li>
-      <li>Speed Quiz responses — your preferences across Stay, Table, and Social environments</li>
-      <li>Location or destination preferences you enter in the app</li>
-      <li>Messages you send us via contact or support forms</li>
+      <li><strong>Name</strong> and <strong>email address</strong> when you request an invitation or create an account.</li>
+      <li><strong>Phone number</strong>, if you provide one. We use it to send you text messages and to reach you about your membership or a trip.</li>
+      <li><strong>Self-reported net worth range</strong> and <strong>travel frequency</strong>. These are selected from ranges (bands), not exact figures. We use them to qualify membership and to calibrate the recommendations we make.</li>
+      <li><strong>Your home city</strong>, and up to <strong>two additional cities</strong> you tell us you care about.</li>
+      <li><strong>Quiz answers.</strong> Your responses to the CURATEvip quiz, which we use to build your "Speed profile" — your taste preferences for hotels, dining, and social venues.</li>
+      <li><strong>Messages you send us</strong> through support or contact channels.</li>
+      <li><strong>Travel details</strong> you enter when booking, such as dates, destination, and guest information.</li>
+    </ul>
+    <p><strong>Text message (SMS) information:</strong></p>
+    <ul>
+      <li>Whether you consented to receive texts, and the <strong>date and time</strong> you consented.</li>
+      <li>The <strong>IP address</strong> the consent was submitted from.</li>
+      <li>A <strong>verbatim copy of the consent language</strong> that was displayed to you at the moment you opted in.</li>
+      <li>The <strong>full text of every message you send back to us</strong>. Inbound replies are stored in our systems in full, including anything personal you choose to write in them. Please do not send us sensitive information by text.</li>
     </ul>
     <p><strong>Information collected automatically:</strong></p>
     <ul>
-      <li>Device type, operating system, and app version</li>
-      <li>Usage data such as features accessed, screens viewed, and session duration</li>
-      <li>IP address and approximate geographic region</li>
-      <li>Crash reports and performance diagnostics</li>
+      <li><strong>IP address</strong> and the <strong>approximate region</strong> it indicates.</li>
+      <li>Device and browser information, and usage data such as pages and screens viewed and session activity.</li>
+      <li>Cookies and similar technologies — see Section 12.</li>
     </ul>
-    <p><strong>Information from third parties:</strong></p>
+    <p><strong>Payment information:</strong></p>
     <ul>
-      <li>If you sign in using a third-party service (e.g., Apple or Google), we receive basic profile information such as name and email as permitted by that service</li>
+      <li>Your membership payments are processed by <strong>Stripe</strong>. You enter your card details with Stripe, not with us.</li>
+      <li><strong>We never see or store your full card number.</strong> What we store is your <strong>Stripe customer ID</strong> and <strong>Stripe subscription ID</strong> — identifiers that let us look up your subscription status — and limited billing status information.</li>
+      <li>Stripe handles your payment data under its own privacy policy and its obligations as a payment processor.</li>
     </ul>
+    <!-- ATTORNEY NOTE: Verify against the live schema before publication. Two items are
+         worth counsel's specific attention:
+         (1) NET WORTH BAND. Financial information is not "sensitive personal information"
+             under CPRA's enumerated list (which covers SSN/DL, financial ACCOUNT numbers
+             with access credentials, precise geolocation, race/religion, contents of mail/
+             email/texts, health, sex life, biometrics). A self-reported net worth BAND is
+             probably outside the SPI definition, but it is high-sensitivity in practice and
+             attractive to attackers. Counsel may want it treated as SPI voluntarily, or at
+             minimum confirm access controls and that it is not disclosed to any vendor.
+         (2) CONTENTS OF INBOUND SMS. The "contents of a consumer's mail, email and text
+             messages" IS enumerated SPI under Civ. Code §1798.140(ae)(1)(D) unless the
+             business is the intended recipient. CurateVIP IS the intended recipient of
+             replies sent to its own number, which is the exemption — but counsel should
+             confirm that characterization holds for the full sms_inbound_log, especially
+             for any message forwarded to or processed by a third party (e.g. an AI model)
+             for a purpose other than responding to the consumer. Section 10 is drafted on
+             the assumption that the intended-recipient exemption applies. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — sensitive data classification</p>
+      <p>Two classification calls to confirm. <strong>Net worth band:</strong> a self-reported band is likely outside CPRA's enumerated "sensitive personal information" list, but it is high-sensitivity in practice; consider treating it as SPI voluntarily. <strong>Inbound SMS content:</strong> the contents of text messages are enumerated SPI unless the business is the intended recipient. CurateVIP is the intended recipient of replies to its own number, which is the exemption relied on below — but that should be confirmed for any message that gets forwarded to or processed by a third party for a purpose other than replying to the member.</p>
+    </div>
 
     <h2>3. How We Use Your Information</h2>
-    <p>We use the information we collect to:</p>
     <ul>
-      <li>Build and continuously refine your Speed Profile to deliver accurate, personalized venue curation</li>
-      <li>Operate, maintain, and improve the Service</li>
-      <li>Respond to your inquiries and provide customer support</li>
-      <li>Send transactional communications such as account confirmations and service updates</li>
-      <li>Detect, investigate, and prevent fraud, abuse, or security incidents</li>
-      <li>Comply with applicable legal obligations</li>
+      <li>To create and run your account and your membership.</li>
+      <li>To bill you, process your annual renewal, and manage cancellations and refunds.</li>
+      <li>To build and refine your Speed profile and generate personalized recommendations.</li>
+      <li>To place, confirm, change, and support hotel reservations you make.</li>
+      <li>To send you text messages you have opted in to, and to respond to messages you send us.</li>
+      <li>To send transactional email such as confirmations, receipts, renewal notices, and service updates.</li>
+      <li>To keep records that prove when and how you consented to receive text messages.</li>
+      <li>To provide customer support.</li>
+      <li>To detect, investigate, and prevent fraud, abuse, and security incidents.</li>
+      <li>To comply with legal obligations and to establish, exercise, or defend legal claims.</li>
+      <li>To analyze and improve the Service, including in aggregated or de-identified form.</li>
     </ul>
     <p>
-      We do not use your Speed Quiz responses or taste profile data for advertising targeting, and we do not sell or license this data to third parties.
+      We do not use your quiz answers, taste profile, or net worth information to target advertising, and we do not sell or license that data.
     </p>
 
-    <h2>4. How We Share Your Information</h2>
-    <p>We do not sell your personal information. We may share it only in the following limited circumstances:</p>
+    <h2>4. Automated Processing and AI</h2>
+    <p>
+      We use automated systems, including third-party AI models, to help generate recommendations and written content for you. Information such as your preferences, cities, and quiz-derived profile may be sent to an AI provider for processing so it can produce those recommendations. These systems inform curation; they do not make decisions that produce legal or similarly significant effects about you.
+    </p>
+    <!-- ATTORNEY NOTE: California's ADMT regulations (CCPA regs, ADMT provisions with
+         phased compliance dates) impose pre-use notice and opt-out obligations only for
+         "significant decisions" (financial/lending, housing, education, employment,
+         healthcare). Travel curation should fall outside that, and Section 4 is drafted
+         to say so. But: MEMBERSHIP QUALIFICATION based on a self-reported net worth band
+         is worth a second look — if net worth is used to accept or reject an applicant,
+         counsel should consider whether that is characterized as automated decision-making
+         and whether any fair-access or discrimination theory attaches. Also confirm the
+         AI vendor's terms prohibit training on CurateVIP customer data, and that the
+         zero-retention / no-training posture is contractually in place before this
+         paragraph is published as written. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — AI processing and ADMT</p>
+      <p>Travel curation should sit outside California's automated decision-making technology rules, which attach to "significant decisions" in lending, housing, education, employment and healthcare. Worth a second look, though: if the self-reported <em>net worth band is used to accept or reject membership applicants</em>, counsel should consider whether that is automated decision-making and whether any fair-access theory attaches. Also please confirm the AI vendor's contract actually prohibits training on CurateVIP customer data before this paragraph is published as written.</p>
+    </div>
+
+    <h2>5. Who We Share Information With</h2>
+    <p>
+      We do not sell your personal information. We share it with service providers who process it on our behalf, under contract, and who are not permitted to use it for their own purposes:
+    </p>
     <ul>
-      <li><strong>Service providers:</strong> Trusted vendors who help us operate the Service (e.g., cloud hosting, analytics, email delivery), bound by confidentiality obligations and prohibited from using your data for their own purposes</li>
-      <li><strong>Legal compliance:</strong> When required by law, regulation, court order, or to protect the rights, safety, or property of CURATEvip, its users, or the public</li>
-      <li><strong>Business transfers:</strong> In connection with a merger, acquisition, or sale of assets, in which case we will notify you and your data will remain subject to this Policy</li>
-      <li><strong>With your consent:</strong> For any other purpose with your explicit prior consent</li>
+      <li><strong>Payment processing.</strong> Stripe processes your membership payments, stores your card, and powers the "Manage Membership" portal where you cancel or update your card. Stripe receives your name, email, and payment details.</li>
+      <li><strong>Text messaging.</strong> Twilio transmits our text messages and delivers your replies to us. It receives your phone number and message content.</li>
+      <li><strong>Database and hosting.</strong> Supabase hosts our database and authentication. Your account data is stored there.</li>
+      <li><strong>Transactional email.</strong> Resend delivers our emails. It receives your name and email address.</li>
+      <li><strong>AI processing.</strong> Anthropic provides the AI models we use to generate recommendations and written content. Profile and preference information may be sent for processing.</li>
+      <li><strong>Hotel booking.</strong> LiteAPI / Nuitee provides the booking platform behind book.curatevip.ai and connects to hotel suppliers. Information needed to make and service a reservation — such as guest name, contact details, dates, and property — is shared with them and with the hotel or supplier fulfilling your stay.</li>
+      <li><strong>Analytics and infrastructure.</strong> Google provides analytics and related infrastructure services, which receive usage and device information.</li>
     </ul>
-
-    <h2>5. Taste Profile & AI-Generated Data</h2>
-    <p>
-      Your Speed Profile — the taste fingerprint derived from your quiz responses and in-app behavior — is the core of the CURATEvip experience. This profile is used exclusively to power your personal curation results. It is not shared with venues, advertisers, or any third party without your explicit consent.
-    </p>
-    <p>
-      We may use aggregated, de-identified data (which cannot reasonably be used to identify you) to improve our curation algorithms and service quality.
-    </p>
-
-    <h2>6. Data Retention</h2>
-    <p>
-      We retain your personal information for as long as your account is active or as needed to provide the Service. If you request deletion of your account, we will delete or anonymize your personal data within 30 days, except where we are required by law to retain certain information or where data is needed to resolve disputes or enforce our agreements.
-    </p>
-
-    <h2>7. Security</h2>
-    <p>
-      We implement industry-standard technical and organizational measures to protect your personal information against unauthorized access, loss, destruction, or alteration. These include encryption in transit and at rest, access controls, and regular security reviews.
-    </p>
-    <p>
-      No method of transmission over the internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your information, we cannot guarantee absolute security.
-    </p>
-
-    <h2>8. Your Rights & Choices</h2>
-    <p>Depending on your jurisdiction, you may have the right to:</p>
+    <p>We may also disclose information:</p>
     <ul>
-      <li><strong>Access</strong> the personal information we hold about you</li>
-      <li><strong>Correct</strong> inaccurate or incomplete information</li>
-      <li><strong>Delete</strong> your personal information (subject to legal retention requirements)</li>
-      <li><strong>Port</strong> your data in a machine-readable format</li>
-      <li><strong>Opt out</strong> of certain data processing activities</li>
-      <li><strong>Withdraw consent</strong> at any time where processing is based on consent</li>
+      <li><strong>To comply with law</strong> — in response to a subpoena, court order, or other legal process, or to protect the rights, safety, or property of CURATEvip, our members, or the public.</li>
+      <li><strong>In a business transfer</strong> — in connection with a merger, acquisition, financing, or sale of assets, in which case your information remains subject to this Policy or you will be notified of any change.</li>
+      <li><strong>With your consent</strong> — for any other purpose you agree to.</li>
     </ul>
     <p>
-      To exercise any of these rights, contact us at <a href="mailto:privacy@curatevip.app">privacy@curatevip.app</a>. We will respond within 30 days. We do not discriminate against users who exercise their privacy rights.
+      <strong>We do not share your phone number with third parties for their own marketing, and we do not sell it.</strong>
+    </p>
+    <!-- ATTORNEY NOTE: Confirm a signed DPA / service-provider addendum with the required
+         CPRA §1798.100(d) contractual terms is in place with EACH vendor listed above
+         (Stripe, Twilio, Supabase, Resend, Anthropic, LiteAPI/Nuitee, Google). Without
+         those terms a disclosure can be recharacterized as a "sale" or "sharing," which
+         would contradict Section 11. Google Analytics in particular has been treated by
+         plaintiffs' counsel as "sharing" for cross-context behavioral advertising where
+         advertising features / signals are enabled — confirm ad features are OFF, or
+         disclose sharing and implement a functioning opt-out. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — vendor contracts and the Google Analytics question</p>
+      <p>Confirm a signed DPA with CPRA service-provider terms is in place with every vendor named above. Without those terms a disclosure can be recharacterized as a "sale" or "sharing," which would contradict the no-sale statement in Section 11. Google Analytics specifically: if advertising features or signals are enabled, plaintiffs treat that as sharing for cross-context behavioral advertising. Please confirm those features are off, or the policy needs to disclose sharing and the site needs a working opt-out mechanism.</p>
+    </div>
+
+    <h2>6. Your Speed Profile</h2>
+    <p>
+      Your Speed profile is the taste fingerprint we derive from your quiz answers, your stated cities, and how you use the Service. We use it to power your recommendations. We do not sell it, and we do not share it with venues or advertisers for their own use.
+    </p>
+    <p>
+      We may use aggregated or de-identified data, which cannot reasonably be used to identify you, to improve our curation and the Service. Where we hold data in de-identified form, we maintain it in that form and do not attempt to re-identify it.
     </p>
 
-    <h2>9. California Residents (CCPA)</h2>
+    <h2>7. SMS Consent Records and Why We Keep Them</h2>
     <p>
-      If you are a California resident, you have specific rights under the California Consumer Privacy Act (CCPA), including the right to know what personal information we collect, the right to request deletion, and the right to opt out of the sale of personal information. We do not sell personal information. To submit a request, contact <a href="mailto:privacy@curatevip.app">privacy@curatevip.app</a>.
+      Federal law regulating automated text messages requires businesses to be able to prove that a person agreed to be texted. To meet that obligation, when you opt in we record:
+    </p>
+    <ul>
+      <li>that you consented,</li>
+      <li>the date and time,</li>
+      <li>the IP address the consent came from, and</li>
+      <li>the exact consent wording shown to you on screen.</li>
+    </ul>
+    <p>
+      We keep this consent record as <strong>legal evidence</strong>. Please note: <strong>we retain the SMS consent record even after you close your account or ask us to delete your data.</strong> We do this because the record is what protects both of us if there is ever a dispute about whether you agreed to receive messages, and because the law permits a business to retain information needed to establish or defend a legal claim and to comply with legal obligations. If you delete your account, we stop texting you, and the consent record is retained separately for that limited legal purpose only — it is not used for marketing or profiling.
+    </p>
+    <p>
+      To stop receiving texts at any time, reply <strong>STOP</strong> to any message, or email <a href="mailto:members@curatevip.ai">members@curatevip.ai</a>.
+    </p>
+    <!-- ATTORNEY NOTE — ACCURACY CORRECTION. The PRIOR policy promised that on an account
+         deletion request all personal data would be "deleted or anonymized within 30 days."
+         That promise was NOT accurate as implemented: the SMS consent record and the
+         inbound SMS log (sms_inbound_log) are retained indefinitely. A blanket deletion
+         promise that the system does not keep is itself a deceptive-practice and CPRA
+         §1798.105 problem, so it has been removed and replaced with the accurate statement
+         above plus per-category retention in Section 8.
+         Counsel to confirm: (a) the legal-claims exemption in §1798.105(d)(5)/(d)(8) is the
+         right hook for retaining consent records post-deletion; (b) whether the retention
+         period should be BOUNDED (e.g. 4-5 years, tied to the TCPA limitations period
+         plus a margin) rather than indefinite — CPRA §1798.100(a)(3) requires disclosing a
+         retention period or the criteria used to determine it, and "indefinitely" is
+         disfavored; (c) whether the FULL BODY of inbound SMS replies genuinely needs
+         indefinite retention, which is a separate and weaker justification than the
+         consent record itself. RECOMMENDATION FOR THE CLIENT: set a defined retention
+         period for sms_inbound_log and implement automated purge. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — corrected an inaccurate deletion promise</p>
+      <p>The previous policy promised that on an account deletion request all personal data would be "deleted or anonymized within 30 days." <strong>That was not accurate as built</strong> — the SMS consent record and the full inbound message log are retained indefinitely. A deletion promise the system does not keep is itself an exposure, so it has been removed and replaced with the accurate statement above.</p>
+      <p>Counsel to confirm: (a) that the legal-claims exemption is the right basis for retaining consent records after deletion; (b) whether retention should be <em>bounded</em> — CPRA requires disclosing a retention period or the criteria for setting one, and "indefinite" is disfavored; a period tied to the TCPA limitations period plus a margin is the usual approach; and (c) whether the full body of every inbound reply genuinely needs indefinite retention, which is a weaker justification than the consent record itself. Recommend the client set a defined retention period and implement an automated purge.</p>
+    </div>
+
+    <h2>8. How Long We Keep Information</h2>
+    <ul>
+      <li><strong>Account information</strong> (name, email, phone number, cities): for as long as your account is active. If you delete your account, we delete or de-identify it, other than what is listed below.</li>
+      <li><strong>Quiz answers and Speed profile:</strong> for as long as your account is active, then deleted or de-identified on account deletion.</li>
+      <li><strong>Net worth band and travel frequency:</strong> for as long as your account is active, then deleted or de-identified on account deletion.</li>
+      <li><strong>Billing records</strong> (Stripe customer and subscription IDs, transaction history): retained after account closure as required for tax, accounting, and audit purposes. Stripe retains payment records under its own schedule.</li>
+      <li><strong>Booking records:</strong> retained as needed to service the reservation and to handle disputes, and by the hotel or supplier under their own policies.</li>
+      <li><strong>SMS consent records</strong> (consent flag, timestamp, IP address, consent text): <strong>retained after account deletion</strong> as legal evidence of consent, as explained in Section 7.</li>
+      <li><strong>Inbound text message content:</strong> currently retained in our message log and not automatically purged. See the note in Section 7.</li>
+      <li><strong>Server logs and analytics:</strong> retained on a rolling basis for security and product analysis.</li>
+    </ul>
+    <!-- ATTORNEY NOTE: CPRA §1798.100(a)(3) requires the retention period for each category,
+         or the criteria used to determine it. The bullets above are honest but several are
+         open-ended. The client should set concrete periods (a written retention schedule)
+         and this section should then be updated to state them. Flagged as a business
+         decision: how long to keep billing records (7 yrs is typical for tax), booking
+         records, and inbound SMS content. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — retention periods need to be set</p>
+      <p>CPRA requires a retention period for each category, or the criteria used to determine it. The bullets above are accurate but several are open-ended. The client should adopt a written retention schedule with concrete periods — particularly for billing records, booking records, and inbound SMS content — and this section should then be updated to state them.</p>
+    </div>
+
+    <h2>9. Security</h2>
+    <p>
+      We take reasonable technical and organizational measures to protect your personal information. Traffic between you and the Service is encrypted in transit, access to member data is restricted, and our database and payment providers apply their own security controls.
+    </p>
+    <p>
+      No method of transmission over the internet or electronic storage is completely secure. We cannot guarantee absolute security.
+    </p>
+    <!-- ATTORNEY NOTE — ACCURACY CORRECTION. The prior policy claimed "industry-standard"
+         measures including "encryption at rest" and "regular security reviews." Those are
+         specific, auditable claims. They have been softened to what can be substantiated,
+         because an overstated security claim is a standard FTC Section 5 theory and is the
+         first thing pled after a breach. Counsel should confirm what is actually true
+         (Supabase does encrypt at rest by default — if the client can substantiate that
+         and a documented review cadence, the stronger language may be restored).
+         Also confirm: no SOC 2 / ISO / PCI certification is claimed anywhere on the site,
+         since none is held. Separately, consider whether a written incident response plan
+         and breach-notification obligations under Cal. Civ. Code §1798.82 (and the
+         CPRA private right of action for breaches of unencrypted/unredacted PI) are
+         adequately addressed operationally — the phone number + net worth combination
+         would be a meaningful breach. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — softened unsubstantiated security claims</p>
+      <p>The prior policy claimed "industry-standard" measures including encryption at rest and "regular security reviews." Those are specific, auditable claims and overstated security representations are a standard FTC Section 5 theory after a breach, so they have been narrowed to what is readily substantiated. If the client can document encryption at rest and a review cadence, the stronger language can be restored. Please also confirm no certification (SOC 2, ISO, PCI) is claimed anywhere on the site, since none is held.</p>
+    </div>
+
+    <h2>10. Your California Privacy Rights (CCPA/CPRA)</h2>
+    <p>
+      If you are a California resident, you have the following rights under the California Consumer Privacy Act, as amended by the California Privacy Rights Act.
+    </p>
+    <p><strong>Right to know.</strong> You can ask us to tell you the categories and specific pieces of personal information we have collected about you, where we got it, why we collected it, and the categories of third parties we disclosed it to.</p>
+    <p><strong>Right to delete.</strong> You can ask us to delete the personal information we collected from you. We must honor that request unless an exception applies — for example, where we need the information to complete a transaction, detect security incidents, comply with a legal obligation, or establish, exercise, or defend a legal claim. As explained in Section 7, <strong>we retain SMS consent records after deletion</strong> on that last basis, and we retain billing records as required for tax and accounting.</p>
+    <p><strong>Right to correct.</strong> You can ask us to correct inaccurate personal information we hold about you. Much of it you can correct yourself in your Profile.</p>
+    <p><strong>Right to opt out of sale or sharing.</strong> You can direct us not to sell your personal information and not to share it for cross-context behavioral advertising. <strong>We do not sell or share your personal information</strong>, so there is nothing to opt out of — but the right exists and you may exercise it. See Section 11.</p>
+    <p><strong>Right to limit use of sensitive personal information.</strong> You can direct a business to limit its use of sensitive personal information to what is necessary to provide the service. We only use any sensitive personal information we hold for those permitted purposes — to run your membership, respond to you, secure the Service, and meet legal obligations — so no additional limitation is required. You may still submit a request.</p>
+    <p><strong>Right to non-discrimination.</strong> We will not deny you service, charge you a different price, or give you a lower quality of service because you exercised a privacy right. We do not offer financial incentives in exchange for personal information.</p>
+    <p><strong>Right to data portability.</strong> You can ask for the personal information you gave us in a portable, readily usable format.</p>
+    <p><strong>How to submit a request.</strong> Email <a href="mailto:members@curatevip.ai">members@curatevip.ai</a> with the subject line "Privacy Request," from the email address on your account, and tell us which right you are exercising. We will confirm receipt within 10 business days and respond within 45 calendar days, and we may extend by another 45 days if we tell you why. We will ask you to verify your identity before we act on a request to know, delete, or correct — usually by confirming information already associated with your account. We do not charge a fee unless a request is manifestly unfounded or excessive.</p>
+    <p><strong>Authorized agents.</strong> You may use an authorized agent to submit a request on your behalf. We will ask the agent for written permission signed by you, and we may ask you to verify your own identity directly with us and to confirm that you gave the agent permission. An agent registered with the California Secretary of State may submit proof of that registration instead.</p>
+    <p><strong>Appeals and complaints.</strong> If we deny your request, you may ask us to reconsider by replying to our response. You may also file a complaint with the California Privacy Protection Agency or the California Attorney General.</p>
+    <!-- ATTORNEY NOTE: Confirm CurateVIP LLC actually MEETS a CCPA "business" threshold
+         (>$26.625M gross revenue as adjusted; or buys/sells/shares PI of 100,000+
+         consumers/households; or derives 50%+ of revenue from selling/sharing PI). A
+         $299/yr invite-only startup very likely does NOT, meaning CCPA/CPRA may not
+         legally apply yet. Two choices for the client:
+           (a) comply voluntarily and keep this section (drafted above) — good practice,
+               good optics, but it creates commitments the company must actually honor,
+               including the 45-day response clock and verification workflow; or
+           (b) state that the company is not currently a covered "business" and offer the
+               rights as a matter of policy without the statutory deadlines.
+         Recommend (a) only if the client can operationally meet the response deadlines.
+         ALSO NOTE OTHER STATES: WA (My Health My Data — likely N/A, no health data),
+         and Washington/Arizona/Hawaii consumers. Colorado, Connecticut, Virginia, Texas,
+         Oregon, Montana etc. have their own comprehensive laws with their own thresholds;
+         most have volume thresholds this company will not meet initially. Counsel to
+         decide whether to add a multi-state rights section now or on growth. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — does CCPA actually apply yet?</p>
+      <p>Confirm whether CurateVIP LLC currently meets a CCPA "business" threshold. An invite-only startup at $299/yr very likely does not meet the revenue or 100,000-consumer thresholds, so the statute may not yet apply. The client can either comply voluntarily and keep this section as drafted — good practice and good optics, but it creates real commitments including the 45-day clock and a verification workflow — or state that it is not a covered business and offer the rights as a matter of policy without statutory deadlines. Recommend the former only if the client can actually meet the deadlines. Separately, counsel should decide whether to add a multi-state rights section (Colorado, Connecticut, Virginia, Texas, Oregon) now or on growth.</p>
+    </div>
+
+    <h2>11. Do Not Sell or Share My Personal Information</h2>
+    <div class="highlight-box">
+      <strong>CurateVIP does not sell your personal information, and does not share it for cross-context behavioral advertising.</strong> We have not sold or shared personal information in the preceding 12 months, and we do not sell or share the personal information of anyone we know to be under 16.
+      <br /><br />
+      Because we do not sell or share, there is no opt-out for you to complete. If you would still like to submit an opt-out request, or if you believe your information has been sold or shared, email <a href="mailto:members@curatevip.ai">members@curatevip.ai</a> with the subject line "Do Not Sell or Share."
+    </div>
+    <!-- ATTORNEY NOTE: This statement is only defensible if (1) every vendor in Section 5 is
+         under a valid CPRA service-provider contract, and (2) no advertising/analytics tag
+         on the marketing site transmits identifiers to an ad network. Verify the actual tag
+         load on curatevip.app and curatevip.ai (including Google Analytics ad features,
+         any Meta pixel, and any remarketing tag) before publishing an absolute no-sale
+         statement. If any ad tech is present, CPRA requires a functioning "Do Not Sell or
+         Share My Personal Information" LINK in the site footer and honoring of Global
+         Privacy Control signals — neither of which currently exists. This is the single
+         most commonly pled CPRA violation. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — verify before publishing an absolute no-sale statement</p>
+      <p>This statement holds only if every vendor is under a valid service-provider contract and no advertising or analytics tag transmits identifiers to an ad network. Please verify the actual tags loading on curatevip.app and curatevip.ai (Google Analytics advertising features, any Meta pixel, any remarketing tag). If any ad tech is present, CPRA requires a working "Do Not Sell or Share My Personal Information" link in the site footer and honoring of Global Privacy Control signals — neither exists today, and this is among the most commonly pled CPRA violations.</p>
+    </div>
+
+    <h2>12. Cookies and Analytics</h2>
+    <p>
+      We use cookies and similar technologies to keep you signed in, remember your preferences, and understand how the Service is used. Some are necessary for the Service to work; others support analytics.
+    </p>
+    <p>
+      You can control cookies through your browser settings. Blocking some cookies may break parts of the Service.
+    </p>
+    <p>
+      We do not currently respond to browser "Do Not Track" signals, because no common standard for them has been adopted.
+    </p>
+    <!-- ATTORNEY NOTE: "We do not respond to DNT" is still accurate and permitted, but it
+         is NOT the same as Global Privacy Control (GPC). California requires businesses
+         that sell or share to honor GPC as a valid opt-out signal. If Section 11's no-sale
+         statement is confirmed, no GPC handling is strictly required — but if any ad tech
+         is found, GPC support must be implemented and this paragraph rewritten. Counsel to
+         confirm which is the case. Also consider whether a cookie consent banner is needed;
+         it is not required in California for non-sale analytics, but is if the site is
+         reachable from the EU/UK and any EU/UK visitors are targeted. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — Global Privacy Control vs. Do Not Track</p>
+      <p>The Do Not Track sentence is accurate and permitted, but DNT is not the same as Global Privacy Control. California requires businesses that sell or share to honor GPC. If the no-sale statement in Section 11 is confirmed, GPC handling is not strictly required; if any ad tech is found, GPC support must be implemented and this paragraph rewritten.</p>
+    </div>
+
+    <h2>13. Children's Privacy</h2>
+    <p>
+      The Service is for adults. It is not directed to anyone under 18, and we do not knowingly collect personal information from anyone under 18. If we learn we have collected information from someone under 18, we will delete it promptly. If you believe we have, contact <a href="mailto:members@curatevip.ai">members@curatevip.ai</a>.
     </p>
 
-    <h2>10. Children's Privacy</h2>
+    <h2>14. Where Your Information Is Processed</h2>
     <p>
-      The Service is not directed to individuals under the age of 18. We do not knowingly collect personal information from children. If we become aware that we have inadvertently collected personal information from a child under 18, we will take steps to delete it promptly. If you believe we have such information, contact us at <a href="mailto:privacy@curatevip.app">privacy@curatevip.app</a>.
+      CURATEvip is operated from the United States and is intended for United States residents. Your information is stored and processed in the United States, and our service providers may process it in other countries where they operate. If you access the Service from outside the United States, you understand that your information will be transferred to and processed in the United States, where privacy laws may differ from those in your country.
+    </p>
+    <!-- ATTORNEY NOTE: The product is sold to US consumers only, so no GDPR transfer
+         mechanism (SCCs) has been described and none is claimed. If the client ever markets
+         to or accepts members from the EU/UK, this section, a lawful-basis section, and an
+         SCC/IDTA analysis all become necessary. Flagging so it is not overlooked at launch
+         of any international market. -->
+    <div class="attorney-note">
+      <p class="attorney-note-label">Attorney note — US-only assumption</p>
+      <p>This is drafted on the assumption that the product is sold only to US consumers, so no GDPR transfer mechanism is claimed. If the client ever markets to or accepts EU/UK members, this section plus a lawful-basis section and a standard contractual clauses analysis all become necessary.</p>
+    </div>
+
+    <h2>15. Third-Party Links</h2>
+    <p>
+      The Service links to third-party websites and services, including hotel and venue sites. This Policy does not apply to them. Please review their privacy policies before giving them information.
     </p>
 
-    <h2>11. Cookies & Tracking Technologies</h2>
+    <h2>16. Changes to This Policy</h2>
     <p>
-      We use cookies and similar technologies to operate and improve the Service, remember your preferences, and understand how users interact with our platform. You can control cookie settings through your browser preferences. Disabling certain cookies may affect the functionality of the Service.
-    </p>
-    <p>
-      We do not currently respond to "Do Not Track" signals, as no industry-wide standard has been established for such signals.
+      We may update this Privacy Policy. When we make material changes, we will update the effective date above and give notice through the Service or by email. Your continued use of the Service after an update constitutes acceptance of the revised Policy.
     </p>
 
-    <h2>12. Third-Party Links</h2>
-    <p>
-      The Service may contain links to third-party websites or services. This Privacy Policy does not apply to those third parties, and we encourage you to review their privacy policies before providing any personal information.
-    </p>
-
-    <h2>13. Changes to This Policy</h2>
-    <p>
-      We may update this Privacy Policy from time to time. When we make material changes, we will update the effective date above and provide notice through the Service or via email. Your continued use of the Service following any update constitutes your acceptance of the revised Policy.
-    </p>
-
-    <h2>14. Contact Us</h2>
-    <p>If you have any questions, concerns, or requests regarding this Privacy Policy, please contact:</p>
+    <h2>17. Contact Us</h2>
+    <p>For questions about this Policy, or to submit a privacy request:</p>
     <p>
       <strong>CurateVIP LLC</strong><br />
       A Delaware Limited Liability Company<br />
-      Privacy inquiries: <a href="mailto:privacy@curatevip.app">privacy@curatevip.app</a><br />
-      General legal: <a href="mailto:legal@curatevip.app">legal@curatevip.app</a>
+      Email: <a href="mailto:members@curatevip.ai">members@curatevip.ai</a><br />
+      Mailing address: <strong>[ PHYSICAL MAILING ADDRESS — TO BE SUPPLIED ]</strong>
+    </p>
+    <p>
+      See also our <a href="terms.html">Terms &amp; Conditions</a>.
     </p>
 
     <div class="page-footer">
