@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Privacy Choices — CURATEvip</title>
+  <link rel="icon" type="image/png" href="C-IconNoBg.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #ba9f75;
+      --gold-light: #d4b896;
+      --bg: #0a0a0a;
+      --bg2: #111;
+      --border: rgba(186,159,117,0.12);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+      --text: rgba(255,255,255,0.82);
+      --text-muted: rgba(255,255,255,0.45);
+      --gold-border: rgba(186,159,117,0.3);
+      --text-40: rgba(255,255,255,0.4);
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV — kept identical to index.html.
+       This page used to carry its own cut-down bar: 72px tall, a translucent
+       blurred background, a different logo file at a different size, and a
+       single "← Back to Home" link instead of the site nav. Landing here from
+       the homepage the header visibly changed, which reads as a different site
+       — exactly the wrong impression on the page where someone is deciding
+       whether to trust you. Every rule below is copied from index.html so the
+       two cannot drift. */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      /* Aligns the bar with the 1120px content column instead of the viewport
+         edge. 100% not 100vw: 100vw includes the scrollbar. */
+      padding: 0 max(24px, calc((100% - 1120px) / 2 + 72px));
+      height: 88px;
+      /* Opaque, matching the black plate baked into the logo PNG. Any
+         translucency makes the image read as a rectangle floating on the bar. */
+      background: #000;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      height: 52px;
+      width: auto;
+      opacity: 0.92;
+      margin: 10px 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      white-space: nowrap;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-40);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      padding: 10px 26px;
+      border: 1px solid var(--gold-border) !important;
+      border-radius: 40px;
+      color: var(--gold) !important;
+      transition: background 0.2s, color 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold) !important;
+      color: #000 !important;
+    }
+
+    .nav-member {
+      font-size: 11px !important;
+      letter-spacing: 0.1em !important;
+      color: var(--text-40) !important;
+      text-transform: uppercase;
+      transition: color 0.2s !important;
+    }
+
+    .nav-member:hover { color: var(--gold) !important; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 8px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: rgba(255,255,255,0.55);
+      transition: all 0.28s ease;
+      transform-origin: center;
+    }
+
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 88px;
+      left: 0; right: 0;
+      background: #000;
+      border-bottom: 1px solid var(--border);
+      z-index: 98;
+      flex-direction: column;
+      padding: 8px 0 32px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--gold); }
+
+    .mobile-menu .mob-cta {
+      margin: 20px 32px 0;
+      padding: 16px 44px;
+      background: var(--gold);
+      border-radius: 40px;
+      color: #000 !important;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-align: center;
+      border-bottom: none;
+    }
+
+    .mobile-menu .mob-cta:hover { background: var(--gold-light); color: #000 !important; }
+
+    /* PAGE */
+    .page-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 140px 40px 100px;
+    }
+
+    .page-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .page-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .page-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 56px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--gold-light);
+      margin: 48px 0 14px;
+      letter-spacing: 0.01em;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    ul {
+      margin: 0 0 16px 20px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    ul li { margin-bottom: 6px; }
+
+    a { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
+    a:hover { opacity: 0.75; }
+
+    .highlight-box {
+      background: rgba(186,159,117,0.06);
+      border: 1px solid rgba(186,159,117,0.18);
+      border-left: 3px solid var(--gold);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.75;
+    }
+
+    /* DRAFT BANNER — remove before publication */
+    .draft-banner {
+      background: rgba(220,68,50,0.10);
+      border: 2px solid rgba(220,68,50,0.55);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin: 0 0 40px;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.7;
+    }
+
+    .draft-banner-title {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #ff8a72;
+      margin-bottom: 10px;
+    }
+
+    .draft-banner p {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 0;
+    }
+
+    /* ATTORNEY CALLOUT — remove before publication */
+    .attorney-note {
+      background: rgba(120,160,220,0.07);
+      border: 1px dashed rgba(150,185,235,0.55);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 20px 0 28px;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .attorney-note-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9dc0ef;
+      margin-bottom: 8px;
+    }
+
+    .attorney-note p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 8px;
+    }
+
+    .attorney-note p:last-child { margin-bottom: 0; }
+
+    .attorney-note ul {
+      font-size: 13px;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 0;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-footer-copy {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .page-footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .page-footer-links a {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .page-footer-links a:hover { color: var(--gold); }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; height: 80px; }
+      .nav-logo img { width: min(300px, 62vw); height: auto; margin: 0; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; flex-shrink: 0; }
+      .mobile-menu { top: 80px; }
+      .page-wrap { padding: 128px 24px 80px; }
+      .page-footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+  <style>
+    .choice-form { background: rgba(186,159,117,0.06); border: 1px solid rgba(186,159,117,0.18); border-left: 3px solid #ba9f75; border-radius: 12px; padding: 22px; margin: 12px 0 24px; }
+    .choice-form label { display: block; font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 10px; }
+    .choice-form input { width: 100%; box-sizing: border-box; padding: 13px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); color: #fff; font-size: 15px; margin-bottom: 14px; }
+    .choice-form button { width: 100%; padding: 14px; border-radius: 32px; border: 1px solid #ba9f75; background: #ba9f75; color: #0c0c0d; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
+    .choice-form button[disabled] { opacity: 0.5; cursor: default; }
+    .choice-msg { margin: 14px 0 0; font-size: 14px; color: #d4b896; min-height: 1em; }
+    .choice-msg.err { color: #ff9a9a; }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV — same as index.html. Anchors are absolute (index.html#…) because
+          the sections they point at live on the homepage, not here. ── -->
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <img src="Logo-Horizontal-Website.png" alt="CURATEvip" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#what-you-get">What You Get</a></li>
+      <li><a href="index.html#how-it-works">How It Works</a></li>
+      <li><a href="index.html#membership">Membership</a></li>
+      <li><a href="https://curatevip.ai" target="_blank" class="nav-member">Member Login</a></li>
+      <li><a href="index.html#contact" class="nav-cta">Request Access</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- ── MOBILE MENU ── -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#what-you-get">What You Get</a>
+    <a href="index.html#how-it-works">How It Works</a>
+    <a href="index.html#membership">Membership</a>
+    <a href="https://curatevip.ai" target="_blank">Member Login</a>
+    <a href="index.html#contact" class="mob-cta">Request Access</a>
+  </div>
+
+  <div class="page-wrap">
+
+    <p class="page-eyebrow">Legal</p>
+    <h1 class="page-title">Your Privacy Choices</h1>
+    <p class="page-meta">CurateVIP LLC</p>
+
+    <p>
+      You can tell us not to sell or share your personal information. Once you opt out, your information will be left out of any list we sell to or share with marketing and commercial partners. It does not change your membership or your recommendations.
+    </p>
+
+    <h2>Do Not Sell or Share My Personal Information</h2>
+
+    <div class="highlight-box" id="gpcNote" style="display:none">
+      Your browser is sending a Global Privacy Control signal. We treat it as a request to opt out. Enter your email below so we can apply it to your account.
+    </div>
+
+    <form id="optOutForm" class="choice-form" novalidate>
+      <label for="optEmail">Email address you use with CURATEvip</label>
+      <input id="optEmail" type="email" required autocomplete="email" placeholder="you@example.com" />
+      <button type="submit" id="optBtn">Do not sell or share my information</button>
+      <p class="choice-msg" id="optMsg" role="status" aria-live="polite"></p>
+    </form>
+
+    <p>
+      Members can also see and change this choice in the app under <strong>Privacy Choices</strong>. We process opt-out requests within 15 business days. You can also email <a href="mailto:members@curatevip.app?subject=Do%20Not%20Sell%20or%20Share">members@curatevip.app</a> with the subject line "Do Not Sell or Share."
+    </p>
+    <p>
+      See Sections 11 and 12 of our <a href="privacy.html">Privacy Policy</a>.
+    </p>
+
+    <div class="page-footer">
+      <p class="page-footer-copy">© 2026 CurateVIP LLC. All rights reserved.</p>
+      <ul class="page-footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="privacy-choices.html">Privacy Choices</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Hamburger menu — same behaviour as index.html. Without this the button
+       renders on mobile and does nothing, which is worse than not having it. -->
+  <script>
+    ;(function() {
+      var hbtn  = document.getElementById('hamburger');
+      var hmenu = document.getElementById('mobileMenu');
+      if (!hbtn || !hmenu) return;
+
+      function openMenu() {
+        hmenu.style.display = 'flex';
+        hbtn.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeMenu() {
+        hmenu.style.display = 'none';
+        hbtn.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      hbtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hmenu.style.display === 'flex' ? closeMenu() : openMenu();
+      });
+
+      hmenu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('click', function(e) {
+        if (hmenu.style.display === 'flex' && !hmenu.contains(e.target) && !hbtn.contains(e.target)) {
+          closeMenu();
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    ;(function() {
+      var API = 'https://api.curatevip.ai';
+      var gpc = false;
+      try { gpc = navigator.globalPrivacyControl === true; } catch (e) {}
+      if (gpc) document.getElementById('gpcNote').style.display = 'block';
+      var form = document.getElementById('optOutForm');
+      var msg = document.getElementById('optMsg');
+      var btn = document.getElementById('optBtn');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = document.getElementById('optEmail').value.trim();
+        msg.className = 'choice-msg';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.className = 'choice-msg err'; msg.textContent = 'Enter a valid email address.'; return; }
+        btn.disabled = true; msg.textContent = 'Saving...';
+        fetch(API + '/api/privacy/opt-out', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, source: 'website', gpc: gpc })
+        }).then(function(r) { return r.json().then(function(d) { return { ok: r.ok && d.ok, d: d }; }); })
+          .then(function(x) {
+            if (!x.ok) throw new Error((x.d && x.d.message) || 'Could not record your request.');
+            form.innerHTML = '<p class="choice-msg">' + (x.d.message || 'Your request is recorded.') + '</p>';
+          })
+          .catch(function(err) {
+            btn.disabled = false; msg.className = 'choice-msg err';
+            msg.textContent = (err && err.message) || 'Something went wrong. Please email members@curatevip.app.';
+          });
+      });
+    })();
+  </script>
+
+</body>
+</html>
