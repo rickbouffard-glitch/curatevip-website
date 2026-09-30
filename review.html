@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<!--
+  review.html: engineering review viewer (README, architecture, schema).
+  - Login checks credentials via /api/admin-auth, then fetches the documents
+    from GET /api/docs/review and renders them with a small Markdown renderer.
+  - See "Docs API credential" in the script for the supported auth modes.
+  - No document content is embedded in this file.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -16,7 +23,7 @@
       min-height: 100vh;
     }
 
-    /* ── Login ── */
+    /* ---- Login ---- */
     .auth-screen {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
       background: radial-gradient(ellipse at 50% 30%, rgba(186,159,117,0.08) 0%, #0c0c0d 65%);
@@ -53,7 +60,7 @@
       margin-top: 12px; letter-spacing: 0.04em; min-height: 18px;
     }
 
-    /* ── Viewer ── */
+    /* ---- Viewer ---- */
     .viewer { display: none; flex-direction: column; min-height: 100vh; }
     .viewer.active { display: flex; }
 
@@ -98,7 +105,7 @@
 
     .viewer-body { max-width: 820px; margin: 0 auto; padding: 44px 32px 80px; width: 100%; }
 
-    /* ── Doc styles ── */
+    /* ---- Doc styles ---- */
     .doc h1 { color: var(--gold); font-size: 20px; font-weight: 700; margin: 0 0 22px; letter-spacing: 0.04em; font-family: inherit; }
     .doc h2 {
       color: rgba(255,255,255,0.85); font-size: 11px; font-weight: 700;
@@ -144,22 +151,22 @@
 </head>
 <body>
 
-<!-- ── Login ── -->
+<!-- Login -->
 <div class="auth-screen" id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">CURATE</div>
     <div class="auth-subtitle">Engineering Review</div>
     <input class="auth-field" type="text" id="uInput" placeholder="Username" autocomplete="username" />
     <input class="auth-field" type="password" id="pInput" placeholder="Password" autocomplete="current-password" />
-    <!-- Shown only when this page is not configured for Supabase sign-in.
-         See the DOCS API CREDENTIAL block in the script below. -->
+    <!-- Admin API secret field. Shown only when Supabase sign-in is not configured
+         (see the docs API credential notes in the script). -->
     <input class="auth-field" type="password" id="sInput" placeholder="Admin API Secret" autocomplete="off" style="display:none" />
     <div class="auth-error" id="authError"></div>
     <button class="auth-btn" onclick="doLogin()">Access</button>
   </div>
 </div>
 
-<!-- ── Viewer ── -->
+<!-- Viewer -->
 <div class="viewer" id="viewer">
   <header class="viewer-header">
     <div class="viewer-wordmark">CURATE<span>/ Engineering Review</span></div>
@@ -180,29 +187,23 @@
 <script>
 const API = 'https://api.curatevip.ai';
 
-// ══════════════════════ DOCS API CREDENTIAL ══════════════════════
-// The three documents are NOT in this file. They used to be — as JS template
-// literals guarded by a username and password written in cleartext a few lines
-// from here — so anyone could read the architecture and the full data model
-// with `curl https://curatevip.app/review.html`. Those two constants are gone
-// and that password must be treated as compromised wherever else it was used.
-//
-// Content now comes from GET /api/docs/review, behind the API's server-side
-// requireAdmin check. requireAdmin accepts exactly two credentials:
+// ---- Docs API credential ----
+// The three documents (README, architecture, schema) are not in this file. They
+// are served by GET /api/docs/review, behind the API's server-side requireAdmin
+// check, which accepts one of two credentials:
 //   (a) Authorization: Bearer <Supabase session token> for a member with
 //       is_admin = true (preferred), or
 //   (b) x-admin-secret: <ADMIN_SCRIPT_SECRET>.
 //
-// (a) is off by default because this site carries no Supabase configuration of
-// its own. To enable it, paste the project URL and the ANON (publishable) key
-// below — never the service-role key. With them blank, the page falls back to
-// (b): the admin API secret is typed at sign-in, kept in memory for the life of
-// the tab, and never written to storage of any kind.
+// (a) is disabled until SUPABASE_URL and SUPABASE_ANON_KEY are set below. Use the
+// anon (publishable) key only, never the service-role key. With them blank the
+// page uses (b): the admin API secret is entered at sign-in, kept in memory for
+// the life of the tab, and never written to storage.
 const SUPABASE_URL      = '';
 const SUPABASE_ANON_KEY = '';
 const USE_SUPABASE      = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-// ── Auth ────────────────────────────────────────────────────
+// ---- Auth ----
 async function sha256(text) {
   const data = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest('SHA-256', data);
@@ -234,8 +235,7 @@ async function doLogin() {
   btn.textContent = 'Checking…';
   btn.disabled = true;
   try {
-    // Step 1 — a real server-side credential check against admin_credentials,
-    // replacing the two hardcoded constants this file used to compare against.
+    // Step 1: verify the username and password hash against admin_credentials.
     const res = await fetch(API + '/api/admin-auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -244,7 +244,7 @@ async function doLogin() {
     const data = await res.json();
     if (!data.ok) { errEl.textContent = 'Invalid credentials.'; return; }
 
-    // Step 2 — a credential the docs API itself accepts.
+    // Step 2: obtain a credential the docs API accepts.
     let headers;
     if (USE_SUPABASE) {
       const token = await supabaseSignIn(u, p);
@@ -254,7 +254,7 @@ async function doLogin() {
       headers = { 'x-admin-secret': s };
     }
 
-    // Step 3 — the API is the gate. Nothing is shown unless it answers 200.
+    // Step 3: load the docs. The API is the actual access check.
     const err = await renderAll(headers);
     if (err) { errEl.textContent = err; return; }
 
@@ -291,14 +291,14 @@ function signOut() {
   document.getElementById('pInput').value = '';
   document.getElementById('sInput').value = '';
   document.getElementById('authError').textContent = '';
-  // Signing out must leave nothing rendered behind.
+  // Clear rendered content on sign-out.
   ['readme', 'architecture', 'schema'].forEach(id => {
     document.getElementById(id).innerHTML = '';
   });
   rendered = false;
 }
 
-// ── Tab switching ────────────────────────────────────────────
+// ---- Tab switching ----
 function showTab(id, btn) {
   ['readme','architecture','schema'].forEach(t => {
     document.getElementById(t).style.display = t === id ? '' : 'none';
@@ -307,7 +307,7 @@ function showTab(id, btn) {
   btn.classList.add('active');
 }
 
-// ── Inline renderer ──────────────────────────────────────────
+// ---- Inline renderer: escapes HTML, then applies **bold** and `code` ----
 function renderInline(text) {
   return text
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -315,7 +315,9 @@ function renderInline(text) {
     .replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
-// ── Markdown renderer ────────────────────────────────────────
+// ---- Markdown renderer ----
+// Minimal renderer for headings, fenced code, tables, rules, lists and
+// paragraphs. All text passes through HTML escaping.
 function renderMarkdown(md) {
   const lines = md.split('\n');
   let html = '';
@@ -380,10 +382,9 @@ function renderMarkdown(md) {
   return html;
 }
 
-// ── Fetch + render the docs after a successful sign-in ──────
+// ---- Fetch and render the docs after sign-in ----
 // Returns an error string on failure, null on success. There is no embedded
-// copy to fall back to by design: if the API will not serve the content, this
-// page shows nothing.
+// fallback copy.
 let rendered = false;
 async function renderAll(headers) {
   if (rendered) return null;

@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  privacy-choices.html: "Your Privacy Choices" page. The opt-out form posts to
+  /api/privacy/opt-out and honors the Global Privacy Control signal.
+  Static page. Nav, mobile menu and footer mirror index.html; keep them in sync.
+  The draft banner and attorney callout must be removed before publication.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -35,14 +41,8 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* NAV — kept identical to index.html.
-       This page used to carry its own cut-down bar: 72px tall, a translucent
-       blurred background, a different logo file at a different size, and a
-       single "← Back to Home" link instead of the site nav. Landing here from
-       the homepage the header visibly changed, which reads as a different site
-       — exactly the wrong impression on the page where someone is deciding
-       whether to trust you. Every rule below is copied from index.html so the
-       two cannot drift. */
+    /* Nav: identical to index.html. Rules below are copied from index.html so the
+       header looks the same across the site; keep them in sync. */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -51,11 +51,11 @@
       align-items: center;
       justify-content: space-between;
       /* Aligns the bar with the 1120px content column instead of the viewport
-         edge. 100% not 100vw: 100vw includes the scrollbar. */
+         edge. 100% rather than 100vw, which includes the scrollbar. */
       padding: 0 max(24px, calc((100% - 1120px) / 2 + 72px));
       height: 88px;
-      /* Opaque, matching the black plate baked into the logo PNG. Any
-         translucency makes the image read as a rectangle floating on the bar. */
+      /* Opaque, to match the black background baked into the logo PNG. Any
+         translucency makes the logo show as a separate rectangle. */
       background: #000;
       border-bottom: 1px solid var(--border);
     }
@@ -189,7 +189,7 @@
 
     .mobile-menu .mob-cta:hover { background: var(--gold-light); color: #000 !important; }
 
-    /* PAGE */
+    /* Page */
     .page-wrap {
       max-width: 780px;
       margin: 0 auto;
@@ -262,7 +262,7 @@
       line-height: 1.75;
     }
 
-    /* DRAFT BANNER — remove before publication */
+    /* Draft banner: remove before publication */
     .draft-banner {
       background: rgba(220,68,50,0.10);
       border: 2px solid rgba(220,68,50,0.55);
@@ -289,7 +289,7 @@
       margin-bottom: 0;
     }
 
-    /* ATTORNEY CALLOUT — remove before publication */
+    /* Attorney callout: remove before publication */
     .attorney-note {
       background: rgba(120,160,220,0.07);
       border: 1px dashed rgba(150,185,235,0.55);
@@ -322,7 +322,7 @@
       margin-bottom: 0;
     }
 
-    /* FOOTER */
+    /* Footer */
     .page-footer {
       margin-top: 80px;
       padding-top: 32px;
@@ -379,8 +379,8 @@
 </head>
 <body>
 
-  <!-- ── NAV — same as index.html. Anchors are absolute (index.html#…) because
-          the sections they point at live on the homepage, not here. ── -->
+  <!-- Nav: same as index.html. Anchors are absolute (index.html#...) because the
+       target sections are on the homepage. -->
   <nav>
     <a href="index.html" class="nav-logo">
       <img src="Logo-Horizontal-Website.png" alt="CURATEvip" />
@@ -399,7 +399,7 @@
     </button>
   </nav>
 
-  <!-- ── MOBILE MENU ── -->
+  <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.html#what-you-get">What You Get</a>
     <a href="index.html#how-it-works">How It Works</a>
@@ -450,9 +450,9 @@
 
   </div>
 
-  <!-- Hamburger menu — same behaviour as index.html. Without this the button
-       renders on mobile and does nothing, which is worse than not having it. -->
+  <!-- Hamburger menu: same behavior as index.html. -->
   <script>
+    // Mobile menu toggle (same behavior as index.html).
     ;(function() {
       var hbtn  = document.getElementById('hamburger');
       var hmenu = document.getElementById('mobileMenu');
@@ -487,6 +487,8 @@
   </script>
 
   <script>
+    // Opt-out form: POSTs the email to /api/privacy/opt-out and flags whether the
+    // browser sent a Global Privacy Control signal (which is treated as an opt-out).
     ;(function() {
       var API = 'https://api.curatevip.ai';
       var gpc = false;
@@ -507,7 +509,11 @@
         }).then(function(r) { return r.json().then(function(d) { return { ok: r.ok && d.ok, d: d }; }); })
           .then(function(x) {
             if (!x.ok) throw new Error((x.d && x.d.message) || 'Could not record your request.');
-            form.innerHTML = '<p class="choice-msg">' + (x.d.message || 'Your request is recorded.') + '</p>';
+            var done = document.createElement('p');
+            done.className = 'choice-msg';
+            done.textContent = x.d.message || 'Your request is recorded.';
+            form.textContent = '';
+            form.appendChild(done);
           })
           .catch(function(err) {
             btn.disabled = false; msg.className = 'choice-msg err';

@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+<!--
+  join.html: paid-traffic landing page and application funnel (served at /join).
+  - Nine-step application. Step 1 POSTs /api/funnel/start; later answers are
+    queued and PATCHed to /api/funnel/:token with retry and backoff.
+  - Captures first-party attribution (UTM and click ids) in sessionStorage.
+  - GA4 and Meta Pixel load only after cookie consent; set the IDs in the
+    analytics config block in the script below.
+  - ?v=<variant> swaps hero copy from an allow-list.
+  - Not indexed (robots noindex). Shares design tokens with index.html.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -35,15 +45,13 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Weight list is identical to index.html on purpose: loading a real 700
-       face here would make these buttons heavier than the same buttons on the
-       main site. -->
+  <!-- Font weights match index.html so buttons render identically on both pages. -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Tokens lifted verbatim from index.html so this campaign page and the
-       main site share one palette. Do not fork these. */
+    /* Design tokens copied from index.html so both pages share one palette.
+       Keep the two in sync. */
     :root {
       --gold:        #ba9f75;
       --gold-light:  #d4bc96;
@@ -76,9 +84,8 @@
 
     [hidden] { display: none !important; }
 
-    /* One visible focus treatment for every interactive element on the page.
-       The funnel is keyboard-driven by design, so this is load-bearing, not
-       decoration. */
+    /* Shared focus style for all interactive elements. The funnel is keyboard-driven,
+       so this is required for accessibility. */
     a:focus-visible,
     button:focus-visible,
     input:focus-visible,
@@ -93,7 +100,7 @@
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
 
-    /* ─── NAV ─────────────────────────────────────────── */
+    /* ---- Nav ---- */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -130,10 +137,9 @@
 
     section { scroll-margin-top: 92px; }
 
-    /* ─── HERO ────────────────────────────────────────────────────────────
-       The application form lives here, above the fold, on every viewport.
-       Everything below this section is supporting material for people who
-       need more before they commit — not a corridor to the form. */
+    /* ---- Hero ----
+       The application form sits here, above the fold, on every viewport.
+       Sections below are supporting material, not a path to the form. */
     #home {
       position: relative;
       isolation: isolate;
@@ -154,13 +160,10 @@
       z-index: -2;
     }
 
-    /* Heaviest under the copy on the left, lightest on the right where the
-       form card is opaque anyway — so the photograph actually reads instead
-       of being crushed to black.
-       Contrast floor: against the worst case in this image (a blown-out white
-       plate, 255), the copy column sits at roughly 0.67–0.75 combined alpha,
-       compositing to ~#44–58. White on that is over 4.5:1 for the 13.5px and
-       15.5px copy, and far over 3:1 for the headline. */
+    /* Scrim is darkest behind the copy on the left and lightest on the right,
+       where the opaque form card covers the photo anyway.
+       Contrast: against the brightest area of the image the copy column composites
+       to roughly #44 to #58, which keeps white text above 4.5:1. */
     .hero-scrim {
       position: absolute;
       inset: 0;
@@ -181,14 +184,10 @@
       align-items: center;
     }
 
-    /* Belt and braces on top of the scrim. The photograph has a blown-out
-       white plate roughly where the third line of the subhead lands, and the
-       crop moves with the viewport, so the copy carries its own shadow rather
-       than relying on the gradient alone. */
-    /* The moss wall is busy and mid-tone, which is the hardest kind of backdrop
-       for light text. The page gradient alone is not enough because the crop
-       moves with the viewport, so the copy column carries its own soft scrim
-       AND a shadow — belt and braces, and it costs nothing. */
+    /* Text shadow on top of the scrim. The crop shifts with the viewport, so the
+       copy cannot rely on the gradient alone to stay legible. */
+    /* The mid-tone background is hard to read light text against, and the crop
+       moves with the viewport, so the copy column gets its own scrim and shadow. */
     .hero-copy {
       position: relative;
       text-shadow: 0 2px 18px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.7);
@@ -256,9 +255,8 @@
 
     #apply { scroll-margin-top: 92px; }
 
-    /* The card is the only thing on this page we want anyone to touch, so it
-       gets the warmest edge and a faint gold lift. Everything else in the hero
-       is deliberately quieter than this. */
+    /* The form card is the primary action, so it gets the warmest border and a
+       subtle gold glow. Everything else in the hero stays visually quieter. */
     .apply-cue {
       font-size: 11px;
       font-weight: 600;
@@ -280,7 +278,7 @@
     .hero-reassure strong { color: rgba(255,255,255,0.78); font-weight: 500; }
     .hero-reassure a { color: rgba(255,255,255,0.5); text-decoration: underline; }
 
-    /* ─── BUTTONS (index.html) ────────────────────────── */
+    /* ---- Buttons (shared with index.html) ---- */
     .btn-primary {
       padding: 16px 44px;
       min-height: 48px;
@@ -324,7 +322,7 @@
     }
     .btn-ghost:hover { border-color: var(--gold-border); color: var(--gold); }
 
-    /* ─── BANDS ───────────────────────────────────────── */
+    /* ---- Bands ---- */
     .band {
       padding: 56px max(20px, calc((100% - 1160px) / 2));
     }
@@ -357,10 +355,8 @@
     .section-sub { font-size: 15px; color: var(--text-60); line-height: 1.7; max-width: 62ch; }
     .section-sub em { color: var(--gold-light); font-style: italic; }
 
-    /* ─── TRUST STRIP ─────────────────────────────────────────────────────
-       Restrained on purpose. These are the guides and award bodies the
-       scoring engine actually reads; the row is a credential, not a logo
-       wall, so it stays as text. */
+    /* ---- Trust strip ----
+       Kept as plain text rather than a logo wall. */
     .trust {
       background: #060606;
       border-bottom: 1px solid var(--border);
@@ -375,8 +371,8 @@
       margin: 0 auto 10px;
       line-height: 1.5;
     }
-    /* Unused since the source list was removed from the markup. Retained so
-       restoring the list is a markup change rather than a rebuild. */
+    /* Currently unused (the source list is no longer in the markup). Kept so the
+       list can be restored with a markup-only change. */
     .trust-list {
       list-style: none;
       display: flex;
@@ -404,7 +400,7 @@
       color: var(--gold);
     }
 
-    /* ─── PRODUCT PROOF ───────────────────────────────── */
+    /* ---- Product proof ---- */
     .proof-grid {
       display: grid;
       grid-template-columns: 290px minmax(0, 1fr);
@@ -446,7 +442,7 @@
     }
     .point-d { font-size: 14px; color: var(--text-60); line-height: 1.7; }
 
-    /* ─── SPEEDS ──────────────────────────────────────── */
+    /* ---- Speeds ---- */
     .speed-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -470,7 +466,7 @@
     .speed-card dt { font-size: 13.5px; font-weight: 500; color: #fff; white-space: nowrap; }
     .speed-card dd { font-size: 13.5px; color: var(--text-60); line-height: 1.5; }
 
-    /* ─── CITIES ──────────────────────────────────────── */
+    /* ---- Cities ---- */
     .city-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
@@ -499,7 +495,7 @@
     }
     .city.new { border-color: var(--gold-border); }
 
-    /* ─── PRICE ───────────────────────────────────────── */
+    /* ---- Price ---- */
     .price-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -544,7 +540,7 @@
       line-height: 1.65;
     }
 
-    /* ─── SECOND CTA ──────────────────────────────────── */
+    /* ---- Second CTA ---- */
     .cta-band {
       text-align: center;
       padding: 62px max(20px, calc((100% - 1160px) / 2)) 68px;
@@ -554,7 +550,7 @@
     .cta-band .section-sub { margin: 0 auto 28px; }
     .cta-sub-note { margin-top: 18px; font-size: 12px; color: var(--text-20); }
 
-    /* ─── FUNNEL ──────────────────────────────────────── */
+    /* ---- Funnel ---- */
     .funnel {
       background: rgba(13,13,13,0.96);
       border: 1px solid rgba(213,152,75,0.28);
@@ -565,33 +561,17 @@
       -webkit-backdrop-filter: blur(6px);
     }
 
-    /* ── Stop the card resizing between questions ─────────────────────────
-       Measured on the live page: steps ranged from 190px (two choices) to
-       395px (four choices) on desktop, and 235px to 455px on a phone. That is
-       a 200px+ jump on every transition, so the card visibly snaps up and down
-       as you answer — and the buttons move under the cursor mid-quiz.
-
-       Fixed with min-height on the steps rather than on the card, because only
-       one step is ever visible and it is the card's only variable content, so
-       pinning the step pins the card. min-height, not height: if copy is ever
-       lengthened the step still grows rather than clipping.
-
-       EVERY step is included, step 1 and the completion screen too, so the card
-       is one size from first question to last. Step 1 was initially exempt on
-       the theory that padding it would push the hero's reassurance line off a
-       phone — measuring showed that reasoning was wrong in the part that
-       matters. Step content is top-anchored, so the Begin button does not move
-       when the card grows; only the card's empty lower half and the line
-       beneath it shift down. The call to action still clears the fold, which is
-       the thing worth protecting. Desktop has 402px of slack against 160px of
-       growth, so it is free there.
-
-       Values are the measured tallest step at each breakpoint. */
+    /* Fixed step height
+       Each step gets a min-height equal to the tallest step at that breakpoint, so the
+       card does not resize (and buttons do not shift under the cursor) between
+       questions. Only one step is visible at a time, so pinning the step pins the card.
+       min-height rather than height lets a step grow instead of clipping if its copy
+       gets longer. Applies to every step, including step 1 and the completion screen.
+       Step content is top-anchored, so the Begin button does not move. */
     .step { min-height: 410px; }
 
-    /* Fills the slack under Begin on step 1. Quiet enough that it never
-       competes with the button — it is there for the person who hesitates,
-       not for the one already typing. */
+    /* Supporting copy under the Begin button on step 1. Styled quietly so it does
+       not compete with the button. */
     .step-sell {
       margin-top: 15px;
       padding-top: 13px;
@@ -700,8 +680,8 @@
     }
     .field-error.show { display: block; }
 
-    /* Choice questions. Real buttons, full width, generous target height —
-       a 390px phone is the primary surface for this page. */
+    /* Choice questions: full-width buttons with large touch targets. A 390px
+       phone is the primary viewport for this page. */
     .choices { display: flex; flex-direction: column; gap: 9px; }
 
     .choice {
@@ -750,7 +730,7 @@
     }
     .step-actions .btn-primary { flex: 1; min-width: 160px; text-align: center; padding: 16px 24px; }
 
-    /* Every low-emphasis control still has to clear a 44px touch target. */
+    /* Low-emphasis controls still need a 44px minimum touch target. */
     .btn-back {
       background: none;
       border: none;
@@ -799,10 +779,8 @@
       color: #e6a49b;
       line-height: 1.6;
     }
-    /* Same surface, different weather. "Still sending" is not a failure and
-       must not be dressed as one — nothing has gone wrong, the work simply
-       has not landed yet, so the box drops the red and reads in the page's
-       own colour. */
+    /* "Still sending" state. This is not an error, so the box uses the page's
+       normal colors instead of the red error styling. */
     .funnel-error.pending {
       border-color: var(--gold-border);
       background: rgba(186,159,117,0.07);
@@ -847,11 +825,10 @@
     .done-text { font-size: 13.5px; color: var(--text-60); line-height: 1.8; max-width: 44ch; margin: 0 auto 12px; }
     .done-text.quiet { color: var(--text-40); font-size: 12.5px; }
 
-    /* ─── STICKY MOBILE CTA ───────────────────────────────────────────────
-       Only appears once the hero form has scrolled out of view, and is
-       suppressed entirely while the consent bar is open so the two never
-       stack at the bottom of a phone. Hidden by default: if the script
-       never runs, no bar appears. */
+    /* ---- Sticky mobile CTA ----
+       Shown only after the hero form scrolls out of view, and hidden while the
+       consent bar is open so the two never stack. Hidden by default, so nothing
+       appears if the script fails. */
     .sticky-cta {
       position: fixed;
       left: 0; right: 0; bottom: 0;
@@ -865,9 +842,9 @@
     }
     .sticky-cta a { width: 100%; min-height: 50px; }
 
-    /* ─── CONSENT BANNER ──────────────────────────────────────────────────
-       Centred at the very bottom rather than floating over the hero, and the
-       hero reserves room for it while it is open. */
+    /* ---- Consent banner ----
+       Centered at the bottom of the viewport. The hero reserves space for it while
+       it is open. */
     .cookie {
       position: fixed;
       left: 50%;
@@ -911,7 +888,7 @@
     body.consent-open .sticky-cta { display: none !important; }
     body.consent-open #home { padding-bottom: 140px; }
 
-    /* ─── FOOTER ──────────────────────────────────────── */
+    /* ---- Footer ---- */
     footer {
       border-top: 1px solid var(--border);
       padding: 26px max(20px, calc((100% - 1160px) / 2));
@@ -937,7 +914,7 @@
     }
     .footer-links a:hover { color: var(--gold); }
 
-    /* ─── RESPONSIVE ──────────────────────────────────── */
+    /* ---- Responsive ---- */
     @media (max-width: 1080px) {
       .hero-inner { grid-template-columns: minmax(0, 1fr) 420px; gap: 36px; }
       .proof-grid { grid-template-columns: 250px minmax(0, 1fr); gap: 36px; }
@@ -949,11 +926,8 @@
       section { scroll-margin-top: 72px; }
       #apply { scroll-margin-top: 76px; }
 
-      /* Every value below is tuned so that the headline, the single field, the
-         Begin button and the reassurance line all clear 844px on a 390px
-         phone — with the consent bar open. Measured, not guessed. Step one is
-         now one text field rather than three, so this has more room than the
-         version these numbers were cut against, not less. */
+      /* Values below keep the headline, city field, Begin button and reassurance
+         line within 844px on a 390px-wide phone with the consent bar open. */
       #home {
         align-items: flex-start;
         padding: 72px 18px 40px;
@@ -965,22 +939,17 @@
       .hero-reassure { margin-top: 12px; font-size: 11.5px; line-height: 1.5; }
       .hero-points { display: none; } /* desktop-only garnish; never above the fold on a phone */
 
-      /* One axis only on a phone: the photo lives in the top strip behind the
-         headline, then hands over to near-solid behind the card. */
+      /* Phone layout uses a single-axis gradient: the photo shows behind the
+         headline, then fades to near-solid behind the card. */
       .hero-scrim {
         background:
           linear-gradient(180deg, rgba(6,6,6,0.40) 0%, rgba(6,6,6,0.58) 20%, rgba(6,6,6,0.86) 44%, rgba(6,6,6,0.95) 66%, rgba(6,6,6,0.98) 100%);
       }
       .hero-photo { object-position: 50% 42%; }
 
-      /* Taller at phone width: the four-choice questions and the consent
-         paragraph both wrap more. Measured max across all steps was 455px.
-
-         ~15px above the measured maximum, which at phone width is step 9 (455)
-         and its consent paragraph. Was briefly 485 while step 1 carried the long
-         sell copy; that copy now lives in the hero column, so the pin comes back
-         down rather than leaving 30px of dead space on every step. If you move
-         copy back into the card, re-measure before trusting this. */
+      /* Taller at phone width because choice questions and the consent paragraph
+         wrap more. Set about 15px above the tallest measured step (step 9, 455px).
+         Re-measure if copy is added to the card. */
       .step { min-height: 470px; }
       .funnel { padding: 16px 16px 18px; border-radius: 16px; }
       .prog-wrap { margin-bottom: 12px; }
@@ -1030,11 +999,9 @@
       .form-row { grid-template-columns: 1fr; }
     }
 
-    /* ─── FADE IN ─────────────────────────────────────────────────────────
-       Deliberately minimal: two section headers, a 10px lift, and a fast
-       transition. Down from 22 elements. Nothing above the fold carries it,
-       no CTA carries it, and nothing it touches is large enough to leave a
-       screen reading as empty while it scrolls past. */
+    /* ---- Fade in ----
+       Applies only to two section headers, with a short 10px lift. Nothing above
+       the fold and no CTA uses it. */
     .fade-in {
       opacity: 0;
       transform: translateY(10px);
@@ -1045,8 +1012,8 @@
 </head>
 <body>
 
-  <!-- ── NAV — deliberately minimal. This is an ad destination; the only two
-       jobs are "prove it's really CurateVIP" and "let an existing member out". ── -->
+  <!-- Nav: kept minimal for an ad landing page. Shows the brand and a sign-in
+       link for existing members. -->
   <nav>
     <a href="/" class="nav-logo">
       <img src="Logo-Horizontal-Website.png" alt="CURATEvip" width="1684" height="284" fetchpriority="high" />
@@ -1054,16 +1021,12 @@
     <a href="https://curatevip.ai" target="_blank" rel="noopener" class="nav-member">Member Login</a>
   </nav>
 
-  <!-- ══ HERO — headline, subhead and step 1 of the application, complete
-       above the fold at 1440×800 and at 390×844. The funnel markup below is
-       unchanged apart from its position in the document; the script binds to
-       the same ids it always did. ══ -->
+  <!-- Hero: headline, subhead and step 1 of the application, all above the fold
+       at 1440x800 and 390x844. The script binds to the funnel element ids below. -->
   <section id="home">
     <picture>
-      <!-- 302 KB JPEG -> 41 KB (mobile) / 87 KB (desktop) WebP. The photo sits
-           behind a heavy scrim, so quality can drop well below normal with no
-           visible difference -- and page speed is a stated conversion lever
-           here (1s loads convert ~2.5x better than 5s). -->
+      <!-- Responsive WebP hero (about 41 KB mobile, 87 KB desktop). The image sits
+           behind a heavy scrim, so lower quality settings are not visible. -->
       <source type="image/webp"
               srcset="hero-lobby-900.webp 900w, hero-lobby-1376.webp 1376w"
               sizes="100vw" />
@@ -1100,14 +1063,11 @@
         </ul>
       </div>
 
-      <!-- ══ THE FUNNEL ══════════════════════════════════════════════════
-           Step 1 is one question — home city — and nothing else. It POSTs to
-           /api/funnel/start on submit and stores the returned token, so an
-           applicant who quits at question four is still a row we can measure
-           drop-off against. Contact details come last, at steps 7, 8 and 9,
-           by which point they have already invested six answers. Every answer
-           after step 1 PATCHes against the token and is queued for retry
-           rather than blocking the applicant. ══ -->
+      <!-- Funnel
+           Step 1 asks only for home city. Submitting it POSTs /api/funnel/start and
+           stores the returned token, so partial applications can be measured.
+           Contact details come last (steps 7 to 9). Every answer after step 1 is sent
+           as a PATCH against the token and queued for retry without blocking the user. -->
       <div id="apply">
         <p class="apply-cue"><span>Start here</span> &mdash; 9 questions, about 2 minutes</p>
         <div class="funnel" id="funnel">
@@ -1123,9 +1083,8 @@
           <!-- Live region for step changes and async status -->
           <p aria-live="polite" class="visually-hidden" id="liveStatus" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;"></p>
 
-          <!-- ── STEP 1 — home city. One field, and the step that opens the
-               lead record: submitting it POSTs /api/funnel/start. Nothing is
-               sent on page load — an impression is not an applicant. ── -->
+          <!-- Step 1: home city. Submitting it POSTs /api/funnel/start to create the
+               lead record. Nothing is sent on page load. -->
           <form class="step" id="step-1" data-step="1" novalidate>
             <h3 class="step-q" tabindex="-1">Let&rsquo;s start with home.</h3>
             <p class="step-help">It tells us which cities to look at for you first. Nine short questions, about two minutes.</p>
@@ -1138,39 +1097,22 @@
               <button type="submit" class="btn-primary" id="startBtn">Begin</button>
             </div>
 
-            <!-- Step 1 is the only step with room to spare, because every step
-                 is pinned to the tallest one. Rather than leave dead space under
-                 the button on the exact screen where someone is deciding whether
-                 to start, it argues for the two minutes. Deliberately NOT
-                 repeated on later steps: by then they have committed, and more
-                 copy would just be noise in the way of the next question. -->
-            <!-- HEIGHT BUDGET: this block must keep step 1 inside the .step
-                 min-height (410px desktop / 485px phone) or step 1 becomes the
-                 tallest step and the card starts jumping again.
-
-                 Last measured: block 93px desktop / 128px phone, putting step 1
-                 at 344 and 378. The binding constraint is no longer step 1 but
-                 step 2 (395 desktop) and step 9 (455 phone) — the pins sit ~15px
-                 above those. Step 1 has room to spare now that the long sell copy
-                 moved out to the hero column, but that can change again in one
-                 edit, so re-measure. -->
+            <!-- Supporting copy shown on step 1 only, using the space left by the fixed
+                 step height. Not repeated on later steps. -->
+            <!-- Height budget: this block must keep step 1 within the .step min-height,
+                 otherwise step 1 becomes the tallest step and the card starts resizing.
+                 Re-measure after any copy change. -->
             <div class="step-sell">
               <ul class="sell-points">
                 <li>We CURATE three to five places, not 150 blue links you still have to sort through.</li>
-                <!-- Named sources removed 2026-08-27. This bullet previously read
-                     "against Michelin, Forbes, and dozens more" — two names that
-                     are arguably safe, since any reader assumes both. Removed
-                     anyway on the product owner's instruction: naming even the
-                     obvious two invites the follow-up question of who else, and
-                     the claim carries without them. One-line change to restore
-                     if the conversion cost shows up. -->
+                <!-- Named sources are intentionally omitted from this bullet. -->
                 <li>Every venue corroborated against independent guides and award bodies.</li>
                 <li>No paid placements, ever. Nobody buys their way onto your list.</li>
               </ul>
             </div>
           </form>
 
-          <!-- ── STEP 2 — occasion spend ── -->
+          <!-- Step 2: occasion spend -->
           <div class="step" id="step-2" data-step="2" hidden>
             <h3 class="step-q" tabindex="-1" id="q2">On a night that matters, what does dinner usually come to?</h3>
             <p class="step-help">The whole tab, before wine gets ambitious.</p>
@@ -1185,7 +1127,7 @@
             </div>
           </div>
 
-          <!-- ── STEP 3 — hotel nights ── -->
+          <!-- Step 3: hotel nights -->
           <div class="step" id="step-3" data-step="3" hidden>
             <h3 class="step-q" tabindex="-1" id="q3">How many hotel nights do you book in a year?</h3>
             <p class="step-help">A rough count is fine.</p>
@@ -1200,7 +1142,7 @@
             </div>
           </div>
 
-          <!-- ── STEP 4 — nightly rate ── -->
+          <!-- Step 4: nightly rate -->
           <div class="step" id="step-4" data-step="4" hidden>
             <h3 class="step-q" tabindex="-1" id="q4">And what do you typically pay a night?</h3>
             <p class="step-help">This sets the shelf we curate from.</p>
@@ -1215,7 +1157,7 @@
             </div>
           </div>
 
-          <!-- ── STEP 5 — trips per year ── -->
+          <!-- Step 5: trips per year -->
           <div class="step" id="step-5" data-step="5" hidden>
             <h3 class="step-q" tabindex="-1" id="q5">How many trips do you take in a year?</h3>
             <p class="step-help">Business and personal together.</p>
@@ -1230,7 +1172,7 @@
             </div>
           </div>
 
-          <!-- ── STEP 6 — private club ── -->
+          <!-- Step 6: private club -->
           <form class="step" id="step-6" data-step="6" novalidate hidden>
             <h3 class="step-q" tabindex="-1" id="q6">Are you a member of a private club?</h3>
             <p class="step-help">Golf, city, social, or a members&rsquo; house. It helps us read the room.</p>
@@ -1248,9 +1190,7 @@
             </div>
           </form>
 
-          <!-- ── STEP 7 — name. Contact details sit at the end now, so this is
-               the first thing we ask that is about the person rather than the
-               way they travel. ── -->
+          <!-- Step 7: name. The first question about the person rather than their travel. -->
           <form class="step" id="step-7" data-step="7" novalidate hidden>
             <h3 class="step-q" tabindex="-1">Those were the questions. Now, your name.</h3>
             <p class="step-help">We read every application ourselves, so it helps to know who we are reading.</p>
@@ -1274,9 +1214,8 @@
             </div>
           </form>
 
-          <!-- ── STEP 8 — email, alone on its own screen. The highest-friction
-               ask on the page, which is why it sits here rather than first: by
-               this point six questions have already been answered. ── -->
+          <!-- Step 8: email, on its own screen. Placed late in the funnel because it is
+               the highest-friction question. -->
           <form class="step" id="step-8" data-step="8" novalidate hidden>
             <h3 class="step-q" tabindex="-1">Where should we send the invitation?</h3>
             <p class="step-help">That is the only reason we ask for it. A decision comes back by email, usually within 24 hours.</p>
@@ -1291,11 +1230,10 @@
             </div>
           </form>
 
-          <!-- ── STEP 9 — mobile + SMS consent.
-               The disclosure below is the same wording the main site uses. It is
-               read out of the DOM at submit time and sent as smsConsentText, so
-               the stored consent record is literally the string displayed here.
-               The box is unchecked by default and must stay that way. ── -->
+          <!-- Step 9: mobile number and SMS consent.
+               The disclosure wording matches the main site. It is read from the DOM at
+               submit time and sent as smsConsentText, so the stored consent record is the
+               exact text displayed. The checkbox must stay unchecked by default. -->
           <form class="step" id="step-9" data-step="9" novalidate hidden>
             <h3 class="step-q" tabindex="-1">Last one, and it is genuinely optional.</h3>
             <p class="step-help">If you would rather have your invitation by text, leave a mobile number. Skip it and nothing about your application changes.</p>
@@ -1326,7 +1264,7 @@
             </div>
           </form>
 
-          <!-- ── COMPLETION ── -->
+          <!-- Completion -->
           <div class="step" id="step-done" data-step="done" hidden>
             <div class="done">
               <div class="done-mark" aria-hidden="true">
@@ -1364,18 +1302,10 @@
     </div>
   </section>
 
-  <!-- ══ TRUST STRIP ═══════════════════════════════════════════════════════
-       This used to name all fourteen guides and award bodies the scoring engine
-       reads. Removed deliberately: that list IS the methodology. Published in
-       full, it hands a competitor the exact set of sources to scrape and saves
-       them the only genuinely hard part of building this — working out which
-       sources are worth trusting and how they corroborate one another.
-
-       The trust claim survives without it. "Independent guides and award
-       bodies" plus "no paid placements" is the substance a reader needs; the
-       fourteen names were proof for us, not information for them. The full list
-       still lives in admin.html, which is behind authentication.
-       ══════════════════════════════════════════════════════════════════════ -->
+  <!-- Trust strip
+       The individual guides and award bodies used by the scoring engine are not
+       listed publicly, because the source list is part of the methodology.
+       The full list is available in admin.html (authenticated). -->
   <div class="trust">
     <div class="trust-inner">
       <p class="trust-lead">Every venue is corroborated against independent guides and award bodies before it can reach a member</p>
@@ -1383,8 +1313,7 @@
     </div>
   </div>
 
-  <!-- ══ WHAT YOU ACTUALLY GET — the real product output, not a description
-       of it. This is an unretouched screenshot from the member app. ══ -->
+  <!-- What you get: an unretouched screenshot of the member app. -->
   <section id="what-you-get" class="band">
     <div class="band-inner proof-grid">
       <figure class="proof-shot">
@@ -1422,7 +1351,7 @@
     </div>
   </section>
 
-  <!-- ══ YOUR SPEED — the differentiator, kept to one screen. ══ -->
+  <!-- Your Speed: the product differentiator, kept to one screen. -->
   <section id="your-speed" class="band band-alt">
     <div class="band-inner">
       <div class="fade-in">
@@ -1465,9 +1394,8 @@
     </div>
   </section>
 
-  <!-- ══ CITIES — named rather than counted, so a visitor can self-qualify in
-       one glance. Nashville and Charleston are new and thinner than the rest;
-       saying so is the honest version. ══ -->
+  <!-- Cities: listed by name so visitors can quickly check coverage.
+       Nashville and Charleston are newer and have fewer venues. -->
   <section id="cities" class="band">
     <div class="band-inner">
       <div class="fade-in">
@@ -1491,7 +1419,7 @@
     </div>
   </section>
 
-  <!-- ══ WHAT IT COSTS ══ -->
+  <!-- Pricing -->
   <section id="cost" class="band band-alt">
     <div class="band-inner price-grid">
       <div>
@@ -1513,7 +1441,7 @@
     </div>
   </section>
 
-  <!-- ══ SECOND CTA — anchors back to the form in the hero. ══ -->
+  <!-- Second CTA: links back to the form in the hero. -->
   <section class="cta-band">
     <div class="band-inner">
       <h2 class="section-h2">Ready when you are.</h2>
@@ -1525,7 +1453,7 @@
     </div>
   </section>
 
-  <!-- ── FOOTER ── -->
+  <!-- Footer -->
   <footer>
     <div class="footer-logo">
       <img src="Logo-Horizontal-Website.png" alt="CURATEvip" width="1684" height="284" loading="lazy" decoding="async" />
@@ -1539,12 +1467,12 @@
     </ul>
   </footer>
 
-  <!-- ── STICKY MOBILE CTA — revealed only once the hero form is off screen ── -->
+  <!-- Sticky mobile CTA, shown only once the hero form is off screen -->
   <div class="sticky-cta" id="stickyCta" hidden>
     <a href="#apply" class="btn-primary">Request an Invitation</a>
   </div>
 
-  <!-- ── COOKIE / ANALYTICS CONSENT ── -->
+  <!-- Cookie / analytics consent -->
   <aside class="cookie" id="cookieBanner" role="region" aria-label="Cookie preferences" hidden>
     <p>
       We use a small amount of analytics to understand which campaigns bring the right members.
@@ -1560,26 +1488,23 @@
   (function () {
     'use strict';
 
-    /* ══════════════════════════════════════════════════════════════════
-       ANALYTICS IDS — Rick fills these in.
-       Leave them as empty strings and nothing loads, nothing throws, and
-       the consent banner still behaves correctly.
+    /* Analytics IDs
+       Leave empty to disable. With empty IDs nothing loads, nothing throws, and
+       the consent banner still works.
          GA4:  'G-XXXXXXXXXX'
-         Meta: '123456789012345'
-       ══════════════════════════════════════════════════════════════════ */
+         Meta: '123456789012345' */
     var GA4_MEASUREMENT_ID = '';
     var META_PIXEL_ID      = '';
 
     var API_BASE = 'https://api.curatevip.ai';
 
-    /* ── Campaign variants ────────────────────────────────────────────
-       ?v=<name> swaps the hero copy only. The name is attacker-controlled,
-       so it is matched against this object's own keys and never rendered
-       from the URL; an unknown value silently falls back to 'default'.
-       Headlines are segment arrays so the gold italic can be built with
-       createElement instead of innerHTML.
-       Subheads are deliberately one sentence: the form now sits beside this
-       copy above the fold, and a long paragraph pushes it down a phone. */
+    /* ---- Campaign variants ----
+       ?v=<name> swaps the hero copy only. The value is user-controlled, so it is
+       matched against this object's keys and never rendered from the URL; unknown
+       values fall back to 'default'.
+       Headlines are segment arrays so the gold italic span can be built with
+       createElement instead of innerHTML. Subheads are one sentence so the form
+       stays above the fold on phones. */
     var VARIANTS = {
       'default': {
         title: [
@@ -1607,10 +1532,9 @@
       }
     };
 
-    /* The one and only allow-list. ?v= is compared against this array; a value
-       that is not an exact member is discarded entirely — never rendered, never
-       stored, never sent. Prototype keys ('__proto__', 'constructor', …) are not
-       members, so they fall through to 'default' like any other junk. */
+    /* Allow-list for ?v=. Any value that is not an exact member is discarded
+       (never rendered, stored or sent). Prototype keys such as '__proto__' are not
+       members, so they fall back to 'default'. */
     var VARIANT_NAMES = ['default', 'golf', 'dining'];
 
     function readVariant() {
@@ -1641,11 +1565,11 @@
       if (subEl) subEl.textContent = cfg.sub;
     }
 
-    /* ── Attribution ──────────────────────────────────────────────────
-       First-party, captured on load, held in sessionStorage so it survives
-       every funnel step and a refresh. Deliberately NOT gated on cookie
-       consent: this is our own record of where an applicant came from, not
-       a third-party tracker. Absent values are sent as null, never guessed. */
+    /* ---- Attribution ----
+       First-party attribution captured on load and kept in sessionStorage so it
+       survives funnel steps and refreshes. Not gated on cookie consent because it is
+       our own record of the traffic source, not a third-party tracker.
+       Missing values are sent as null. */
     var ATTR_KEY = 'cvip_attr_v1';
 
     function captureAttribution() {
@@ -1654,9 +1578,8 @@
       if (stored && typeof stored === 'object' && stored.variant) return stored;
 
       var p = new URLSearchParams(window.location.search);
-      /* Absent, blank and the literal strings "null"/"undefined" all collapse to
-         a real null. Ad platforms and tag managers emit those strings when a
-         macro fails to expand, and storing them as text poisons reporting. */
+      /* Treat missing, blank, "null" and "undefined" as null. Ad platforms emit
+         those literal strings when a macro fails to expand. */
       function get(key) {
         var v = p.get(key);
         if (v === null) return null;
@@ -1682,10 +1605,9 @@
 
     var ATTRIBUTION = captureAttribution();
 
-    /* ── Consent + analytics ──────────────────────────────────────────
-       'granted' or 'denied' persists in localStorage. Decline is honoured
-       for the whole session and every session after it; nothing is loaded
-       and queued events are dropped. */
+    /* ---- Consent and analytics ----
+       'granted' or 'denied' is stored in localStorage. When declined, nothing is
+       loaded and queued events are dropped. */
     var CONSENT_KEY = 'cvip_analytics_consent';
     var consentState = null;
     try { consentState = window.localStorage.getItem(CONSENT_KEY); } catch (e) { consentState = null; }
@@ -1708,7 +1630,7 @@
 
     function loadMetaPixel() {
       if (!META_PIXEL_ID) return;
-      /* Standard Meta bootstrap, trimmed. Guarded on a non-empty ID. */
+      /* Standard Meta Pixel bootstrap, trimmed. Only runs when an ID is set. */
       if (!window.fbq) {
         var n = window.fbq = function () {
           n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
@@ -1726,8 +1648,8 @@
     function loadAnalytics() {
       if (analyticsLoaded) return;
       analyticsLoaded = true;
-      try { loadGA4(); } catch (e) { /* never let analytics break the funnel */ }
-      try { loadMetaPixel(); } catch (e) { /* ditto */ }
+      try { loadGA4(); } catch (e) { /* analytics must never break the funnel */ }
+      try { loadMetaPixel(); } catch (e) { /* same as above */ }
     }
 
     function emit(ev) {
@@ -1738,11 +1660,12 @@
         if (ev.fb && typeof window.fbq === 'function' && META_PIXEL_ID) {
           window.fbq('track', ev.fb, ev.fbParams || {});
         }
-      } catch (e) { /* analytics is never allowed to throw into the funnel */ }
+      } catch (e) { /* analytics must never throw into the funnel */ }
     }
 
     /* track(gaName, params, fbName, fbParams)
-       Before a decision: buffered (capped). Granted: sent. Denied: dropped. */
+       Before a consent decision events are buffered (capped). Granted: sent.
+       Denied: dropped. */
     function track(gaName, params, fbName, fbParams) {
       var ev = { ga: gaName, params: params || {}, fb: fbName || null, fbParams: fbParams || {} };
       if (consentState === 'granted') { emit(ev); return; }
@@ -1765,8 +1688,8 @@
       pendingEvents.length = 0;
     }
 
-    /* body.consent-open makes the hero reserve room for the bar and suppresses
-       the sticky mobile CTA, so neither one ever covers the form. */
+    /* body.consent-open makes the hero reserve space for the bar and hides the
+       sticky mobile CTA, so neither covers the form. */
     function initConsentUI() {
       var banner = document.getElementById('cookieBanner');
       if (consentState === 'granted') { loadAnalytics(); return; }
@@ -1786,7 +1709,7 @@
       });
     }
 
-    /* ── Funnel state ─────────────────────────────────────────────────── */
+    /* ---- Funnel state ---- */
     var TOTAL_STEPS = 9;
     var current = 1;
     var leadToken = null;
@@ -1794,27 +1717,19 @@
     var answers = {};      // API field -> value, so Back can repaint selections
     var identity = { firstName: '', lastName: '', email: '' };
 
-    /* ── What the server has actually confirmed ───────────────────────────
-       `identity` is what the applicant typed. `identityAck` is what the server
-       has told us it holds: a field is written here only when a PATCH carrying
-       it came back ok, never when it was merely enqueued. Values are stored
-       rather than flags so that going Back and editing an email invalidates
-       the old acknowledgement by itself.
-
-       This exists for one reason. The lead row is created anonymously at step
-       1; the name and email arrive at steps 7 and 8 by PATCH. If those patches
-       never land, telling the applicant their application is in leaves them
-       waiting on a reply we have no address to send. The completion screen is
-       therefore gated on this, not on the queue having accepted the work. */
+    /* ---- Server-confirmed identity ----
+       `identity` holds what the applicant typed. `identityAck` holds what the
+       server has confirmed: a field is written only when a PATCH containing it
+       returns ok. Values (not flags) are stored, so editing a field after going
+       Back invalidates the old acknowledgement automatically.
+       The completion screen is gated on this, so an applicant is never told the
+       application is in unless the server actually has their contact details. */
     var identityAck = { firstName: null, email: null };
     var completionAcked = false;
 
-    /* Email is the bar: it is the single field that makes a reply possible,
-       and the server refuses a completion without one. firstName is tracked
-       alongside it and used for the greeting, but is deliberately NOT part of
-       this test — holding someone on a finished form over a lost first name,
-       when we can already write to them, would be exactly the trap this change
-       is meant to remove. */
+    /* Email is required: it is the only field that makes a reply possible, and the
+       server rejects completion without it. firstName is tracked for the greeting
+       but is intentionally not required here. */
     function identityAcknowledged() {
       return !!identity.email && identityAck.email === identity.email;
     }
@@ -1849,9 +1764,8 @@
 
     function say(msg) { if (els.live) els.live.textContent = msg; }
 
-    /* pending=true means "nothing is wrong, this just hasn't landed yet" and
-       only changes how the box is dressed. Every existing caller omits it and
-       gets the error styling unchanged. */
+    /* pending=true means "not an error, just not sent yet" and only changes the
+       styling. Callers that omit it get the normal error styling. */
     function showError(msg, retryFn, pending) {
       els.errorText.textContent = msg;
       els.error.classList.toggle('pending', !!pending);
@@ -1888,9 +1802,8 @@
         say('Question ' + n + ' of ' + TOTAL_STEPS);
       }
 
-      /* Keep the funnel card in view when stepping, but don't yank the page
-         on first paint. The card now lives in the hero, so on a normal step
-         transition this condition is false and nothing scrolls at all. */
+      /* Keep the funnel card in view when changing steps, but do not scroll on first
+         paint. Since the card is in the hero, normal transitions do not scroll. */
       if (!opts || !opts.noScroll) {
         var rect = els.funnel.getBoundingClientRect();
         if (rect.top < 0 || rect.top > window.innerHeight * 0.5) {
@@ -1898,20 +1811,19 @@
         }
       }
 
-      /* Going back must show what they already chose. Cheap enough to run on
-         every transition rather than tracking direction. */
+      /* Repaint previous selections on every transition so Back shows what was
+         already chosen. */
       repaintSelections();
-      /* Symmetric on purpose: coming Back to step 6 has to re-show the club
-         fields for a Yes and re-hide them for a No. Text fields repaint for
-         free — nothing ever clears their values. */
+      /* Handles both directions: returning to step 6 re-shows the club fields for Yes
+         and hides them for No. Text inputs keep their values automatically. */
       if (n === 6) {
         var isYes = answers.privateClubMember === 'Yes';
         clubNameGroup.hidden = !isYes;
         clubContinue.hidden = !isYes;
       }
 
-      /* First paint must not grab focus: on a phone that pops the keyboard and
-         scrolls the hero away the instant the ad click lands. */
+      /* Do not move focus on first paint: on a phone that opens the keyboard and
+         scrolls the hero out of view. */
       if (opts && opts.noFocus) return;
 
       var focusTarget = to.querySelector('.step-q, .done-title');
@@ -1931,20 +1843,19 @@
       });
     }
 
-    /* ── PATCH queue ──────────────────────────────────────────────────
-       Answers are queued and flushed in the background. A failure never
-       blocks the applicant: pending patches are coalesced into a single
-       body and retried with backoff, and any later answer re-triggers a
-       flush. Bounded attempts, so this never becomes a poll against a
+    /* ---- PATCH queue ----
+       Answers are queued and flushed in the background and never block the
+       applicant. Pending patches are merged into one body and retried with backoff;
+       any new answer triggers another flush. Attempts are capped to avoid polling a
        rate-limited endpoint. */
     var queue = [];
     var inFlight = null;
     var retryTimer = null;
     var retryAttempt = 0;
     var BACKOFF = [2000, 6000, 15000, 40000];
-    /* Message from the most recent 400. A 400 is the server refusing the body
-       itself — an unusable email, a phone it cannot parse, a completion with
-       no email on the record — so it is kept and surfaced rather than retried. */
+    /* Message from the most recent 400. A 400 means the server rejected the body
+       (invalid email or phone, or completion without an email), so it is kept and
+       shown to the user instead of retried. */
     var lastPatchError = null;
 
     function coalesce(items) {
@@ -1961,10 +1872,9 @@
       flushQueue();
     }
 
-    /* Resolves true when the batch it sent landed, false on failure or a dead
-       token. A caller that queued work while a request was already in flight
-       gets that request's promise, so use flushAll() when you need to know
-       that *your* payload specifically made it. */
+    /* Resolves true if the sent batch landed, false on failure or an expired token.
+       If a request is already in flight, callers get that request's promise; use
+       flushAll() to confirm a specific payload was delivered. */
     function flushQueue() {
       if (inFlight) return inFlight;
       if (tokenDead || !leadToken) return Promise.resolve(false);
@@ -1982,15 +1892,14 @@
       }).then(function (res) {
         inFlight = null;
         if (res.status === 404) {
-          /* Token gone or expired. Stop retrying; the final step surfaces it. */
+          /* Token missing or expired. Stop retrying; the final step reports it. */
           tokenDead = true;
           return false;
         }
         if (res.status === 400) {
-          /* The server rejected this body. Sending it again unchanged would
-             fail identically for ever and would sit in front of every later
-             answer, so the batch is dropped and the reason kept for whichever
-             step is waiting on it. */
+          /* The server rejected this body. Resending it unchanged would fail again and
+             block later answers, so the batch is dropped and the reason is kept for the
+             step waiting on it. */
           return res.json().catch(function () { return {}; }).then(function (d) {
             lastPatchError = (d && typeof d.error === 'string' && d.error) ? d.error : null;
             return false;
@@ -1998,23 +1907,18 @@
         }
         if (!res.ok) throw new Error('HTTP ' + res.status);
         retryAttempt = 0;
-        /* The server has this batch. Record what was in it before anything
-           else, so that an applicant held on the "not sent yet" notice is
-           released the instant their email lands — including when it lands on
-           a background retry rather than on a button they pressed. */
+        /* Batch accepted. Record acknowledged fields first so an applicant waiting on
+           the "not sent yet" notice is released as soon as their email lands, even if
+           it lands on a background retry. */
         noteServerAck(body);
         releaseIfSaved();
-        /* Answers recorded while this request was in the air are still sitting
-           in the queue. Drain them now rather than waiting for the applicant's
-           next action, which might never come.
-           The nested result is returned as-is and deliberately NOT coerced to
-           true: if that drain 404s or fails, the caller waiting on this promise
-           (the final submit) must hear about it rather than being told the
-           whole queue landed. */
+        /* Drain any answers queued while this request was in flight instead of waiting
+           for the next user action. The nested result is returned as-is (not coerced to
+           true) so the final submit learns if that drain fails. */
         if (queue.length) return flushQueue();
         return true;
       }).catch(function () {
-        /* Put the work back at the front so no answer is ever dropped. */
+        /* Requeue at the front so no answer is lost. */
         inFlight = null;
         queue.unshift(body);
         scheduleRetry();
@@ -2024,8 +1928,8 @@
       return inFlight;
     }
 
-    /* Drains the queue completely, following on from anything already in
-       flight. Used by the final submit, where "did it land" is the question. */
+    /* Drains the queue completely, including anything already in flight. Used by
+       the final submit to confirm everything was delivered. */
     function flushAll() {
       return flushQueue().then(function (ok) {
         if (!ok) return false;
@@ -2045,8 +1949,8 @@
       }, delay);
     }
 
-    /* A returning-to-foreground tab is a free chance to drain anything that
-       failed while the connection was down. Event-driven, never a poll. */
+    /* When the tab returns to the foreground, retry anything that failed while
+       offline. Event-driven, not polled. */
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState === 'visible' && queue.length) {
         retryAttempt = 0;
@@ -2054,7 +1958,7 @@
       }
     });
 
-    /* ── Validation ───────────────────────────────────────────────────── */
+    /* ---- Validation ---- */
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     function setFieldError(inputId, errId, show) {
@@ -2066,12 +1970,9 @@
 
     function digits(s) { return String(s).replace(/\D/g, ''); }
 
-    /* ── Step 1: home city + POST /api/funnel/start ───────────────────────
-       start no longer carries a name or an email — it carries attribution and
-       nothing else, and it fires here, on the first answer, rather than on
-       load. An impression is not a lead. The city itself is answered before a
-       token exists, so it rides out in the very first PATCH the moment start
-       returns. */
+    /* ---- Step 1: home city + POST /api/funnel/start ----
+       Start carries attribution only and fires on the first answer, not on page
+       load. The city is sent in the first PATCH once start returns a token. */
     var startBtn = document.getElementById('startBtn');
 
     function submitStart() {
@@ -2081,9 +1982,8 @@
       setFieldError('fCity', 'errCity', !ok);
       if (!ok) { input.focus(); return; }
 
-      /* Coming Back to this step and pressing Begin again must NOT open a
-         second lead. A live token means the record already exists — patch the
-         city if they changed it, then walk forward. */
+      /* Returning to this step and pressing Begin again must not create a second
+         lead. If a token exists, patch the city if it changed and continue. */
       if (leadToken && !tokenDead) {
         clearError();
         if (answers.city !== city) { record('city', city, 1, 2); }
@@ -2111,14 +2011,13 @@
         if (r.ok && r.data && typeof r.data.leadToken === 'string' && r.data.leadToken) {
           leadToken = r.data.leadToken;
           tokenDead = false;
-          /* A brand new record holds nothing yet, whatever an earlier one had
-             acknowledged before it expired. */
+          /* A new record starts with no acknowledged fields, regardless of any
+             previous (expired) record. */
           resetServerAck();
           track('funnel_start', { variant: VARIANT }, 'Lead', { content_name: 'CurateVIP Membership' });
-          /* The city was answered before this token existed, so it goes out in
-             the first PATCH. If a dead session sent them back here to start
-             over, this is a brand new record — replay everything already
-             answered, name and email included, so it is not born empty. */
+          /* Send the city in the first PATCH. If an expired token forced a restart,
+             replay all answers collected so far (including name and email) so the new
+             record is complete. */
           answers.city = city;
           var replay = { step: 1 };
           Object.keys(answers).forEach(function (k) { replay[k] = answers[k]; });
@@ -2147,7 +2046,7 @@
       submitStart();
     });
 
-    /* ── Recording an answer ──────────────────────────────────────────── */
+    /* ---- Recording an answer ---- */
     function record(field, value, stepIndex, nextStep) {
       answers[field] = value;
       var payload = {};
@@ -2158,7 +2057,7 @@
       if (nextStep) goTo(nextStep);
     }
 
-    /* ── Steps 2-5: auto-advancing choice questions ───────────────────── */
+    /* ---- Steps 2-5: auto-advancing choice questions ---- */
     var AUTO_NEXT = { '2': 3, '3': 4, '4': 5, '5': 6 };
 
     Array.prototype.forEach.call(document.querySelectorAll('.choices'), function (group) {
@@ -2180,24 +2079,23 @@
       });
     });
 
-    /* ── Step 6: private club ─────────────────────────────────────────── */
+    /* ---- Step 6: private club ---- */
     var clubNameGroup = document.getElementById('clubNameGroup');
     var clubNameInput = document.getElementById('fClubName');
     var clubContinue = document.getElementById('clubContinue');
 
     function onClubChoice(value) {
-      /* Only a genuine change is transmitted, so toggling Yes/No a dozen times
-         cannot turn into a dozen requests against a rate-limited endpoint. */
+      /* Only send on an actual change, so toggling Yes/No repeatedly does not
+         generate repeated requests. */
       var changed = answers.privateClubMember !== value;
       answers.privateClubMember = value;
       if (value === 'Yes') {
         clubNameGroup.hidden = false;
         clubContinue.hidden = false;
         clubNameInput.focus();
-        /* Send the selection now rather than waiting for Continue. An applicant
-           who picks Yes and then abandons has still answered the question, and
-           the rule here is that no answer is ever lost. The club name follows
-           in the Continue patch. */
+        /* Send the selection immediately instead of waiting for Continue, so the
+           answer is recorded even if the applicant leaves here. The club name is sent
+           with the Continue patch. */
         if (changed) {
           enqueue({ privateClubMember: 'Yes', step: 6 });
           track('funnel_step', { step: 6, variant: VARIANT });
@@ -2207,8 +2105,8 @@
         clubContinue.hidden = true;
         clubNameInput.value = '';
         answers.privateClubName = null;
-        /* One payload, not two: a trailing single-key patch could sit in the
-           queue unsent if the applicant stops here. */
+        /* Send as a single payload so no trailing patch is left unsent if the
+           applicant stops here. */
         if (changed) {
           enqueue({ privateClubMember: 'No', privateClubName: null, step: 6 });
           track('funnel_step', { step: 6, variant: VARIANT });
@@ -2219,8 +2117,8 @@
 
     document.getElementById('step-6').addEventListener('submit', function (e) {
       e.preventDefault();
-      /* This form only ever completes the Yes branch; No is dispatched and
-         advanced the moment it is picked. */
+      /* This form only handles the Yes branch; No is sent and advanced as soon as
+         it is selected. */
       if (answers.privateClubMember !== 'Yes') return;
       var name = clubNameInput.value.trim();
       answers.privateClubName = name || null;
@@ -2229,9 +2127,8 @@
       goTo(7);
     });
 
-    /* ── Step 7: first and last name ──────────────────────────────────────
-       The first thing asked about the person rather than the travel. The lead
-       row already exists; this simply names it. */
+    /* ---- Step 7: first and last name ----
+       Adds the name to the existing lead record. */
     document.getElementById('step-7').addEventListener('submit', function (e) {
       e.preventDefault();
       var firstEl = document.getElementById('fFirst');
@@ -2248,7 +2145,7 @@
 
       identity.firstName = first;
       identity.lastName = last;
-      /* Held in `answers` as well as `identity` so a restart after an expired
+      /* Stored in `answers` as well as `identity` so a restart after an expired
          token replays them onto the new record. */
       answers.firstName = first;
       answers.lastName = last;
@@ -2257,10 +2154,9 @@
       goTo(8);
     });
 
-    /* ── Step 8: email, alone ─────────────────────────────────────────────
-       The one field the application cannot be completed without — the server
-       refuses a completion with no email on the record. Validated here first
-       so that refusal is the exception rather than the route. */
+    /* ---- Step 8: email ----
+       Required to complete the application (the server rejects completion without
+       it). Validated client-side first so a server rejection is rare. */
     document.getElementById('step-8').addEventListener('submit', function (e) {
       e.preventDefault();
       var emailEl = document.getElementById('fEmail');
@@ -2276,38 +2172,35 @@
       goTo(9);
     });
 
-    /* ── Step 9: phone + SMS consent, then complete ───────────────────── */
+    /* ---- Step 9: phone + SMS consent, then complete ---- */
     var phoneInput = document.getElementById('fPhone');
     var consentBox = document.getElementById('fSmsConsent');
     var finishBtn = document.getElementById('finishBtn');
 
-    /* Read the disclosure out of the DOM so the stored consent record is
-       exactly the string the applicant saw, whitespace-normalised. */
+    /* Read the disclosure from the DOM so the stored consent text is exactly
+       what the applicant saw, with whitespace normalized. */
     function consentTextShown() {
       var el = document.getElementById('smsConsentText');
       if (!el) return '';
       return el.textContent.replace(/\s+/g, ' ').trim();
     }
 
-    /* Consecutive failures of the completing PATCH, network-only. Reset on a
-       dead token, which is a different problem with a different remedy. */
+    /* Consecutive network failures of the completing PATCH. Reset on an expired
+       token, which is handled separately. */
     var completeFailures = 0;
 
-    /* True from a submit we could not confirm until the server acknowledges
-       the email. While it is true the completion screen is off the table and
-       the queue keeps draining behind an honest notice. */
+    /* True after a submit that could not be confirmed, until the server
+       acknowledges the email. While true, the completion screen is blocked and the
+       queue keeps draining behind a status notice. */
     var awaitingSave = false;
     var completedShown = false;
 
-    /* Deliberately plain. Their answers are not lost, they are not at fault,
-       and nothing here is urgent — the only thing being corrected is the
-       impression that we already have what they typed. */
+    /* Neutral wording: the answers are not lost and the user did nothing wrong;
+       they just have not reached the server yet. */
     var NOT_SAVED_MSG = 'Your answers haven’t reached us yet. We’re still sending them, and this page will confirm the moment they land — you can leave it open, or try again now.';
 
-    /* The only door to the completion screen. Every caller goes through here,
-       so the success event cannot be double-counted and, more importantly,
-       nothing can show "your application is in" by a route that skipped the
-       identity check above it. */
+    /* Single entry point to the completion screen. Guarantees the success event
+       fires once and that completion is never shown without the identity check. */
     function finishAndShowDone() {
       if (completedShown) return;
       completedShown = true;
@@ -2317,9 +2210,8 @@
       showDone();
     }
 
-    /* Called from the queue whenever a batch lands. Releases an applicant who
-       is sitting on the notice the moment the server has both their email and
-       the completion. */
+    /* Called by the queue whenever a batch lands. Releases a waiting applicant as
+       soon as the server has both their email and the completion. */
     function releaseIfSaved() {
       if (!awaitingSave) return false;
       if (!identityAcknowledged() || !completionAcked) return false;
@@ -2328,11 +2220,9 @@
       return true;
     }
 
-    /* Keep the background ladder alive and restart it from the top: this is
-       now the difference between having a lead and having nothing, so it is
-       given far more than the two attempts a confirmed record gets. Bounded
-       all the same — the ladder still runs out, and only a submit or a retry
-       starts a fresh one. */
+    /* Restart the background retry schedule from the beginning, with more attempts
+       than a confirmed record gets, since the lead depends on it. Still bounded;
+       only a submit or manual retry starts a new schedule. */
     function keepTrying() {
       awaitingSave = true;
       retryAttempt = 0;
@@ -2356,10 +2246,9 @@
           return;
         }
 
-        /* The queue drained but the server never took an email — the only way
-           here is an earlier 400 that dropped the email from the batch. There
-           is nothing left to retry, so send them back to the field that fixes
-           it rather than confirming an application we cannot reply to. */
+        /* Queue drained but the server never received an email, which only happens
+           when an earlier 400 dropped it. Nothing is left to retry, so send the user
+           back to the email step instead of showing completion. */
         if (ok) {
           completeFailures = 0;
           awaitingSave = false;
@@ -2370,9 +2259,8 @@
           return;
         }
 
-        /* A dead token is genuinely unrecoverable from here — the record the
-           answers belong to no longer exists — so this one does have to be
-           said out loud. */
+        /* Expired token: the record these answers belong to no longer exists, so
+           this has to be reported to the user. */
         if (tokenDead) {
           completeFailures = 0;
           awaitingSave = false;
@@ -2388,21 +2276,17 @@
           return;
         }
 
-        /* A 400 is the server refusing the body, not the network dropping it —
-           an unusable phone number, or a completion it will not accept because
-           it holds no email for this record. Retrying changes nothing, so the
-           reason is shown as given and the applicant is put back on the field
-           that can fix it. */
+        /* A 400 is a rejected body (e.g. invalid phone, or completion without an email),
+           not a network failure. Retrying will not help, so show the server's message
+           and return the user to the field that can fix it. */
         if (lastPatchError !== null || (!identity.email)) {
           completeFailures = 0;
           awaitingSave = false;
           var msg = lastPatchError || 'We couldn’t finish your application without an email address.';
           lastPatchError = null;
-          /* The server's own wording, verbatim, either way. What changes is
-             where they are put to fix it: a 400 while the record still has no
-             acknowledged email is the email being refused, so that is the step
-             to return to. A 400 with the email already on file is about the
-             body of this last request — the phone number — so they stay here. */
+          /* Show the server's message as-is. If no email has been acknowledged, the 400
+             refers to the email, so return to step 8. Otherwise it refers to this
+             request (the phone number), so stay on this step. */
           if (!identity.email || !identityAcknowledged()) {
             showError(msg, function () { clearError(); goTo(8); });
           } else {
@@ -2413,22 +2297,16 @@
 
         completeFailures++;
 
-        /* Second consecutive network failure, and the server has confirmed it
-           holds their email. The lead row was created back at step 1, the
-           answers are in the queue, and it keeps draining in the background
-           (backoff, plus every time the tab is brought forward). Holding
-           someone hostage on a form they have finished is the worse outcome,
-           so let them out. */
+        /* Second consecutive network failure, but the server already has the email.
+           The lead exists and the queue keeps retrying in the background (backoff plus
+           on tab focus), so show completion rather than blocking the user. */
         if (identityAcknowledged() && completeFailures >= 2) {
           finishAndShowDone();
           return;
         }
 
-        /* No acknowledged email. Everything they typed is still only on this
-           device, and "your application is in" would be a promise of a reply
-           to an address we do not have — the one outcome worse than an error.
-           So: no completion screen, the queue keeps going, and they are told
-           plainly where things stand. */
+        /* No acknowledged email. The answers exist only on this device, so do not show
+           completion. Keep draining the queue and tell the user the current status. */
         if (!identityAcknowledged()) {
           keepTrying();
           showError(NOT_SAVED_MSG, function () {
@@ -2447,7 +2325,7 @@
 
     function showDone() {
       var greet = document.getElementById('doneGreeting');
-      /* textContent, not innerHTML — this is applicant-supplied. */
+      /* textContent, not innerHTML: this is user-supplied. */
       greet.textContent = identity.firstName
         ? 'Thank you, ' + identity.firstName + '.'
         : 'Thank you.';
@@ -2465,8 +2343,8 @@
         setFieldError('fPhone', 'errPhone', !phoneOk);
         if (!phoneOk) { phoneInput.focus(); return; }
 
-        /* A number without a tick is not consent. Same rule the main site
-           enforces: give the number and opt in, or clear the number. */
+        /* A phone number without the consent checkbox is not consent. Same rule as
+           the main site: provide the number and opt in, or clear the number. */
         var needsConsent = !consentBox.checked;
         document.getElementById('errSmsConsent').classList.toggle('show', needsConsent);
         if (needsConsent) { consentBox.focus({ preventScroll: true }); return; }
@@ -2492,7 +2370,7 @@
       completeApplication({ phone: null, smsConsent: false });
     });
 
-    /* ── Back buttons. Answers persist; selections are repainted. ─────── */
+    /* ---- Back buttons: answers persist and selections are repainted ---- */
     Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (btn) {
       btn.addEventListener('click', function () {
         var host = btn.closest('.step');
@@ -2501,10 +2379,9 @@
       });
     });
 
-    /* ── Secondary CTA ────────────────────────────────────────────────────
-       The form is in the hero now, so this anchors back up to it. Same
-       behaviour as before: let the smooth scroll land, then put the caret in
-       whichever step they are actually on. */
+    /* ---- Secondary CTA ----
+       Scrolls back to the form in the hero, then focuses the input on the
+       current step once the smooth scroll finishes. */
     var heroCta = document.getElementById('heroCta');
     if (heroCta) {
       heroCta.addEventListener('click', function () {
@@ -2516,9 +2393,9 @@
       });
     }
 
-    /* ── Sticky mobile CTA ────────────────────────────────────────────────
-       Shown only while the hero form is off screen. Starts hidden, so if any
-       of this throws the bar simply never appears. */
+    /* ---- Sticky mobile CTA ----
+       Shown only while the hero form is off screen. Starts hidden, so the bar
+       never appears if this code throws. */
     (function () {
       var bar = document.getElementById('stickyCta');
       var applyBlock = document.getElementById('apply');
@@ -2529,12 +2406,12 @@
           entries.forEach(function (e) { bar.hidden = e.isIntersecting; });
         }, { threshold: 0 });
         barObserver.observe(applyBlock);
-      } catch (e) { /* no bar, no harm */ }
+      } catch (e) { /* bar stays hidden */ }
     })();
 
-    /* ── Scroll reveal ────────────────────────────────────────────────────
-       Two section headers only, and nothing above the fold. If this throws,
-       revealAll() paints everything immediately. */
+    /* ---- Scroll reveal ----
+       Two section headers only, nothing above the fold. If this throws,
+       revealAll() shows everything immediately. */
     function revealAll() {
       Array.prototype.forEach.call(document.querySelectorAll('.fade-in'), function (el) {
         el.classList.add('visible');
@@ -2560,20 +2437,16 @@
       revealAll();
     }
 
-    /* Safety net. The two failure paths above cover "no IntersectionObserver"
-       and "constructing one threw", but not "the observer exists and silently
-       never delivers a callback" — which does happen in some embedded and
-       in-app browser contexts. Nothing on a page taking paid traffic is
-       allowed to sit at opacity 0 indefinitely, so reveal unconditionally
-       shortly after load. If the observer did its job this is a no-op. */
+    /* Fallback: some in-app browsers provide IntersectionObserver but never fire
+       its callback. Reveal everything shortly after load so no content stays at
+       opacity 0. This is a no-op if the observer already ran. */
     window.setTimeout(revealAll, 1200);
 
-    /* ── Boot ─────────────────────────────────────────────────────────── */
+    /* ---- Boot ---- */
     applyVariant();
     initConsentUI();
     /* page_path is sent explicitly. vercel.json sets cleanUrls, so the canonical
-       path for this page is /join with no extension, and reporting has to agree
-       with the canonical tag rather than with whatever the file is called. */
+       path is /join and analytics should match the canonical tag, not the filename. */
     track('page_view', {
       page_title: document.title,
       page_location: window.location.href,

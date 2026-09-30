@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<!--
+  admin.html: internal documentation viewer and admin user management.
+  - Login posts a SHA-256 password hash to /api/admin-auth, then obtains a
+    docs credential (see "Docs API credential" in the script) and loads the
+    docs HTML from GET /api/docs/admin.
+  - Users modal manages admin accounts via /api/admin-users (Basic auth).
+  - No documentation content is embedded in this file.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -12,7 +20,7 @@
     :root { --gold: #ba9f75; --gold-dim: rgba(186,159,117,0.5); --bg: #0c0c0d; --surface: #111113; }
     body { background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
 
-    /* ── Auth screens ── */
+    /* ---- Auth screens ---- */
     .auth-screen {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
       background: radial-gradient(ellipse at 50% 30%, rgba(186,159,117,0.10) 0%, #0c0c0d 60%);
@@ -58,7 +66,7 @@
       color: rgba(76,175,125,0.9); margin-bottom: 18px; display: none;
     }
 
-    /* ── Docs layout ── */
+    /* ---- Docs layout ---- */
     #screen-docs { display: none; }
     .docs-header {
       position: sticky; top: 0; z-index: 100;
@@ -79,7 +87,7 @@
     .header-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
     .docs-body { max-width: 760px; margin: 0 auto; padding: 40px 28px 100px; }
 
-    /* ── Sections ── */
+    /* ---- Sections ---- */
     .section { margin-bottom: 44px; }
     .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
     .section-num { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--gold-dim); letter-spacing: 0.2em; }
@@ -184,7 +192,7 @@
     /* Updated marker in page header */
     .docs-updated { font-size: 10px; letter-spacing: 0.12em; color: rgba(186,159,117,0.4); text-transform: uppercase; margin-top: 4px; }
 
-    /* ── Tab system ── */
+    /* ---- Tab system ---- */
     .tab-nav {
       display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 0 28px; background: rgba(12,12,13,0.97);
@@ -202,7 +210,7 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── IP Methodology extras ── */
+    /* ---- IP methodology extras ---- */
     .ip-intro { margin-bottom: 44px; }
     .ip-intro-eyebrow { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,100,100,0.5); margin-bottom: 8px; }
     .ip-intro-title { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 600; color: #fff; margin-bottom: 10px; line-height: 1.1; }
@@ -266,7 +274,7 @@
       .axis-grid { grid-template-columns: 1fr; }
     }
 
-    /* ── Users modal ── */
+    /* ---- Users modal ---- */
     #modal-users { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px; }
     #modal-users.open { display:flex; }
     .users-card { background:#111113; border:1px solid rgba(186,159,117,0.2); border-radius:20px; padding:36px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; position:relative; }
@@ -293,9 +301,9 @@
 </head>
 <body>
 
-<!-- Setup screen removed — credentials are pre-seeded on first visit -->
+<!-- No first-run setup screen: admin credentials are provisioned server-side. -->
 
-<!-- ══════════════════════ LOGIN SCREEN ══════════════════════ -->
+<!-- Login screen -->
 <div id="screen-login" class="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">CURATE</div>
@@ -305,18 +313,13 @@
     <input id="login-user" class="auth-input" type="text" autocomplete="username" placeholder="">
     <label class="auth-label">Password</label>
     <input id="login-pass" class="auth-input" type="password" autocomplete="current-password" placeholder="">
-    <!-- Shown only when this page is not configured for Supabase sign-in.
-         See the DOCS API CREDENTIAL block in the script below. -->
-    <!-- The ADMIN API SECRET field lived here until 2026-08-27. Removed with the
-         fallback that needed it: reading documentation should never have
-         required handling ADMIN_SCRIPT_SECRET, which unlocks every admin
-         route. Sign-in now uses /api/docs/session and the username and
-         password already collected above. -->
+    <!-- Documentation access reuses this username and password via
+         /api/docs/session (see the docs API credential notes in the script). -->
     <button class="auth-btn" onclick="handleLogin()">Sign In</button>
   </div>
 </div>
 
-<!-- ══════════════════════ PASSWORD MODAL ══════════════════════ -->
+<!-- Password modal -->
 <div id="modal-pw">
   <div class="modal-card">
     <button class="modal-close" onclick="closePwModal()">&times;</button>
@@ -334,7 +337,7 @@
 </div>
 
 
-<!-- ══════════════════════ USERS MODAL ══════════════════════ -->
+<!-- Users modal -->
 <div id="modal-users">
   <div class="users-card">
     <button class="modal-close" onclick="closeUsersModal()">&times;</button>
@@ -377,40 +380,33 @@
   </div>
 </div>
 
-<!-- ══════════════════════ DOCS SCREEN ══════════════════════ -->
+<!-- Docs screen -->
 <div id="screen-docs"><!-- content loaded from GET /api/docs/admin after sign-in --></div>
 
 <script>
   const API = 'https://api.curatevip.ai';
 
-  // ══════════════════════ DOCS API CREDENTIAL ══════════════════════
-  // The documentation body is NOT in this file. It used to be: all 54 sections
-  // shipped in the HTML to every anonymous visitor and were "protected" only by
-  // a CSS display toggle, so `curl https://curatevip.app/admin.html` returned
-  // the entire methodology. The body now comes from GET /api/docs/admin, which
-  // sits behind the API's server-side requireAdmin check.
+  // ---- Docs API credential ----
+  // The documentation body is not in this file. It is served by GET /api/docs/admin,
+  // behind the API's server-side requireAdmin check, so nothing is readable without
+  // signing in.
   //
-  // requireAdmin accepts exactly two credentials, and this page must present
-  // one of them:
+  // The page presents one of two credentials:
   //   (a) Authorization: Bearer <Supabase session token> for a member with
   //       is_admin = true (preferred), or
-  //   (b) x-docs-token: issued by POST /api/docs/session against the same
-  //       username and password as above. Scoped to /api/docs only.
+  //   (b) x-docs-token: issued by POST /api/docs/session for the same username and
+  //       password used on the login form. Scoped to /api/docs only.
   //
-  // (a) is off by default because this site has no Supabase configuration of
-  // its own — no client library, no project URL, no anon key. To turn it on,
-  // paste the project URL and the ANON (publishable) key below; never the
-  // service-role key. The sign-in then goes straight to the GoTrue REST
-  // endpoint, so no third-party script is loaded into a page that guards trade
-  // secrets. Note the identity sets differ: the Username/Password below are
-  // admin_credentials rows, while a Supabase token must belong to a member with
-  // is_admin = true (or an ADMIN_EMAILS address).
+  // (a) is disabled until SUPABASE_URL and SUPABASE_ANON_KEY are set below. Use the
+  // anon (publishable) key only, never the service-role key. Sign-in calls the
+  // GoTrue REST endpoint directly, so no third-party script is loaded. Note the
+  // identity sets differ: the login form checks admin_credentials rows, while a
+  // Supabase token must belong to a member with is_admin = true (or an
+  // ADMIN_EMAILS address).
   //
-  // With these blank, the page falls back to (b): the operator types the admin
-  // API secret at sign-in. It is held in a variable for the life of the tab and
-  // is never written to sessionStorage, localStorage or a cookie — reloading
-  // the page requires signing in again, which is the intended trade for not
-  // parking a server-to-server secret in browser storage.
+  // With these blank the page uses (b). The resulting credential is held in memory
+  // for the life of the tab and never written to storage or cookies, so a reload
+  // requires signing in again.
   const SUPABASE_URL      = '';
   const SUPABASE_ANON_KEY = '';
   const USE_SUPABASE      = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -418,14 +414,14 @@
   // In-memory only. Never persisted.
   let docsAuthHeaders = null;
 
-  // ── SHA-256 helper ──────────────────────────────────────────────────────────
+  // ---- SHA-256 helper ----
   async function sha256(text) {
     const data = new TextEncoder().encode(text);
     const hash = await crypto.subtle.digest('SHA-256', data);
     return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  // ── Show/hide screens ───────────────────────────────────────────────────────
+  // ---- Show/hide screens ----
   function showScreen(name) {
     document.getElementById('screen-login').style.display = 'none';
     document.getElementById('screen-docs').style.display = 'none';
@@ -444,7 +440,7 @@
     el.textContent = '';
   }
 
-  // ── Docs content loading ────────────────────────────────────────────────────
+  // ---- Docs content loading ----
   // Signs in to Supabase directly against the GoTrue REST API and returns the
   // session bearer token. Only used when SUPABASE_URL / SUPABASE_ANON_KEY are
   // configured above.
@@ -459,9 +455,8 @@
     return data.access_token;
   }
 
-  // Fetches the doc body and injects it. Returns an error string on failure and
-  // null on success. There is deliberately no embedded copy to fall back to:
-  // if the API will not serve the content, the page shows nothing.
+  // Fetches the docs HTML and injects it. Returns an error string on failure,
+  // null on success. There is no embedded fallback copy.
   async function loadDocsContent(headers) {
     let res;
     try {
@@ -477,11 +472,13 @@
     try { data = await res.json(); } catch (err) { return 'Documentation response was malformed.'; }
     if (!data || !data.ok || !data.html) return 'Documentation response was empty.';
 
+    // Trusted first-party HTML: /api/docs/admin must keep serving static
+    // repo content only. Sanitize it if the source ever changes.
     document.getElementById('screen-docs').innerHTML = data.html;
     return null;
   }
 
-  // ── Login ───────────────────────────────────────────────────────────────────
+  // ---- Login ----
   async function handleLogin() {
     clearAuthError('login-error');
     const user = document.getElementById('login-user').value.trim();
@@ -493,8 +490,7 @@
     btn.disabled = true;
 
     try {
-      // Step 1 — the existing admin_credentials check. Server-side, against a
-      // hash this page never receives.
+      // Step 1: verify the admin_credentials username and password hash server-side.
       const hash = await sha256(pass);
       const res = await fetch(API + '/api/admin-auth', {
         method: 'POST',
@@ -504,20 +500,11 @@
       const data = await res.json();
       if (!data.ok) { showAuthError('login-error', 'Invalid credentials.'); return; }
 
-      // Step 2 — obtain a credential the docs API itself will accept.
-      //
-      // CHANGED 2026-08-27. This used to ask a human to paste
-      // ADMIN_SCRIPT_SECRET into the form whenever the Supabase constants were
-      // unset — which they were, so that was the live path. It was the wrong
-      // trade twice over: ADMIN_SCRIPT_SECRET unlocks every admin route, so
-      // reading documentation required handling the most privileged key in the
-      // system, and it made a person memorise a secret to do the least
-      // sensitive thing anyone does here.
-      //
-      // /api/docs/session exchanges the SAME username and password already
-      // verified above for a docs-only token: scoped to /api/docs, HMAC-signed
-      // server-side, 8-hour expiry, and not accepted by requireAdmin — so it
-      // cannot read a member row even if it leaks.
+      // Step 2: obtain a credential the docs API accepts.
+      // /api/docs/session exchanges the same verified username and password for a
+      // docs-only token: scoped to /api/docs, HMAC-signed server-side, 8-hour expiry,
+      // and not accepted by requireAdmin, so it cannot read member data if leaked.
+      // This avoids ever handling ADMIN_SCRIPT_SECRET in the browser.
       let headers;
       if (USE_SUPABASE) {
         const token = await supabaseSignIn(user, pass);
@@ -537,13 +524,13 @@
         headers = { 'x-docs-token': sdata.token };
       }
 
-      // Step 3 — the API is the real gate. Only a 200 here reveals anything.
+      // Step 3: load the docs. The API is the actual access check.
       const err = await loadDocsContent(headers);
       if (err) { showAuthError('login-error', err); return; }
 
       docsAuthHeaders = headers;
-      // Username + hash back the user-management calls, as before. The docs
-      // credential itself stays out of storage.
+      // Username and hash are kept in sessionStorage for the user-management calls.
+      // The docs credential itself is not stored.
       sessionStorage.setItem('curate_admin_session', crypto.randomUUID());
       sessionStorage.setItem('curate_admin_user', user);
       sessionStorage.setItem('curate_admin_hash', hash);
@@ -557,21 +544,21 @@
     }
   }
 
-  // ── Sign out ────────────────────────────────────────────────────────────────
+  // ---- Sign out ----
   function handleSignOut() {
     sessionStorage.removeItem('curate_admin_session');
     sessionStorage.removeItem('curate_admin_user');
     sessionStorage.removeItem('curate_admin_hash');
     docsAuthHeaders = null;
-    // Drop the fetched content from the DOM as well — signing out must leave
-    // nothing behind for the next person at the keyboard.
+    // Also clear the fetched content from the DOM so nothing is left for the next
+    // person at the keyboard.
     document.getElementById('screen-docs').innerHTML = '';
     document.getElementById('login-user').value = '';
     document.getElementById('login-pass').value = '';
     showScreen('login');
   }
 
-  // ── Password modal ──────────────────────────────────────────────────────────
+  // ---- Password modal ----
   function openPwModal() {
     document.getElementById('modal-pw').classList.add('open');
     document.getElementById('pw-current').value = '';
@@ -626,22 +613,19 @@
     }
   }
 
-  // ── Keyboard shortcuts ──────────────────────────────────────────────────────
-  // Enter submits from the password field. There is no longer a second field to
-  // tab into — the admin API secret input was removed 2026-08-27 when docs
-  // sign-in moved to /api/docs/session.
+  // ---- Keyboard shortcuts ----
+  // Enter in the password field submits the login form.
   document.getElementById('login-pass').addEventListener('keydown', e => {
     if (e.key === 'Enter') handleLogin();
   });
   document.getElementById('pw-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handlePwChange(); });
 
-  // ── Close modal on backdrop click ───────────────────────────────────────────
+  // ---- Close modal on backdrop click ----
   document.getElementById('modal-pw').addEventListener('click', function(e) {
     if (e.target === this) closePwModal();
   });
 
-  // ── Init ────────────────────────────────────────────────────────────────────
-  // ── Tab switching ───────────────────────────────────────────────────────────
+  // ---- Tab switching ----
   function switchTab(name, btn) {
     document.getElementById('tab-curate').classList.remove('active');
     document.getElementById('tab-system').classList.remove('active');
@@ -653,24 +637,22 @@
   }
 
   (function init() {
-    // Always start at the login screen. A stored session no longer implies
-    // anything is readable: the content lives on the API and the credential
-    // that fetches it is intentionally not persisted, so a reload means a
-    // fresh sign-in.
+    // Always start at the login screen. The docs credential is not persisted, so
+    // a reload requires a fresh sign-in.
     sessionStorage.removeItem('curate_admin_session');
     sessionStorage.removeItem('curate_admin_user');
     sessionStorage.removeItem('curate_admin_hash');
     showScreen('login');
   })();
 
-  // ── Helper: Basic auth header for user management endpoints ────────────────
+  // ---- Basic auth header for user-management endpoints ----
   function adminAuthHeader() {
     const user = sessionStorage.getItem('curate_admin_user') || '';
     const hash = sessionStorage.getItem('curate_admin_hash') || '';
     return 'Basic ' + btoa(user + ':' + hash);
   }
 
-  // ── Users modal ─────────────────────────────────────────────────────────────
+  // ---- Users modal ----
   let resetTargetUsername = null;
 
   async function openUsersModal() {
@@ -702,20 +684,54 @@
         listEl.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.3);padding:8px 0;">No users found.</div>';
         return;
       }
-      listEl.innerHTML = data.users.map(u => {
-        const isSelf = u.username === currentUser;
+      // Built with DOM APIs so API-provided usernames are never parsed as HTML.
+      listEl.textContent = '';
+      data.users.forEach(u => {
+        const username = String(u.username || '');
+        const isSelf = username === currentUser;
         const date = u.updated_at ? new Date(u.updated_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '';
-        return `<div class="user-row">
-          <div>
-            <div class="user-name">${u.username}${isSelf ? ' <span style="font-size:10px;color:rgba(186,159,117,0.5);margin-left:6px;">you</span>' : ''}</div>
-            ${date ? `<div class="user-date">Password last changed ${date}</div>` : ''}
-          </div>
-          <div class="user-actions">
-            <button class="user-btn reset" onclick="startReset('${u.username}')">Reset PW</button>
-            ${!isSelf ? `<button class="user-btn del" onclick="handleDeleteUser('${u.username}')">Delete</button>` : ''}
-          </div>
-        </div>`;
-      }).join('');
+
+        const row = document.createElement('div');
+        row.className = 'user-row';
+
+        const info = document.createElement('div');
+        const nameEl = document.createElement('div');
+        nameEl.className = 'user-name';
+        nameEl.textContent = username;
+        if (isSelf) {
+          const you = document.createElement('span');
+          you.style.cssText = 'font-size:10px;color:rgba(186,159,117,0.5);margin-left:6px;';
+          you.textContent = 'you';
+          nameEl.appendChild(document.createTextNode(' '));
+          nameEl.appendChild(you);
+        }
+        info.appendChild(nameEl);
+        if (date) {
+          const dateEl = document.createElement('div');
+          dateEl.className = 'user-date';
+          dateEl.textContent = 'Password last changed ' + date;
+          info.appendChild(dateEl);
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'user-actions';
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'user-btn reset';
+        resetBtn.textContent = 'Reset PW';
+        resetBtn.addEventListener('click', () => startReset(username));
+        actions.appendChild(resetBtn);
+        if (!isSelf) {
+          const delBtn = document.createElement('button');
+          delBtn.className = 'user-btn del';
+          delBtn.textContent = 'Delete';
+          delBtn.addEventListener('click', () => handleDeleteUser(username));
+          actions.appendChild(delBtn);
+        }
+
+        row.appendChild(info);
+        row.appendChild(actions);
+        listEl.appendChild(row);
+      });
     } catch (err) {
       listEl.innerHTML = '<div style="font-size:13px;color:rgba(255,100,100,0.7);padding:8px 0;">Server unreachable.</div>';
     }

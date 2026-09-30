@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<!--
+  index.html: main marketing site (curatevip.app).
+  - Sections: hero, stats, problem, what you get, Speeds, how it works,
+    membership, investors, contact.
+  - Contact form POSTs to https://api.curatevip.ai/api/contact with
+    first-party attribution (sessionStorage) and optional SMS consent.
+  - Design tokens here are the source for join.html; keep them in sync.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -42,7 +50,7 @@
       overflow-x: hidden;
     }
 
-    /* ─── NAV ─────────────────────────────────────────── */
+    /* ---- Nav ---- */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -50,18 +58,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      /* Align the nav's contents with the page's 1120px content column instead
-         of the viewport edge. At 72px flat, the logo sat 286px to the left of
-         the headline below it — the bar and the page didn't share an edge,
-         which reads as two layouts stacked on each other.
-         100% not 100vw: 100vw includes the scrollbar and threw it out by 8px. */
+      /* Align nav contents with the page's 1120px content column rather than the
+         viewport edge. Uses 100% instead of 100vw because 100vw includes the scrollbar. */
       padding: 0 max(24px, calc((100% - 1120px) / 2 + 72px));
       height: 88px;
-      /* Opaque pure black, matching the black plate baked into the logo PNG.
-         At rgba(10,10,10,0.88) the bar sat a shade lighter than the logo's own
-         background, so the image read as a visible rectangle floating on the
-         header. Any translucency reintroduces that seam as content scrolls
-         under, so the blur goes with it. */
+      /* Opaque black to match the black background baked into the logo PNG. Any
+         translucency would show the logo as a visible rectangle, so no backdrop blur. */
       background: #000;
       border-bottom: 1px solid var(--border);
     }
@@ -127,10 +129,10 @@
 
     .nav-member:hover { color: var(--gold) !important; }
 
-    /* ─── SECTIONS ────────────────────────────────────── */
+    /* ---- Sections ---- */
     section { scroll-margin-top: 88px; }
 
-    /* ─── HERO ────────────────────────────────────────── */
+    /* ---- Hero ---- */
     #home {
       min-height: 100vh;
       display: flex;
@@ -314,7 +316,7 @@
       50% { opacity: 0.9; }
     }
 
-    /* ─── STATS BAR ───────────────────────────────────── */
+    /* ---- Stats bar ---- */
     .stats-bar {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -344,22 +346,17 @@
       color: var(--text-40);
     }
 
-    /* ─── ABOUT ───────────────────────────────────────── */
-    /* Single column: heading and intro across the top, cards in a row beneath.
-       This was a two-column grid (text left, cards stacked right), which left
-       the intro stranded beside a tall stack and gave the pull-quote nowhere
-       sensible to sit. Stacking it matches every other section on the page. */
+    /* ---- About ---- */
+    /* Single column: heading and intro on top, cards in a row beneath, matching
+       the other sections. */
     #about {
       padding: 58px 72px;
       max-width: 1120px;
       margin: 0 auto;
     }
 
-    /* No max-width here — the headline and intro should use the full column,
-       same as every other section. This used to be capped at a flat 760px,
-       which is what stranded a gap on the right on wide screens. Individual
-       paragraphs still cap themselves at a readable 66ch via .body-text, so
-       this wrapper only needs to get out of the way. */
+    /* No max-width: the headline and intro use the full column like other sections.
+       Paragraphs still cap at 66ch via .body-text. */
     #about .about-intro { margin: 0 0 26px; text-align: left; }
 
     .section-eyebrow {
@@ -383,8 +380,7 @@
     .section-h2 em { font-style: italic; color: var(--gold); }
 
     .body-text {
-      /* No max-width — fills the column like the headline and cards above
-         and below it, on any screen size. */
+      /* No max-width: fills the column like the headline and cards around it. */
       font-size: 15px;
       color: var(--text-60);
       line-height: 1.9;
@@ -400,12 +396,8 @@
       gap: 12px;
     }
 
-    /* Stacked: icon, then title, then copy.
-       This was a horizontal flex row with the icon vertically centred — right
-       for a short card in a narrow column, wrong in a tall grid cell, where it
-       pinned the icon to the middle of the left edge and indented every line of
-       text around it. Also dropped: the gold left rule and the diagonal wash,
-       which read as decoration competing with the copy. */
+    /* Stacked layout: icon, then title, then copy. No left rule or background
+       wash, to keep the focus on the copy. */
     .about-card {
       background: var(--bg2);
       border: 1px solid var(--border-l);
@@ -430,8 +422,8 @@
       transition: opacity 0.35s ease;
     }
 
-    /* Lift, not slide. translateX shifted a card sideways out of its column,
-       which reads as a glitch once the cards sit in a grid rather than a list. */
+    /* Hover lifts the card vertically. A horizontal shift looks like a glitch
+       in a grid layout. */
     .about-card:hover {
       border-color: var(--gold-border);
       box-shadow: 0 14px 40px rgba(0,0,0,0.5);
@@ -440,8 +432,7 @@
 
     .about-card:hover::after { opacity: 1; }
 
-    /* Smaller and quieter, sitting above the title rather than beside it. The
-       glow was sized to anchor a horizontal card; stacked, it shouted. */
+    /* Small icon placed above the title. */
     .card-icon {
       width: 36px;
       height: 36px;
@@ -458,15 +449,10 @@
 
     .card-body { flex: 1; }
 
-    /* Georgia at 17px/700. The page previously set this in Cormorant Garamond,
-       whose small x-height and thin strokes made a 17px title read smaller and
-       fainter than the 14px sans caption beneath it. Georgia has a high
-       x-height and even strokes, so it holds up at card-title size — which is
-       why the same wording looked stronger in the mock. */
-    /* White, like the mock. Gold at this size sat at lower contrast than the
-       body copy beneath it, so the title read as the quieter of the two — the
-       opposite of what a heading is for. The Speed cards keep gold via an
-       inline colour, where it's doing categorical work rather than decoration. */
+    /* Georgia at 17px/700. Its high x-height and even strokes hold up at
+       card-title size better than Cormorant Garamond. */
+    /* White title for stronger contrast than the body copy. The Speed cards set
+       gold inline because there the color distinguishes categories. */
     .card-title {
       font-family: var(--serif);
       font-size: 17px;
@@ -483,8 +469,8 @@
       line-height: 1.7;
     }
 
-    /* Included card — two columns of bulleted items instead of one long
-       stacked list. Falls back to a single column on narrow screens. */
+    /* Included card: two columns of bulleted items, falling back to one column
+       on narrow screens. */
     .included-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -519,11 +505,10 @@
       .included-grid { grid-template-columns: 1fr; }
     }
 
-    /* ─── HOW IT WORKS ────────────────────────────────── */
+    /* ---- How it works ---- */
     #how-it-works {
-      /* Same inset formula as the nav: full-width background, but contents
-         aligned to the shared 1120px column. A flat 72px put this section's
-         heading 286px left of every other heading on the page. */
+      /* Same inset formula as the nav: full-width background with contents aligned
+         to the shared 1120px column. */
       padding: 58px max(24px, calc((100% - 1120px) / 2 + 72px));
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -535,11 +520,9 @@
       margin-bottom: 30px;
     }
 
-    /* ── Sections added in the member-first rewrite ───────────────────────────
-       Padding in this stylesheet is declared per-section-ID (#about,
-       #how-it-works, #contact each carry their own). New sections therefore
-       started life with none at all, which is why their cards ran edge to edge
-       against the viewport. These give them the same measure as the rest. */
+    /* ---- Member-first sections ----
+       Padding is declared per section id (#about, #how-it-works, #contact), so
+       these sections get the same horizontal measure explicitly. */
     #what-you-get,
     #your-speed,
     #membership,
@@ -552,10 +535,8 @@
     #membership .section-header { text-align: center; }
     #membership .section-sub { margin-left: auto; margin-right: auto; }
 
-    /* Full-bleed background, contents on the shared column — the same pattern as
-       #how-it-works. Previously this section kept a flat 72px padding and then
-       re-centred its children inside the full viewport width, which put its
-       heading 72px left of every other heading on the page. */
+    /* Full-bleed background with contents on the shared column, same pattern as
+       #how-it-works. */
     #your-speed {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -564,9 +545,8 @@
       padding: 58px max(24px, calc((100% - 1120px) / 2 + 72px));
     }
 
-    /* Cards side by side rather than stacked. .about-cards is a vertical flex
-       column because it sits in the narrow right-hand column of #about; in a
-       full-width section that same stack reads as four heavy bands. */
+    /* Cards side by side. .about-cards is a vertical column, which reads as heavy
+       bands in a full-width section. */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
@@ -575,12 +555,11 @@
     }
     .cards-grid .about-card { height: 100%; }
 
-    /* What You Get has FOUR cards. auto-fit fits as many 270px columns as the
-       width allows, which is three — leaving a single orphan on a second row.
-       Four items want an explicit 2×2, not a best-fit flow. */
+    /* What You Get has four cards, so use an explicit 2x2 grid instead of auto-fit
+       (which would give three columns and an orphan). */
     #what-you-get .cards-grid { grid-template-columns: repeat(2, 1fr); }
 
-    /* The three Speed cards are lists, not paragraphs — a little more air. */
+    /* The three Speed cards are lists, so they get slightly more spacing. */
     .speed-card .card-desc { line-height: 1.9; }
 
     @media (max-width: 900px) {
@@ -600,9 +579,7 @@
       margin: 20px auto;
     }
 
-    /* No max-width — fills the column, left-aligned to sit under the headline.
-       This used to be capped at 60ch, which left it narrower than the headline
-       and cards in the same section on wide screens. */
+    /* No max-width: fills the column, left-aligned under the headline. */
     .section-sub {
       font-size: 15px;
       color: var(--text-40);
@@ -610,9 +587,8 @@
       line-height: 1.75;
     }
 
-    /* Flow steps — app CC-card style. No max-width: this used to be capped at a
-       flat 860px, leaving a gap on the right against the 976px phone mockup
-       below it on wide screens — the same bug as the Problem section. */
+    /* Flow steps in the app's card style. No max-width, so the steps line up with
+       the phone mockup below on wide screens. */
     .flow {
       margin: 0 0 40px;
       display: flex;
@@ -762,10 +738,7 @@
       align-items: flex-end;
       gap: 20px;
       flex-shrink: 0;
-      /* Centred. This block was originally the right-hand half of a two-column
-         row, so it never needed to place itself — flex-start was correct there.
-         Standing alone under the three steps it pinned itself to the left edge
-         and left half the section empty. */
+      /* Centered on its own row beneath the three steps. */
       justify-content: center;
       margin: 0 auto;
       max-width: 1120px;
@@ -792,9 +765,8 @@
     }
 
     /* Solution callout */
-    /* A gold rule with a tinted wash, left-aligned — not a centred rounded
-       card. `border-left` has to come AFTER `border: none`, or the shorthand
-       resets it and the rule disappears. */
+    /* Gold left rule with a tinted background, left-aligned. `border-left` must
+       come after `border: none`, or the shorthand resets it. */
     .solution-callout {
       max-width: none;
       margin: 28px 0 0;
@@ -823,7 +795,7 @@
 
     .solution-sub em { color: var(--gold); font-style: italic; }
 
-    /* ─── CONTACT ─────────────────────────────────────── */
+    /* ---- Contact ---- */
     #contact {
       padding: 120px 72px;
       max-width: 680px;
@@ -978,7 +950,7 @@
       transform: none;
     }
 
-    /* ─── FOOTER ──────────────────────────────────────── */
+    /* ---- Footer ---- */
     footer {
       border-top: 1px solid var(--border);
       padding: 36px 72px;
@@ -1028,7 +1000,7 @@
 
     .footer-links a:hover { color: var(--gold); }
 
-    /* ─── HAMBURGER / MOBILE MENU ────────────────────── */
+    /* ---- Hamburger / mobile menu ---- */
     .hamburger {
       display: none;
       flex-direction: column;
@@ -1062,8 +1034,7 @@
       position: fixed;
       top: 88px;
       left: 0; right: 0;
-      /* Matches the nav bar above it — a 0.97 alpha panel hanging off an
-         opaque black bar shows a visible seam between the two. */
+      /* Opaque to match the nav bar; a translucent panel would show a seam. */
       background: #000;
       border-bottom: 1px solid var(--border);
       z-index: 98;
@@ -1105,7 +1076,7 @@
 
     .mobile-menu .mob-cta:hover { background: var(--gold-light); color: #000 !important; }
 
-    /* ─── MOBILE RESPONSIVE ──────────────────────────── */
+    /* ---- Mobile responsive ---- */
     @media (max-width: 768px) {
 
       /* NAV */
@@ -1113,18 +1084,13 @@
         padding: 0 24px;
         height: 80px;
       }
-      /* SIZE THE WORDMARK BY WIDTH, NOT HEIGHT.
-         This was `height: 71px; margin: 8px 0`. The logo is 1684x284 — a 5.93:1
-         horizontal wordmark — so 71px tall makes it 421px WIDE. On a 375px
-         phone the logo alone was wider than the screen, which pushed the
-         hamburger clean off the right edge: it wasn't hidden, it was outside
-         the viewport. 71 + 16px of margin also stood 87px tall inside an 80px
-         bar, so it overflowed vertically too and left no air above or below.
-         Constraining the width is what fixes both at once — height follows the
-         aspect ratio, and 62vw always leaves room for the button. */
+      /* Size the wordmark by width, not height. The logo is a wide 1684x284 image,
+         so a fixed height can make it wider than a phone screen and push the
+         hamburger off the edge. 62vw always leaves room for the button, and height
+         follows the aspect ratio. */
       .nav-logo img { width: min(300px, 62vw); height: auto; margin: 0; }
       .nav-links { display: none; }
-      /* Never let the flex row absorb an overflow by shrinking the tap target. */
+      /* Prevent the flex row from shrinking the tap target. */
       .hamburger { display: flex; flex-shrink: 0; }
       .mobile-menu { top: 80px; }
 
@@ -1173,7 +1139,7 @@
       .flow-desc { font-size: 13px; color: rgba(255,255,255,0.7); }
       .flow-arrow { display: none; }
 
-      /* App mockup wrap — stack vertically */
+      /* App mockup: stack vertically */
       .app-mockup-wrap {
         flex-direction: column;
         gap: 48px;
@@ -1211,7 +1177,7 @@
       .hero-title { font-size: 30px; }
     }
 
-    /* ─── FADE IN ─────────────────────────────────────── */
+    /* ---- Fade in ---- */
     .fade-in {
       opacity: 0;
       transform: translateY(28px);
@@ -1230,7 +1196,7 @@
 </head>
 <body>
 
-  <!-- ── NAV ── -->
+  <!-- Nav -->
   <nav>
     <a href="#home" class="nav-logo">
       <img src="Logo-Horizontal-Website.png" alt="CURATEvip" />
@@ -1249,7 +1215,7 @@
     </button>
   </nav>
 
-  <!-- ── MOBILE MENU ── -->
+  <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="#what-you-get">What You Get</a>
     <a href="#how-it-works">How It Works</a>
@@ -1258,7 +1224,7 @@
     <a href="#contact" class="mob-cta">Request Access</a>
   </div>
 
-  <!-- ── HERO ── -->
+  <!-- Hero -->
   <section id="home">
     <div class="hero-glow"></div>
 
@@ -1299,7 +1265,7 @@
     </div>
   </section>
 
-  <!-- ── STATS BAR — member-facing numbers, not market numbers ── -->
+  <!-- Stats bar: member-facing numbers -->
   <div class="stats-bar">
     <div class="stat fade-in">
       <div class="stat-num">3-5</div>
@@ -1319,7 +1285,7 @@
     </div>
   </div>
 
-  <!-- ── THE PROBLEM ── -->
+  <!-- The problem -->
   <section id="about">
 
     <div class="about-intro fade-in">
@@ -1363,9 +1329,7 @@
 
     </div>
 
-    <!-- Full width, below the cards. .solution-callout centres itself at 780px —
-         it only read as stranded because the old two-column grid confined it to
-         the left half. -->
+    <!-- Full width below the cards. .solution-callout centers itself at 780px. -->
     <div class="solution-callout fade-in delay-2">
       <p class="solution-quote">"If I'm committing my time and my money to this place, is it actually going to be my speed?"</p>
       <p class="solution-sub">Right now, you're guessing. That's the whole problem.</p>
@@ -1373,7 +1337,7 @@
 
   </section>
 
-  <!-- ── WHAT YOU GET ── -->
+  <!-- What you get -->
   <section id="what-you-get">
     <div class="section-header fade-in">
       <p class="section-eyebrow">What You Get</p>
@@ -1417,7 +1381,7 @@
     </div>
   </section>
 
-  <!-- ── WHAT IS A SPEED ── -->
+  <!-- What is a Speed -->
   <section id="your-speed">
     <div class="section-header fade-in">
       <p class="section-eyebrow">The Idea</p>
@@ -1470,7 +1434,7 @@
     </div>
   </section>
 
-  <!-- ── HOW IT WORKS ── -->
+  <!-- How it works -->
   <section id="how-it-works">
     <div class="section-header fade-in">
       <p class="section-eyebrow">How It Works</p>
@@ -1536,7 +1500,7 @@
     </div>
   </section>
 
-  <!-- ── MEMBERSHIP / PRICE ── -->
+  <!-- Membership / price -->
   <section id="membership">
     <div class="section-header fade-in">
       <p class="section-eyebrow">Membership</p>
@@ -1574,7 +1538,7 @@
     </div>
   </section>
 
-  <!-- ── FOR INVESTORS — separated deliberately from the member story ── -->
+  <!-- For investors: kept separate from the member-facing sections -->
   <section id="investors" style="border-top:1px solid var(--border);">
     <div class="section-header fade-in">
       <p class="section-eyebrow">For Investors &amp; Partners</p>
@@ -1620,12 +1584,8 @@
       <div class="about-card">
         <div class="card-body">
           <div class="card-title">The Speed Engine™</div>
-          <!-- Named sources removed 2026-08-27, same reasoning as the trust
-               strip on /join: the source list IS the methodology. "Lartisien"
-               was the real leak here — Michelin and Forbes are what any reader
-               would assume, but naming an obscure curation index tells a
-               competitor we found it and thought it worth reading, which is the
-               genuinely hard part of building this. -->
+          <!-- Named sources are intentionally omitted, as on /join: the source list is
+               part of the methodology. -->
           <div class="card-desc">Proprietary CCTF classification reads atmosphere, acoustic energy and behavioural signal to place every venue on a two-axis taste architecture. An always-on engine pre-ranks pools from dozens of independent guides and award bodies, so a member's answer is computed before they ask for it.</div>
         </div>
       </div>
@@ -1646,7 +1606,7 @@
   </section>
 
 
-  <!-- ── CONTACT ── -->
+  <!-- Contact -->
   <section id="contact">
     <div class="fade-in">
       <p class="section-eyebrow">By Invitation Only</p>
@@ -1655,9 +1615,8 @@
       <p class="section-sub">We give a high-taste traveler back the hours they currently spend researching, with the same or better outcome. Whether you're a potential member, venue partner, or investor, we'd love to connect.</p>
     </div>
 
-    <!-- Submitted by fetch to our own API (see the handler below), not by the
-         browser. No action/method: there is no non-JS fallback to degrade to,
-         and leaving them would let a stray Enter key navigate away mid-edit. -->
+    <!-- Submitted via fetch to our API (see the handler below). No action/method
+         attributes, so pressing Enter cannot trigger a native form submit. -->
     <form class="contact-form fade-in delay-1" id="contactForm">
       <div class="form-row">
         <div class="form-group">
@@ -1676,12 +1635,10 @@
         <input type="email" name="email" id="fieldEmail" class="form-input" placeholder="you@example.com" autocomplete="email" />
         <span class="field-error" id="errEmail">Please enter a valid email address.</span>
       </div>
-      <!-- Mobile number + SMS consent.
-           Optional by design: requiring a phone number to request access would
-           cost more applicants than the text channel is worth. But if a number
-           IS given, the consent box must be ticked before the form will send —
-           that tick is the record of opt-in that carrier A2P registration
-           requires, and it has to be a real, unchecked-by-default action. -->
+      <!-- Mobile number and SMS consent.
+           The number is optional. If one is entered, the consent box must be checked
+           before the form will send: the check is the opt-in record that carrier A2P
+           registration requires, and it must be unchecked by default. -->
       <div class="form-group">
         <label class="form-label">Mobile Number <span style="opacity:0.55;text-transform:none;letter-spacing:0;">(optional, to receive your invitation by text)</span></label>
         <input type="tel" name="phone" id="fieldPhone" class="form-input" placeholder="(206) 555-0123" autocomplete="tel" />
@@ -1690,10 +1647,9 @@
       <div class="form-group" id="smsConsentGroup">
         <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;line-height:1.6;">
           <input type="checkbox" name="sms_consent" id="fieldSmsConsent" value="Yes, consented to SMS" style="margin-top:3px;flex-shrink:0;" />
-          <!-- id is load-bearing: the handler reads this element's text at
-               submit time and stores it as smsConsentText, so the consent
-               record is always the exact wording that was on screen. Edit the
-               copy freely; do not remove the id. -->
+          <!-- Do not remove this id: the handler reads this element's text at submit time
+               and stores it as smsConsentText, so the consent record matches the displayed
+               wording. The copy itself can be edited. -->
           <span style="font-size:13px;opacity:0.75;" id="smsConsentText">
             I agree to receive my invitation, account notifications, booking updates, and promotional or marketing text messages from CURATEvip at the mobile number provided above, including text messages sent using an automated telephone dialing system or similar automated technology. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply STOP to opt out and HELP for help. See our
             <a href="privacy.html" style="text-decoration:underline;color:inherit;">Privacy Policy</a> and
@@ -1721,13 +1677,13 @@
         <textarea name="message" id="fieldMessage" class="form-textarea" placeholder="Tell us a bit about yourself or what you're looking for…"></textarea>
         <span class="field-error" id="errMessage">Please include a brief message.</span>
       </div>
-      <!-- Honeypot. Hidden from people, irresistible to bots. Checked in the
-           submit handler now that nothing else is checking it for us. -->
+      <!-- Honeypot field, hidden from users. Checked in the submit handler and
+           sent to the server. -->
       <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <button type="submit" class="form-submit" id="formSubmitBtn">Send Message →</button>
       <p class="form-note" id="formNote">We respond to every inquiry within 24 hours.</p>
-      <!-- Split so a server-supplied message can be written into the first span
-           with textContent while the mailto fallback stays static markup. -->
+      <!-- Split so a server message can go into the first span via textContent
+           while the mailto fallback stays static markup. -->
       <p class="form-note" id="formError" style="display:none; color:#c0392b;"><span id="formErrorText">Something went wrong. Please try again</span><span id="formErrorContact"> or email us at <a href="mailto:rick@curatevip.app" style="color:#c0392b;">rick@curatevip.app</a>.</span></p>
     </form>
 
@@ -1738,7 +1694,7 @@
     </div>
   </section>
 
-  <!-- ── FOOTER ── -->
+  <!-- Footer -->
   <footer>
     <div class="footer-logo">
       <img src="logo-wordmark.png" alt="CURATEvip" />
@@ -1773,24 +1729,18 @@
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // ── Form Validation + CURATEvip API Submit ──────────────
+    // ---- Form validation and submit to the CurateVIP API ----
     ;(function() {
       const API_ENDPOINT = 'https://api.curatevip.ai/api/contact'
       const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-      /* ── Attribution ────────────────────────────────────────────────
-         Same shape and rules as join.html, so a homepage inquiry and a
-         funnel application land in the database looking alike. Captured on
-         load and held in sessionStorage, because someone can arrive on a
-         campaign link, read the whole page, and only then scroll down to the
-         form — by which point the query string may be long gone.
-
-         Deliberately NOT gated on cookie consent: this is our own record of
-         where an inquiry came from, not a third-party tracker.
-
-         Separate storage key from join.html on purpose. join's record carries
-         a campaign variant; the homepage has none, and sharing one key would
-         let a variant leak onto inquiries that were never part of a test. */
+      /* ---- Attribution ----
+         Same shape and rules as join.html so homepage inquiries and funnel
+         applications are stored consistently. Captured on load and kept in
+         sessionStorage because the query string may be gone by the time the visitor
+         reaches the form. Not gated on cookie consent (first-party record only).
+         Uses a separate storage key from join.html so join's campaign variant never
+         attaches to homepage inquiries. */
       const ATTR_KEY = 'cvip_attr_home_v1'
 
       function captureAttribution() {
@@ -1799,14 +1749,13 @@
           const raw = window.sessionStorage.getItem(ATTR_KEY)
           if (raw) stored = JSON.parse(raw)
         } catch (e) { stored = null }
-        // 'landingPath' is present on every record we write, so it doubles as
-        // the "this is one of ours, fully formed" marker.
+        // 'landingPath' is present on every record we write, so it doubles as the
+        // marker for a complete, valid stored record.
         if (stored && typeof stored === 'object' && 'landingPath' in stored) return stored
 
         const p = new URLSearchParams(window.location.search)
-        /* Absent, blank and the literal strings "null"/"undefined" all collapse
-           to a real null. Ad platforms and tag managers emit those strings when
-           a macro fails to expand, and storing them as text poisons reporting. */
+        /* Treat missing, blank, "null" and "undefined" as null. Ad platforms emit
+           those literal strings when a macro fails to expand. */
         function get(key) {
           let v = p.get(key)
           if (v === null) return null
@@ -1832,9 +1781,8 @@
 
       const ATTRIBUTION = captureAttribution()
 
-      /* Read the disclosure out of the DOM so the stored consent record is
-         exactly the string the visitor saw, whitespace-normalised. Never a
-         hardcoded copy — that would drift the moment the wording changes. */
+      /* Read the disclosure from the DOM so the stored consent text is exactly what
+         the visitor saw (whitespace normalized) and never drifts from the page copy. */
       function consentTextShown() {
         const el = document.getElementById('smsConsentText')
         if (!el) return ''
@@ -1846,9 +1794,9 @@
       const errText    = document.getElementById('formErrorText')
       const errContact = document.getElementById('formErrorContact')
 
-      /* msg = a message from our API (400s carry useful ones, e.g. about phone
-         format); null = the generic line plus the mailto fallback. textContent
-         throughout: this string is server-supplied and never markup. */
+      /* msg: a message from our API (400s include useful ones, e.g. phone format).
+         null: show the generic line plus the mailto fallback. Always set via
+         textContent since the text is server-supplied. */
       function showError(msg) {
         if (msg) {
           errText.textContent = msg
@@ -1882,26 +1830,24 @@
         { id: 'fieldEmail',     errId: 'errEmail',     test: v => emailRE.test(v) },
         { id: 'fieldType',      errId: 'errType',      test: v => v !== '' },
         { id: 'fieldMessage',   errId: 'errMessage',   test: v => v.length >= 10 },
-        // Blank is valid — the number is optional. Anything entered must look
-        // like a real number, so a half-typed one doesn't reach the admin and
-        // fail silently at send time.
+        // Blank is valid (the number is optional). Anything entered must look like a
+        // real number so a partial entry does not reach the server.
         { id: 'fieldPhone',     errId: 'errPhone',     test: v => v.trim() === '' || /^\+?[0-9()\s.\-]{10,}$/.test(v.trim()) },
       ]
 
-      // Blur (on-leave) validation for each field
+      // Validate each field on blur
       fields.forEach(f => {
         const el = document.getElementById(f.id)
         el.addEventListener('blur', () => validate(f.id, f.errId, f.test))
         el.addEventListener('input', () => {
-          // Clear invalid state as user types
+          // Clear invalid state as the user types
           if (el.classList.contains('invalid')) validate(f.id, f.errId, f.test)
         })
       })
 
-      /* One POST, and at most one retry — and only when fetch itself rejected,
-         i.e. the request never reached us. A 4xx or 5xx is an answer and gets
-         no second attempt: the endpoint allows 10 requests per 10 minutes per
-         IP, so a retry loop would lock a real visitor out of their own form. */
+      /* One POST with at most one retry, only when fetch itself rejects (the request
+         never reached the server). 4xx/5xx responses are not retried because the
+         endpoint is rate limited to 10 requests per 10 minutes per IP. */
       async function postContact(payload) {
         const init = {
           method: 'POST',
@@ -1919,9 +1865,8 @@
       document.getElementById('contactForm').addEventListener('submit', async function(e) {
         e.preventDefault()
 
-        /* Honeypot. A person cannot fill a display:none field, so anything in
-           it is automation. Show the success panel and stop — a bot that is
-           told it failed just tries again with the field left blank. */
+        /* Honeypot filled: this is automation. Show the success panel and stop, so
+           the bot has no reason to retry. */
         const gotcha = this.querySelector('input[name="_gotcha"]')
         if (gotcha && gotcha.value.trim() !== '') {
           showSuccess(this)
@@ -1931,9 +1876,8 @@
         // Run all validations
         let allValid = fields.every(f => validate(f.id, f.errId, f.test))
 
-        // Consent gate: a number without a tick is not consent, and sending on
-        // it would be the thing A2P registration exists to prevent. Checked
-        // here rather than in `fields` because it depends on another field.
+        // Consent gate: a number without the consent box checked is not consent.
+        // Checked here rather than in `fields` because it depends on another field.
         const phoneEl   = document.getElementById('fieldPhone')
         const consentEl = document.getElementById('fieldSmsConsent')
         const consentErr = document.getElementById('errSmsConsent')
@@ -1958,19 +1902,18 @@
           firstName: document.getElementById('fieldFirstName').value.trim(),
           lastName:  document.getElementById('fieldLastName').value.trim(),
           email:     document.getElementById('fieldEmail').value.trim(),
-          // No number means no phone and no consent to text one, whatever the
-          // box says — a consent record with nothing to send to is not a record.
+          // With no number there is no phone and no SMS consent, regardless of the
+          // checkbox state.
           phone:          phone === '' ? null : phone,
           smsConsent:     phone !== '' && consentEl.checked,
           smsConsentText: consentTextShown(),
-          // Verbatim. The backend routes on this string, so trimming, mapping
-          // or prettifying it here would silently misfile the inquiry.
+          // Sent verbatim. The backend routes on this string, so it must not be
+          // trimmed or mapped here.
           inquiryType: document.getElementById('fieldType').value,
           message:     document.getElementById('fieldMessage').value.trim(),
           source:      'homepage_contact',
-          // Sent so the server can enforce the honeypot too. Checking it only
-          // in the page would leave the protection looking present while a bot
-          // posting straight to the API skipped it entirely.
+          // Sent so the server can also enforce the honeypot, since bots can post
+          // directly to the API.
           _gotcha:     gotcha ? gotcha.value : '',
           attribution: ATTRIBUTION
         }
@@ -1983,8 +1926,8 @@
             return
           }
 
-          // 4xx carries a message worth reading — bad phone format, a rejected
-          // email. 5xx does not; that is ours to fix, not theirs.
+          // 4xx responses carry a user-facing message (e.g. bad phone format or a
+          // rejected email). 5xx responses do not.
           let data = null
           try { data = await res.json() } catch (parseErr) { data = null }
           const serverMsg = data && typeof data.error === 'string' ? data.error.trim() : ''
@@ -1994,11 +1937,10 @@
             showError(null)
           }
         } catch (err) {
-          // Both attempts failed to reach the network at all.
+          // Neither attempt reached the network.
           showError(null)
         } finally {
-          // Always. A stuck disabled button is a dead form, even on success
-          // where it is hidden anyway.
+          // Always re-enable the button, including on success where it is hidden.
           btn.textContent = 'Send Message →'
           btn.disabled = false
         }
@@ -2038,7 +1980,7 @@
       });
     })();
 
-    // Request Access button — pre-select "Potential User" in form
+    // Request Access button: pre-select "Potential User" in the form
     var heroBtn = document.getElementById('heroRequestBtn');
     if (heroBtn) {
       heroBtn.addEventListener('click', function() {
