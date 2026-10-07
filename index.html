@@ -1177,7 +1177,16 @@
         gap: 20px;
         text-align: center;
       }
-      .footer-links { justify-content: center; }
+      /* Seven links do not fit one row on a phone: wrap them instead of
+         letting the row run off the screen. */
+      .footer-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 14px 22px;
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+      }
     }
 
     @media (max-width: 480px) {
@@ -1718,9 +1727,9 @@
       <li><a href="#membership">Membership</a></li>
       <li><a href="#investors">Investors</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="privacy.html">Privacy Policy</a></li>
-      <li><a href="privacy-choices.html">Privacy Choices</a></li>
-      <li><a href="terms.html">Terms</a></li>
+      <li><a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></li>
+      <li><a href="privacy-choices.html" target="_blank" rel="noopener">Privacy Choices</a></li>
+      <li><a href="terms.html" target="_blank" rel="noopener">Terms</a></li>
     </ul>
   </footer>
 
