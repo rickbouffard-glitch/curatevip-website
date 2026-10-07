@@ -1574,9 +1574,32 @@
     function captureAttribution() {
       var stored = null;
       try { stored = JSON.parse(window.sessionStorage.getItem(ATTR_KEY) || 'null'); } catch (e) { stored = null; }
-      if (stored && typeof stored === 'object' && stored.variant) return stored;
-
       var p = new URLSearchParams(window.location.search);
+
+      /* Creator referral code (?ref=nicole). Kept 30 days in localStorage so a
+         visitor who comes back later still credits the creator. A new ref link
+         replaces the old one. */
+      var REF_KEY = 'cvip_ref_v1';
+      var REF_DAYS = 30;
+      function cleanRef(v) {
+        v = String(v || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
+        return v.length >= 2 ? v : null;
+      }
+      var ref = cleanRef(p.get('ref'));
+      try {
+        if (ref) {
+          window.localStorage.setItem(REF_KEY, JSON.stringify({ code: ref, at: Date.now() }));
+        } else {
+          var savedRef = JSON.parse(window.localStorage.getItem(REF_KEY) || 'null');
+          if (savedRef && savedRef.code && Date.now() - savedRef.at < REF_DAYS * 864e5) ref = cleanRef(savedRef.code);
+        }
+      } catch (e) { /* storage blocked */ }
+
+      if (stored && typeof stored === 'object' && stored.variant) {
+        if (ref) stored.ref = ref;
+        return stored;
+      }
+
       /* Treat missing, blank, "null" and "undefined" as null. Ad platforms emit
          those literal strings when a macro fails to expand. */
       function get(key) {
@@ -1596,7 +1619,8 @@
         fbclid:      get('fbclid'),
         referrer:    document.referrer ? String(document.referrer).slice(0, 500) : null,
         landingPath: window.location.pathname || null,
-        variant:     VARIANT
+        variant:     VARIANT,
+        ref:         ref
       };
       try { window.sessionStorage.setItem(ATTR_KEY, JSON.stringify(attr)); } catch (e) { /* private mode */ }
       return attr;
@@ -2441,8 +2465,22 @@
        opacity 0. This is a no-op if the observer already ran. */
     window.setTimeout(revealAll, 1200);
 
+    /* ---- Creator referral: show "Invited by <name>" ---- */
+    function showReferrer() {
+      if (!ATTRIBUTION || !ATTRIBUTION.ref) return;
+      fetch(API_BASE + '/api/ref/' + encodeURIComponent(ATTRIBUTION.ref))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d || !d.valid || !d.name) return;
+          var k = document.querySelector('.hero-kicker');
+          if (k) k.textContent = 'Invited by ' + d.name + ' \u00b7 Priority review';
+        })
+        .catch(function () {});
+    }
+
     /* ---- Boot ---- */
     applyVariant();
+    showReferrer();
     initConsentUI();
     /* page_path is sent explicitly. vercel.json sets cleanUrls, so the canonical
        path is /join and analytics should match the canonical tag, not the filename. */
