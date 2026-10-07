@@ -1,0 +1,7 @@
+# CURATEvip public site (curatevip.app)
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /review
+
+Sitemap: https://curatevip.app/sitemap.xml

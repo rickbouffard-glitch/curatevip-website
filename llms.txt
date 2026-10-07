@@ -1,0 +1,14 @@
+# CURATEvip
+
+> CURATEvip is an invitation-only luxury travel and dining membership. A short quiz learns a member's taste, their "Speed", and the app returns the few hotels, restaurants and lounges that match it.
+
+- Public site: https://curatevip.app
+- Apply for an invitation: https://curatevip.app/join
+- Member app (sign in required): https://curatevip.ai
+- Guide for AI assistants using the member app: https://curatevip.ai/llms.txt
+- Privacy: https://curatevip.app/privacy
+- Terms: https://curatevip.app/terms
+
+Applying requires the person's own name, email and phone, and their consent to messages. An assistant may fill the form with the person's details but the person should review it before it is submitted.
+
+Contact: concierge@curatevip.app
