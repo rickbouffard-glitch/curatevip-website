@@ -24,7 +24,8 @@
   <link rel="icon" type="image/png" href="C-IconNoBg.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" /></noscript>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -987,7 +988,7 @@
 
     .footer-copy {
       font-size: 11px;
-      color: var(--text-20);
+      color: var(--text-40);
       letter-spacing: 0.04em;
     }
 
@@ -998,8 +999,8 @@
     }
 
     .footer-links a {
-      font-size: 10px;
-      color: var(--text-20);
+      font-size: 11px;
+      color: var(--text-60);
       text-decoration: none;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -1216,7 +1217,7 @@
   <!-- Nav -->
   <nav>
     <a href="#home" class="nav-logo">
-      <img src="Logo-Horizontal-Website.png" alt="CURATEvip" />
+      <img src="Logo-Horizontal-Website.webp" alt="CURATEvip" width="842" height="142" fetchpriority="high" />
     </a>
     <ul class="nav-links">
       <li><a href="#what-you-get">What You Get</a></li>
@@ -1247,7 +1248,7 @@
 
     <div class="hero-inner">
       <!-- Left: text -->
-      <div class="hero-left fade-in">
+      <div class="hero-left">
         <h1 class="hero-title">
           Five stars mean nothing unless they're <em>your</em> five stars.
         </h1>
@@ -1265,11 +1266,11 @@
       </div>
 
       <!-- Right: phone mockup -->
-      <div class="hero-right fade-in delay-2">
+      <div class="hero-right">
         <div class="phone-frame">
           <div class="phone-outer">
             <div class="phone-screen">
-              <img src="screenshot-resultsStay.png" alt="CURATEvip: Your Curation Results" />
+              <img src="screenshot-resultsStay.webp" alt="CURATEvip: Your Curation Results" width="274" height="864" fetchpriority="high" />
             </div>
           </div>
         </div>
@@ -1501,7 +1502,7 @@
       <div class="phone-secondary">
         <div class="phone-outer">
           <div class="phone-screen">
-            <img src="screenshot-quiz.png" alt="CURATEvip: Your Speed Quiz" />
+            <img src="screenshot-quiz.webp" alt="CURATEvip: Your Speed Quiz" width="290" height="864" loading="lazy" decoding="async" />
           </div>
         </div>
         <div class="phone-label">Select Your Category</div>
@@ -1509,7 +1510,7 @@
       <div class="phone-secondary">
         <div class="phone-outer">
           <div class="phone-screen">
-            <img src="screenshot-curation.png" alt="CURATEvip: Your Curated Results" />
+            <img src="screenshot-curation.webp" alt="CURATEvip: Your Curated Results" width="274" height="864" loading="lazy" decoding="async" />
           </div>
         </div>
         <div class="phone-label">Your Curated Result</div>
@@ -1714,13 +1715,13 @@
   <!-- Footer -->
   <footer>
     <div class="footer-logo">
-      <img src="logo-wordmark.png" alt="CURATEvip" />
+      <img src="logo-wordmark-footer.webp" alt="CURATEvip" width="400" height="71" loading="lazy" decoding="async" />
     </div>
     <p class="footer-copy">© 2026 CurateVIP LLC. All rights reserved.</p>
     <p style="margin-top:14px;display:flex;align-items:center;justify-content:center;gap:20px;">
-      <a href="admin.html" style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.18);text-decoration:none;transition:color 0.25s;" onmouseover="this.style.color='rgba(186,159,117,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.18)'">admin</a>
-      <span style="color:rgba(255,255,255,0.08);font-size:9px;">·</span>
-      <a href="review.html" style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.18);text-decoration:none;transition:color 0.25s;" onmouseover="this.style.color='rgba(186,159,117,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.18)'">review</a>
+      <a href="admin.html" style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.25s;" onmouseover="this.style.color='rgba(186,159,117,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">admin</a>
+      <span style="color:rgba(255,255,255,0.25);font-size:10px;">·</span>
+      <a href="review.html" style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.25s;" onmouseover="this.style.color='rgba(186,159,117,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">review</a>
     </p>
     <ul class="footer-links">
       <li><a href="#what-you-get">What You Get</a></li>
