@@ -391,6 +391,9 @@
        who knows." never wraps. On phones the heading scales with screen width
        so that line always fits. */
     .h2-research .nowrap-line { white-space: nowrap; }
+    /* Desktop: the first two sentences share a line; phones stack them. */
+    .h2-research .br-phone { display: none; }
+    @media (max-width: 768px) { .h2-research .br-phone { display: inline; } }
     @media (max-width: 768px) {
       .section-h2.h2-research { font-size: 6vw; }
     }
@@ -1300,7 +1303,7 @@
       <div class="stat-lbl">Hours lost to research</div>
     </div>
     <div class="stat fade-in delay-1">
-      <div class="stat-num">5 min</div>
+      <div class="stat-num">8 min</div>
       <div class="stat-lbl">To learn your Speed, once</div>
     </div>
     <div class="stat fade-in delay-2">
@@ -1318,7 +1321,7 @@
 
     <div class="about-intro fade-in">
       <p class="section-eyebrow">The Problem</p>
-      <h2 class="section-h2 h2-research">The research takes time.<br /><span class="nowrap-line">You need someone who <em>knows</em>.</span><br />That's <span style="color:var(--gold);font-style:normal;">CURATE</span>.</h2>
+      <h2 class="section-h2 h2-research">The research takes time.<br class="br-phone" /> <span class="nowrap-line">You need someone who <em>knows</em>.</span><br />That's <span style="color:var(--gold);font-style:normal;">CURATE</span>.</h2>
       <p class="body-text" style="margin-bottom:18px;">
         You know what you like. The hours go into finding it: scrolling your credit card's travel
         site, working through the big brand lists of a hundred four and five star hotels, reading
@@ -1384,7 +1387,7 @@
 
       <div class="about-card">
         <div class="card-body">
-          <div class="card-title">Your Speed, in about five minutes</div>
+          <div class="card-title">Your Speed, in about eight minutes</div>
           <div class="card-desc">A short set of questions across three areas: how you rest, how you dine, how you spend the evening. No star ratings, no price sliders. Just what a room needs to feel like before it feels right to you. The answer is your Speed Profile.</div>
         </div>
       </div>
@@ -1484,7 +1487,7 @@
         <div class="flow-body">
           <div class="flow-label">Lodging · Dining · Evening</div>
           <div class="flow-title">Take the Speed test</div>
-          <div class="flow-desc">Once, at the start, and it takes about five minutes. Your answers are scored into a Speed Profile across Stay, Table and Social: an atmospheric signature that's yours and no one else's.</div>
+          <div class="flow-desc">Once, at the start, and it takes about eight minutes. Your answers are scored into a Speed Profile across Stay, Table and Social: an atmospheric signature that's yours and no one else's.</div>
         </div>
       </div>
 
