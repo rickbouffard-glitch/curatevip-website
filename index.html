@@ -628,7 +628,14 @@
     .has-bg-photo.bg-bleed::before, .has-bg-photo.bg-bleed::after { left: calc(50% - 50vw); right: calc(50% - 50vw); }
     @media (max-width: 768px) {
       /* Phones: sections are tall and narrow, so cover the area instead */
-      .has-bg-photo::before { background-size: cover; }
+      /* Zoomed out: the photo is about twice the screen width (instead of
+         covering the whole tall section), anchored at the top, and fades into
+         the dark background below. */
+      .has-bg-photo::before { background-size: 210% auto; background-position: center top !important; }
+      /* The photo is about 157vw tall at this size; fade its lower edge out
+         so there is no visible line where it ends. */
+      .has-bg-photo::before { -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 105vw, transparent 155vw);
+        mask-image: linear-gradient(to bottom, #000 0, #000 105vw, transparent 155vw); }
       .has-bg-photo.bg-on[data-bg="lobby"]::before { background-image: url(bg-lobby-900.webp); }
       .has-bg-photo.bg-on[data-bg="dining"]::before { background-image: url(bg-dining-900.webp); }
       /* Phones: lighter wash and full color so the photos actually show on a
