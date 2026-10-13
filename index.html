@@ -636,6 +636,10 @@
          so there is no visible line where it ends. */
       .has-bg-photo::before { -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 105vw, transparent 155vw);
         mask-image: linear-gradient(to bottom, #000 0, #000 105vw, transparent 155vw); }
+      /* Lobby: zoomed out a bit further (photo about 127vw tall) */
+      .has-bg-photo[data-bg="lobby"]::before { background-size: 170% auto;
+        -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 85vw, transparent 125vw);
+        mask-image: linear-gradient(to bottom, #000 0, #000 85vw, transparent 125vw); }
       .has-bg-photo.bg-on[data-bg="lobby"]::before { background-image: url(bg-lobby-900.webp); }
       .has-bg-photo.bg-on[data-bg="dining"]::before { background-image: url(bg-dining-900.webp); }
       /* Phones: lighter wash and full color so the photos actually show on a
@@ -643,7 +647,7 @@
       .has-bg-photo::after { background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.66) 12%, rgba(12,12,13,.64) 50%, rgba(12,12,13,.70) 88%, #0c0c0d 100%) !important; }
       .has-bg-photo::before { filter: none !important; }
       /* Dining room is brighter than the lobby photo: a slightly darker wash on phones */
-      .has-bg-photo[data-bg="dining"]::after { background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.76) 12%, rgba(12,12,13,.74) 50%, rgba(12,12,13,.80) 88%, #0c0c0d 100%) !important; }
+      .has-bg-photo[data-bg="dining"]::after { background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.82) 12%, rgba(12,12,13,.80) 50%, rgba(12,12,13,.85) 88%, #0c0c0d 100%) !important; }
     }
 
     #your-speed {
