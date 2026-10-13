@@ -387,6 +387,13 @@
     }
 
     .section-h2 em { font-style: italic; color: var(--gold); }
+    /* The Problem heading: each sentence on its own line, and "You need someone
+       who knows." never wraps. On phones the heading scales with screen width
+       so that line always fits. */
+    .h2-research .nowrap-line { white-space: nowrap; }
+    @media (max-width: 768px) {
+      .section-h2.h2-research { font-size: 6vw; }
+    }
 
     .body-text {
       /* No max-width: fills the column like the headline and cards around it. */
@@ -1311,7 +1318,7 @@
 
     <div class="about-intro fade-in">
       <p class="section-eyebrow">The Problem</p>
-      <h2 class="section-h2">The research takes time. You need someone who <em>knows</em>.<br />That's <span style="color:var(--gold);font-style:normal;">CURATE</span>.</h2>
+      <h2 class="section-h2 h2-research">The research takes time.<br /><span class="nowrap-line">You need someone who <em>knows</em>.</span><br />That's <span style="color:var(--gold);font-style:normal;">CURATE</span>.</h2>
       <p class="body-text" style="margin-bottom:18px;">
         You know what you like. The hours go into finding it: scrolling your credit card's travel
         site, working through the big brand lists of a hundred four and five star hotels, reading
