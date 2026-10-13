@@ -619,6 +619,8 @@
     .has-bg-photo.bg-on[data-bg="dining"]::before { background-image: url(bg-dining.webp); }
     /* Photo anchored to the top of the section instead of centered */
     .has-bg-photo.bg-top::before { background-position: center top; }
+    /* Dining room: start a little lower so the room shows, not only the chandeliers */
+    .has-bg-photo[data-bg="dining"]::before { background-position: center 38%; }
     .has-bg-photo.bg-top::after { background: linear-gradient(180deg, rgba(12,12,13,.91) 0%, rgba(12,12,13,.90) 45%, rgba(12,12,13,.93) 75%, #0c0c0d 100%); }
     /* Problem section photo: desaturated and dimmed on desktop so the white headline stands out */
     .has-bg-photo[data-bg="dining"]::before { filter: saturate(.55) brightness(.8); }
@@ -633,6 +635,8 @@
          small screen; the text sits on solid cards or is large enough to read. */
       .has-bg-photo::after { background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.66) 12%, rgba(12,12,13,.64) 50%, rgba(12,12,13,.70) 88%, #0c0c0d 100%) !important; }
       .has-bg-photo::before { filter: none !important; }
+      /* Dining room is brighter than the lobby photo: a slightly darker wash on phones */
+      .has-bg-photo[data-bg="dining"]::after { background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.76) 12%, rgba(12,12,13,.74) 50%, rgba(12,12,13,.80) 88%, #0c0c0d 100%) !important; }
     }
 
     #your-speed {
