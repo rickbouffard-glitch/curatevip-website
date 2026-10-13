@@ -1115,7 +1115,9 @@
       .hero-left { align-items: flex-start; }
       .hero-wordmark { height: 44px; margin-bottom: 28px; }
       .hero-title { font-size: clamp(32px, 8vw, 48px); max-width: 100%; }
-      .hero-sub { font-size: 14px; max-width: 100%; margin-bottom: 36px; }
+      /* Phones: larger, brighter paragraph text so it reads without zooming. */
+      .hero-sub { font-size: 17px; font-weight: 400; color: rgba(255,255,255,0.78); line-height: 1.7; max-width: 100%; margin-bottom: 36px; }
+      .body-text { font-size: 17px; color: rgba(255,255,255,0.78); line-height: 1.75; }
       .hero-actions { flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
       .btn-primary, .btn-ghost { padding: 13px 16px; width: auto; flex: 1; min-width: 0; font-size: 9px; letter-spacing: 0.12em; white-space: nowrap; text-align: center; }
       .btn-enter { justify-content: center; }
@@ -1257,8 +1259,8 @@
           CurateVIP learns how you like a hotel or restaurant to feel. We call it <em>Your Speed</em>.
           From then on, every search returns three to five places that match it, with a plain
           explanation of why each one is yours. No 150 results to sort through, no evenings lost to
-          reviews written by strangers. Minutes instead of hours, and a choice you already know
-          you'll like.
+          reviews written by strangers. Minutes instead of hours, and a choice we already know
+          you like.
         </p>
         <div class="hero-actions">
           <a href="#contact" class="btn-primary" id="heroRequestBtn">Request Access</a>
