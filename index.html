@@ -249,6 +249,10 @@
       display: inline-block;
     }
 
+    /* Request Access button centered under a section */
+    .section-cta { text-align: center; margin-top: 48px; }
+    .section-cta .btn-primary { display: inline-block; flex: none; width: auto; padding: 16px 44px; }
+
     .btn-primary:hover {
       background: var(--gold-light);
       transform: translateY(-2px);
@@ -1276,7 +1280,7 @@
           you like.
         </p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary" id="heroRequestBtn">Request Access</a>
+          <a href="#contact" class="btn-primary js-request-access" id="heroRequestBtn">Request Access</a>
           <a href="#how-it-works" class="btn-ghost">See How It Works</a>
         </div>
       </div>
@@ -1417,6 +1421,9 @@
       </div>
 
     </div>
+    <div class="section-cta fade-in">
+      <a href="#contact" class="btn-primary js-request-access">Request Access</a>
+    </div>
   </section>
 
   <!-- What is a Speed -->
@@ -1535,6 +1542,9 @@
         </div>
         <div class="phone-label">Your Curated Result</div>
       </div>
+    </div>
+    <div class="section-cta fade-in">
+      <a href="#contact" class="btn-primary js-request-access">Request Access</a>
     </div>
   </section>
 
@@ -2021,9 +2031,10 @@
     })();
 
     // Request Access button: pre-select "Potential User" in the form
-    var heroBtn = document.getElementById('heroRequestBtn');
-    if (heroBtn) {
-      heroBtn.addEventListener('click', function() {
+    // Every Request Access button (hero, What You Get, How It Works) scrolls to
+    // the form and pre-selects the same option.
+    document.querySelectorAll('.js-request-access').forEach(function(btn) {
+      btn.addEventListener('click', function() {
         var sel = document.getElementById('fieldType');
         if (sel) {
           sel.value = 'Potential User: I want early access';
@@ -2031,7 +2042,7 @@
           sel.classList.add('valid');
         }
       });
-    }
+    });
 
     // Nav active link highlight
     const sections = document.querySelectorAll('section[id]')
