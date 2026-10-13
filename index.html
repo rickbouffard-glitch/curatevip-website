@@ -605,6 +605,25 @@
 
     /* Full-bleed background with contents on the shared column, same pattern as
        #how-it-works. */
+
+    /* Muted hotel photos behind The Idea and How It Works. The photo spans the
+       full width and fades to black at the top and bottom; an 82 to 86% black
+       wash keeps the text readable. Images load only when the section is near
+       the screen (the bg-on class is added by an IntersectionObserver). */
+    .has-bg-photo { position: relative; isolation: isolate; }
+    .has-bg-photo::before { content: ""; position: absolute; inset: 0; z-index: -2;
+      background-repeat: no-repeat; background-size: 100% auto; background-position: center; }
+    .has-bg-photo::after { content: ""; position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.84) 18%, rgba(12,12,13,.82) 50%, rgba(12,12,13,.84) 82%, #0c0c0d 100%); }
+    .has-bg-photo.bg-on[data-bg="lobby"]::before { background-image: url(bg-lobby.webp); }
+    .has-bg-photo.bg-on[data-bg="hall"]::before { background-image: url(bg-hall.webp); }
+    @media (max-width: 768px) {
+      /* Phones: sections are tall and narrow, so cover the area instead */
+      .has-bg-photo::before { background-size: cover; }
+      .has-bg-photo.bg-on[data-bg="lobby"]::before { background-image: url(bg-lobby-900.webp); }
+      .has-bg-photo.bg-on[data-bg="hall"]::before { background-image: url(bg-hall-900.webp); }
+    }
+
     #your-speed {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -1472,7 +1491,7 @@
   </section>
 
   <!-- What is a Speed -->
-  <section id="your-speed">
+  <section id="your-speed" class="has-bg-photo" data-bg="lobby">
     <div class="section-header fade-in">
       <p class="section-eyebrow">The Idea</p>
       <h2 class="section-h2">A Speed is <em>how a place feels</em>, not how much it costs.</h2>
@@ -1525,7 +1544,7 @@
   </section>
 
   <!-- How it works -->
-  <section id="how-it-works">
+  <section id="how-it-works" class="has-bg-photo" data-bg="hall">
     <div class="section-header fade-in">
       <p class="section-eyebrow">How It Works</p>
       <h2 class="section-h2">Two taps to <em>your Speed</em>.</h2>
@@ -2147,6 +2166,16 @@
           errBox.style.display = 'block';
         } finally { btn.textContent = 'Send Message'; btn.disabled = false; }
       });
+    })();
+
+    // Background photos: load when the section comes within ~600px of view
+    (function() {
+      var els = document.querySelectorAll('.has-bg-photo');
+      if (!('IntersectionObserver' in window)) { els.forEach(function(e) { e.classList.add('bg-on'); }); return; }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(en) { if (en.isIntersecting) { en.target.classList.add('bg-on'); io.unobserve(en.target); } });
+      }, { rootMargin: '600px 0px' });
+      els.forEach(function(e) { io.observe(e); });
     })();
 
     // Every Request Access button (hero, What You Get, How It Works) scrolls to
