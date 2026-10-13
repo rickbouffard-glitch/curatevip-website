@@ -619,7 +619,9 @@
     .has-bg-photo.bg-on[data-bg="hall"]::before { background-image: url(bg-hall.webp); }
     /* Photo anchored to the top of the section instead of centered */
     .has-bg-photo.bg-top::before { background-position: center top; }
-    .has-bg-photo.bg-top::after { background: linear-gradient(180deg, rgba(12,12,13,.84) 0%, rgba(12,12,13,.82) 45%, rgba(12,12,13,.88) 75%, #0c0c0d 100%); }
+    .has-bg-photo.bg-top::after { background: linear-gradient(180deg, rgba(12,12,13,.91) 0%, rgba(12,12,13,.90) 45%, rgba(12,12,13,.93) 75%, #0c0c0d 100%); }
+    /* Hallway photo: also desaturated and dimmed so the white headline stands out */
+    .has-bg-photo[data-bg="hall"]::before { filter: saturate(.55) brightness(.8); }
     /* #about sits in the 1120px column; let its photo run the full page width */
     .has-bg-photo.bg-bleed::before, .has-bg-photo.bg-bleed::after { left: calc(50% - 50vw); right: calc(50% - 50vw); }
     @media (max-width: 768px) {
