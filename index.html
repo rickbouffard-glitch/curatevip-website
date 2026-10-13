@@ -617,6 +617,11 @@
       background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.84) 18%, rgba(12,12,13,.82) 50%, rgba(12,12,13,.84) 82%, #0c0c0d 100%); }
     .has-bg-photo.bg-on[data-bg="lobby"]::before { background-image: url(bg-lobby.webp); }
     .has-bg-photo.bg-on[data-bg="hall"]::before { background-image: url(bg-hall.webp); }
+    /* Photo anchored to the top of the section instead of centered */
+    .has-bg-photo.bg-top::before { background-position: center top; }
+    .has-bg-photo.bg-top::after { background: linear-gradient(180deg, rgba(12,12,13,.84) 0%, rgba(12,12,13,.82) 45%, rgba(12,12,13,.88) 75%, #0c0c0d 100%); }
+    /* #about sits in the 1120px column; let its photo run the full page width */
+    .has-bg-photo.bg-bleed::before, .has-bg-photo.bg-bleed::after { left: calc(50% - 50vw); right: calc(50% - 50vw); }
     @media (max-width: 768px) {
       /* Phones: sections are tall and narrow, so cover the area instead */
       .has-bg-photo::before { background-size: cover; }
@@ -1388,7 +1393,7 @@
   </div>
 
   <!-- The problem -->
-  <section id="about">
+  <section id="about" class="has-bg-photo bg-top bg-bleed" data-bg="hall">
 
     <div class="about-intro fade-in">
       <p class="section-eyebrow">The Problem</p>
@@ -1544,7 +1549,7 @@
   </section>
 
   <!-- How it works -->
-  <section id="how-it-works" class="has-bg-photo" data-bg="hall">
+  <section id="how-it-works">
     <div class="section-header fade-in">
       <p class="section-eyebrow">How It Works</p>
       <h2 class="section-h2">Two taps to <em>your Speed</em>.</h2>
