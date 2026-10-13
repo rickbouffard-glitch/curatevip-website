@@ -561,6 +561,17 @@
     #membership .section-header { text-align: center; }
     #membership .section-sub { margin-left: auto; margin-right: auto; }
 
+    /* Investors: a large label so visitors know who this section is for, and
+       paragraph text at the same size and brightness as the top sections. */
+    #investors .section-eyebrow { font-size: 24px; letter-spacing: 0.2em; opacity: 1; margin-bottom: 24px; }
+    #investors .section-sub,
+    #investors .card-desc { font-size: 15px; color: var(--text-60); line-height: 1.8; }
+    @media (max-width: 768px) {
+      #investors .section-eyebrow { font-size: 17px; letter-spacing: 0.16em; }
+      #investors .section-sub,
+      #investors .card-desc { font-size: 17px; color: rgba(255,255,255,0.78); line-height: 1.75; }
+    }
+
     /* Full-bleed background with contents on the shared column, same pattern as
        #how-it-works. */
     #your-speed {
