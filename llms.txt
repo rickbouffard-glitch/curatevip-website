@@ -1,6 +1,6 @@
 # CURATEvip
 
-> CURATEvip is an invitation-only luxury travel and dining membership. A short quiz learns a member's taste, their "Speed", and the app returns the few hotels, restaurants and lounges that match it.
+> CURATEvip is an invitation-only luxury travel and dining membership. A short quiz learns a member's taste, their "Speed", and the app returns the few hotels and restaurants that match it.
 
 - Public site: https://curatevip.app
 - Apply for an invitation: https://curatevip.app/join
