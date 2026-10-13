@@ -616,19 +616,23 @@
     .has-bg-photo::after { content: ""; position: absolute; inset: 0; z-index: -1;
       background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.84) 18%, rgba(12,12,13,.82) 50%, rgba(12,12,13,.84) 82%, #0c0c0d 100%); }
     .has-bg-photo.bg-on[data-bg="lobby"]::before { background-image: url(bg-lobby.webp); }
-    .has-bg-photo.bg-on[data-bg="hall"]::before { background-image: url(bg-hall.webp); }
+    .has-bg-photo.bg-on[data-bg="dining"]::before { background-image: url(bg-dining.webp); }
     /* Photo anchored to the top of the section instead of centered */
     .has-bg-photo.bg-top::before { background-position: center top; }
     .has-bg-photo.bg-top::after { background: linear-gradient(180deg, rgba(12,12,13,.91) 0%, rgba(12,12,13,.90) 45%, rgba(12,12,13,.93) 75%, #0c0c0d 100%); }
-    /* Hallway photo: also desaturated and dimmed so the white headline stands out */
-    .has-bg-photo[data-bg="hall"]::before { filter: saturate(.55) brightness(.8); }
+    /* Problem section photo: desaturated and dimmed on desktop so the white headline stands out */
+    .has-bg-photo[data-bg="dining"]::before { filter: saturate(.55) brightness(.8); }
     /* #about sits in the 1120px column; let its photo run the full page width */
     .has-bg-photo.bg-bleed::before, .has-bg-photo.bg-bleed::after { left: calc(50% - 50vw); right: calc(50% - 50vw); }
     @media (max-width: 768px) {
       /* Phones: sections are tall and narrow, so cover the area instead */
       .has-bg-photo::before { background-size: cover; }
       .has-bg-photo.bg-on[data-bg="lobby"]::before { background-image: url(bg-lobby-900.webp); }
-      .has-bg-photo.bg-on[data-bg="hall"]::before { background-image: url(bg-hall-900.webp); }
+      .has-bg-photo.bg-on[data-bg="dining"]::before { background-image: url(bg-dining-900.webp); }
+      /* Phones: lighter wash and full color so the photos actually show on a
+         small screen; the text sits on solid cards or is large enough to read. */
+      .has-bg-photo::after { background: linear-gradient(180deg, #0c0c0d 0%, rgba(12,12,13,.66) 12%, rgba(12,12,13,.64) 50%, rgba(12,12,13,.70) 88%, #0c0c0d 100%) !important; }
+      .has-bg-photo::before { filter: none !important; }
     }
 
     #your-speed {
@@ -1395,7 +1399,7 @@
   </div>
 
   <!-- The problem -->
-  <section id="about" class="has-bg-photo bg-top bg-bleed" data-bg="hall">
+  <section id="about" class="has-bg-photo bg-top bg-bleed" data-bg="dining">
 
     <div class="about-intro fade-in">
       <p class="section-eyebrow">The Problem</p>
