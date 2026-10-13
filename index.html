@@ -252,7 +252,15 @@
     /* Request Access button centered under a section */
     .section-cta { text-align: center; margin-top: 48px; }
     .section-cta--above { margin-top: 40px; margin-bottom: 8px; }
-    .section-cta .btn-primary { display: inline-block; flex: none; width: auto; padding: 16px 44px; }
+    .section-cta .btn-primary { display: inline-block; flex: none; width: auto; }
+    /* Request Access buttons (hero and section buttons): larger than the other
+       buttons on desktop and phones. */
+    .btn-primary.js-request-access { font-size: 13px; padding: 21px 60px; letter-spacing: 0.22em; }
+    @media (max-width: 768px) {
+      .btn-primary.js-request-access { font-size: 12px; padding: 19px 40px; letter-spacing: 0.18em; }
+      /* Hero: Request Access gets its own full-width row, See How It Works below */
+      .hero-actions .btn-primary.js-request-access { flex: 1 1 100%; }
+    }
 
     .btn-primary:hover {
       background: var(--gold-light);
