@@ -594,10 +594,11 @@
     .sell-points li::before {
       content: '';
       position: absolute;
-      left: 0; top: 8px;
-      width: 7px; height: 1px;
+      left: 2px; top: 6.5px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
       background: var(--gold);
-      opacity: 0.75;
+      opacity: 0.85;
     }
     .sell-points em { font-style: italic; color: var(--gold-light); }
 
@@ -960,6 +961,8 @@
          wrap more. Set about 15px above the tallest measured step (step 9, 455px).
          Re-measure if copy is added to the card. */
       .step { min-height: 470px; }
+      /* Step 1 sizes to its content so there is no empty space under the bullets. */
+      #step-1 { min-height: 0; }
       .funnel { padding: 16px 16px 18px; border-radius: 16px; }
       .prog-wrap { margin-bottom: 12px; }
       .prog-label { margin-top: 8px; }
@@ -1111,10 +1114,13 @@
                  Re-measure after any copy change. -->
             <div class="step-sell">
               <ul class="sell-points">
-                <li>We CURATE three to five places, not 150 blue links you still have to sort through.</li>
+                <li>We CURATE three to five places.</li>
+                <li>Not 100 links you have to sort through.</li>
                 <!-- Named sources are intentionally omitted from this bullet. -->
                 <li>Every venue corroborated against independent guides and award bodies.</li>
-                <li>No paid placements, ever. Nobody buys their way onto your list.</li>
+                <li>All specific to your taste, <em>your Speed.</em></li>
+                <li>No paid placements, ever.</li>
+                <li>Nobody buys their way onto your list.</li>
               </ul>
             </div>
           </form>
