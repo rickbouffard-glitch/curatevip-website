@@ -931,7 +931,10 @@
          line within 844px on a 390px-wide phone with the consent bar open. */
       #home {
         align-items: flex-start;
-        padding: 72px 18px 40px;
+        padding: 72px 18px 20px;
+        /* Size to the content on phones: a full-screen minimum left a gap
+           under the "No payment" line on taller phones. */
+        min-height: 0;
       }
       .hero-inner { grid-template-columns: 1fr; gap: 20px; }
       .hero-kicker { font-size: 10px; letter-spacing: 0.2em; margin-bottom: 10px; }
