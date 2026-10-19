@@ -938,6 +938,16 @@
       .hero-sub { font-size: 13px; line-height: 1.55; }
       .hero-reassure { margin-top: 12px; font-size: 11.5px; line-height: 1.5; }
       .hero-points { display: none; } /* desktop-only garnish; never above the fold on a phone */
+      /* Phones: the application card sits right under the headline, and the
+         longer intro paragraph moves below the card. display:contents lets the
+         copy's children join the hero grid so they can be reordered. */
+      .hero-inner { gap: 14px; }
+      .hero-copy { display: contents; }
+      .hero-copy > * { order: 4; }
+      .hero-kicker { order: 1; margin-bottom: 0; }
+      .hero-title { order: 2; margin-bottom: 0; }
+      #apply { order: 3; }
+      .hero-sub { text-shadow: 0 2px 12px rgba(0,0,0,0.8); }
 
       /* Phone layout uses a single-axis gradient: the photo shows behind the
          headline, then fades to near-solid behind the card. */
@@ -1054,7 +1064,6 @@
           search returns three to five places chosen for how you like a room to
           feel, each with the reason it is yours.
         </p>
-        <p class="hero-lead">Two minutes now, and you stop researching for good.</p>
         <ul class="hero-points">
           <li>We read the guides, the awards and every &ldquo;best of&rdquo; list, so you don&rsquo;t.</li>
           <li>The top, the best and the newest &mdash; cross-checked, in one place.</li>
@@ -1069,7 +1078,6 @@
            Contact details come last (steps 7 to 9). Every answer after step 1 is sent
            as a PATCH against the token and queued for retry without blocking the user. -->
       <div id="apply">
-        <p class="apply-cue"><span>Start here</span> &mdash; 9 questions, about 2 minutes</p>
         <div class="funnel" id="funnel">
 
           <!-- Progress -->
