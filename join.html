@@ -414,11 +414,16 @@
       background: #000;
       padding: 8px;
       box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+      /* Frame sized to the screenshot (258px + padding). Without a fixed width
+         the wide caption stretched the frame and left a black strip beside
+         the image. */
+      width: 274px;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .proof-shot img {
       display: block;
       width: 100%;
-      max-width: 258px;
       height: auto;
       border-radius: 13px;
     }
@@ -981,7 +986,7 @@
       .trust-list li { font-size: 10.5px; padding: 0 10px; letter-spacing: 0.08em; }
 
       .proof-grid { grid-template-columns: 1fr; gap: 28px; }
-      .proof-shot img { max-width: 230px; }
+      .proof-shot { width: 246px; }
       .point-list { gap: 18px; margin-top: 20px; }
 
       .price-grid { grid-template-columns: 1fr; gap: 24px; }
