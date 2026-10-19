@@ -1338,7 +1338,7 @@
       <li><a href="#how-it-works">How It Works</a></li>
       <li><a href="#membership">Membership</a></li>
       <li><a href="https://curatevip.ai" target="_blank" class="nav-member">Member Login</a></li>
-      <li><a href="#contact" class="nav-cta">Request Access</a></li>
+      <li><a href="/join" class="nav-cta">Request Access</a></li>
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Open menu">
       <span></span>
@@ -1353,7 +1353,7 @@
     <a href="#how-it-works">How It Works</a>
     <a href="#membership">Membership</a>
     <a href="https://curatevip.ai" target="_blank">Member Login</a>
-    <a href="#contact" class="mob-cta">Request Access</a>
+    <a href="/join" class="mob-cta">Request Access</a>
   </div>
 
   <!-- Hero -->
@@ -1375,7 +1375,7 @@
           you like.
         </p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary js-request-access" id="heroRequestBtn">Request Access</a>
+          <a href="/join" class="btn-primary js-request-access" id="heroRequestBtn">Request Access</a>
           <a href="#how-it-works" class="btn-ghost">See How It Works</a>
         </div>
       </div>
@@ -1517,7 +1517,7 @@
 
     </div>
     <div class="section-cta fade-in">
-      <a href="#contact" class="btn-primary js-request-access">Request Access</a>
+      <a href="/join" class="btn-primary js-request-access">Request Access</a>
     </div>
   </section>
 
@@ -1621,7 +1621,7 @@
     </div>
 
     <div class="section-cta section-cta--above fade-in">
-      <a href="#contact" class="btn-primary js-request-access">Request Access</a>
+      <a href="/join" class="btn-primary js-request-access">Request Access</a>
     </div>
     <div class="dual-phones fade-in delay-2">
       <div class="phone-secondary">
@@ -2238,5 +2238,11 @@
       })
     })
   </script>
+<script>
+  /* Request Access buttons go to the full application on /join. Carry any
+     campaign or referral tags (utm, ref) through so attribution is kept. */
+  (function(){var q=location.search; if(!q) return;
+    document.querySelectorAll('a[href="/join"]').forEach(function(a){a.setAttribute('href','/join'+q);});})();
+</script>
 </body>
 </html>
