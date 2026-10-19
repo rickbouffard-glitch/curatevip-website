@@ -1743,6 +1743,24 @@
     var answers = {};      // API field -> value, so Back can repaint selections
     var identity = { firstName: '', lastName: '', email: '' };
 
+    /* ---- Details mode (?t=TOKEN&n=Name) ----
+       Admin emailed the qualifying questions to an existing request (usually
+       from the short home page form). Answers PATCH onto that same request,
+       the contact steps (7 to 9) are skipped, and step 6 completes it. */
+    var DETAILS_MODE = false;
+    (function () {
+      try {
+        var qp = new URLSearchParams(window.location.search);
+        var t = qp.get('t');
+        if (t && t.length >= 20) {
+          DETAILS_MODE = true;
+          leadToken = t;
+          TOTAL_STEPS = 6;
+          identity.firstName = String(qp.get('n') || '').slice(0, 80);
+        }
+      } catch (e) { /* old browser: normal application */ }
+    })();
+
     /* ---- Server-confirmed identity ----
        `identity` holds what the applicant typed. `identityAck` holds what the
        server has confirmed: a field is written only when a PATCH containing it
@@ -1809,6 +1827,7 @@
     }
 
     function goTo(n, opts) {
+      if (DETAILS_MODE && n === 7) { finishDetails(); return; }
       var from = stepEl(current);
       var to = stepEl(n);
       if (!to) return;
@@ -2000,6 +2019,10 @@
        Start carries attribution only and fires on the first answer, not on page
        load. The city is sent in the first PATCH once start returns a token. */
     var startBtn = document.getElementById('startBtn');
+    if (DETAILS_MODE) {
+      var help1 = document.querySelector('#step-1 .step-help');
+      if (help1) help1.textContent = 'It tells us which cities to look at for you first. Six short questions, about a minute.';
+    }
 
     function submitStart() {
       var input = document.getElementById('fCity');
@@ -2347,6 +2370,20 @@
           completeApplication({});
         });
       });
+    }
+
+    /* Details mode: mark the existing request complete, then show the thank-you
+       screen once every answer has reached the server. */
+    function finishDetails() {
+      enqueue({ complete: true, step: 6 });
+      var tries = 0;
+      (function check() {
+        if (tokenDead) { showError('This link has expired. Reply to our email and we will send you a new one.'); return; }
+        if (lastPatchError) { showError(lastPatchError); return; }
+        if (!inFlight && queue.length === 0 && !retryTimer) { showDone(); return; }
+        if (++tries > 120) { showError('Your answers haven\u2019t reached us yet. Please check your connection and try again.', finishDetails); return; }
+        setTimeout(check, 500);
+      })();
     }
 
     function showDone() {
