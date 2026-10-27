@@ -1498,8 +1498,8 @@
   <!-- Cookie / analytics consent -->
   <aside class="cookie" id="cookieBanner" role="region" aria-label="Cookie preferences" hidden>
     <p>
-      We count visits anonymously to see which campaigns bring the right members.
-      Google and Meta analytics load only if you accept. See our <a href="/privacy">Privacy Policy</a>.
+      We use analytics, including Meta and Google, to see which campaigns bring the right members.
+      Decline to opt out. See our <a href="/privacy">Privacy Policy</a>.
     </p>
     <div class="cookie-actions">
       <button type="button" class="cookie-btn cookie-decline" id="cookieDecline">Decline</button>
@@ -1517,7 +1517,7 @@
          GA4:  'G-XXXXXXXXXX'
          Meta: '123456789012345' */
     var GA4_MEASUREMENT_ID = '';
-    var META_PIXEL_ID      = '';
+    var META_PIXEL_ID      = '1815295053230528';
 
     var API_BASE = 'https://api.curatevip.ai';
 
@@ -1659,6 +1659,13 @@
     var consentState = null;
     try { consentState = window.localStorage.getItem(CONSENT_KEY); } catch (e) { consentState = null; }
     if (consentState !== 'granted' && consentState !== 'denied') consentState = null;
+    /* Opt-out model (US): with no decision yet, analytics run unless the browser
+       sends Global Privacy Control. Decline stops them. Set false for opt-in. */
+    var OPT_OUT_MODEL = true;
+    var gpc = false;
+    try { gpc = !!navigator.globalPrivacyControl; } catch (e) {}
+    if (gpc && consentState === null) consentState = 'denied';
+    var defaultOn = OPT_OUT_MODEL && consentState === null;
 
     var analyticsLoaded = false;
     var pendingEvents = [];
@@ -1690,6 +1697,7 @@
         document.head.appendChild(s);
       }
       window.fbq('init', META_PIXEL_ID);
+      window.fbq('track', 'PageView');
     }
 
     function loadAnalytics() {
@@ -1715,7 +1723,7 @@
        Denied: dropped. */
     function track(gaName, params, fbName, fbParams) {
       var ev = { ga: gaName, params: params || {}, fb: fbName || null, fbParams: fbParams || {} };
-      if (consentState === 'granted') { emit(ev); return; }
+      if (consentState === 'granted' || (defaultOn && analyticsLoaded)) { emit(ev); return; }
       if (consentState === 'denied') return;
       if (pendingEvents.length < 25) pendingEvents.push(ev);
     }
@@ -1733,6 +1741,9 @@
       consentState = 'denied';
       try { window.localStorage.setItem(CONSENT_KEY, 'denied'); } catch (e) {}
       pendingEvents.length = 0;
+      defaultOn = false;
+      try { if (window.fbq) window.fbq('consent', 'revoke'); } catch (e) {}
+      try { if (window.gtag) window.gtag('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied' }); } catch (e) {}
     }
 
     /* body.consent-open makes the hero reserve space for the bar and hides the
@@ -1741,6 +1752,7 @@
       var banner = document.getElementById('cookieBanner');
       if (consentState === 'granted') { loadAnalytics(); return; }
       if (consentState === 'denied') return;
+      if (defaultOn) { loadAnalytics(); var q0 = pendingEvents.slice(); pendingEvents.length = 0; q0.forEach(emit); }
       if (!banner) return;
       banner.hidden = false;
       document.body.classList.add('consent-open');
