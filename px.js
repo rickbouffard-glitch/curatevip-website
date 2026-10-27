@@ -4,7 +4,7 @@
    sends Global Privacy Control. Lets Ads Manager credit visits and
    applications to the exact ad or Reel, and builds retargeting audiences. */
 (function () {
-  var META_PIXEL_ID = '1815295053230528';
+  var META_PIXEL_ID = '1110301094699463';
   if (!META_PIXEL_ID) return;
   try { if (navigator.globalPrivacyControl) return; } catch (e) {}
   try { if (window.localStorage.getItem('cvip_analytics_consent') === 'denied') return; } catch (e) {}

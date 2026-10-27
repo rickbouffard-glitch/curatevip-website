@@ -41,6 +41,13 @@
   function saveMs() { sset('cvip_ms', String(activeMs())); }
 
   var maxScroll = 0, joined = sget('cvip_join') === '1', cta = sget('cvip_cta') === '1';
+  // Button and link clicks this session: [{ l: label, p: page, t: seconds in }].
+  var clicks = [];
+  try { clicks = JSON.parse(sget('cvip_clicks') || '[]') || []; } catch (e) { clicks = []; }
+  // Buttons tracked by id (application funnel answers are not recorded).
+  var TRACK_IDS = { formSubmitBtn: 'Request Access (form)', pfSubmit: 'Send Message', startBtn: 'Begin application',
+    clubContinue: 'Club step continue', finishBtn: 'Submit Application', skipPhone: 'Submit without phone',
+    cookieAccept: 'Cookie Accept', cookieDecline: 'Cookie Decline' };
   function onScroll() {
     var h = document.documentElement, b = document.body;
     var total = Math.max(h.scrollHeight, b ? b.scrollHeight : 0) - window.innerHeight;
@@ -53,7 +60,7 @@
     var p = {
       ev: ev, sid: sid, vid: vid, page: window.location.pathname,
       dur: Math.round(activeMs() / 1000), scroll: maxScroll,
-      join: joined, cta: cta, sw: window.screen ? window.screen.width : null,
+      join: joined, cta: cta, clicks: clicks, sw: window.screen ? window.screen.width : null,
       utm_source: src.utm_source, utm_medium: src.utm_medium,
       utm_campaign: src.utm_campaign, utm_content: src.utm_content,
       fbclid: src.fbclid, ref: src.ref,
@@ -76,11 +83,23 @@
   // Clicked a call to action (Request an Invitation and similar).
   document.addEventListener('click', function (e) {
     var a = e.target && e.target.closest ? e.target.closest('a,button') : null;
-    if (!a || cta) return;
+    if (!a) return;
     var href = a.getAttribute('href') || '';
-    if (/join|#apply/i.test(href) || /request|invitation|apply/i.test(a.textContent || '')) {
+    var text = (a.textContent || '').replace(/\s+/g, ' ').trim();
+    var label = null;
+    if (a.id && TRACK_IDS[a.id]) label = TRACK_IDS[a.id];
+    else if (a.tagName === 'A' && text) {
+      label = text.slice(0, 40);
+      if (a.closest('nav, header')) label += ' (menu)';
+    }
+    if (label && clicks.length < 30) {
+      clicks.push({ l: label, p: window.location.pathname, t: Math.round(activeMs() / 1000) });
+      sset('cvip_clicks', JSON.stringify(clicks));
+    }
+    if (!cta && (/join|#apply/i.test(href) || /request|invitation|apply/i.test(text))) {
       cta = true; sset('cvip_cta', '1');
     }
+    if (label) send('ping');
   });
 
   var pings = 0;
